@@ -1,0 +1,103 @@
+{
+	"name": "min-git",
+	"displayName": "Minimalist Git",
+	"icon": "resources/logo.png",
+	"description": "TODO",
+	"categories": ["SCM Providers"],
+	"keywords": ["git", "log", "diff", "history", "graph", "branch", "commit", "scm", "flow", "tag"],
+	"license": "MIT",
+
+	"version": "0.0.1",
+	"engines": { "vscode": "^1.95.0" },
+	"main": "./src/extension.js",
+	"activationEvents": [],
+
+	"contributes": {
+
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "min-git",
+					"title": "Minimalist Git",
+					"icon": "resources/img/activitybar-icon.svg"
+				}
+			]
+		},
+		"views": {
+			"min-git": [
+				{
+					"type": "webview",
+					"id": "min-git.history",
+					"name": "Graph",
+					"contextualTitle": "Git",
+					"visibility": "visible"
+				}
+			]
+		},
+
+		"commands": [
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history",
+				"title": "History",
+				"icon": "$(history)"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history.reset",
+				"title": "Reset History",
+				"icon": "$(discard)"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history.refresh",
+				"title": "Refresh History",
+				"icon": "$(refresh)"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history.switch.repo",
+				"title": "Switch Repository",
+				"icon": "$(repo)"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history.switch.branch",
+				"title": "Select Reference",
+				"icon": "$(git-branch)"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.history.filter",
+				"title": "Git History",
+				"icon": "$(filter)"
+			}
+		],
+
+		"menus": {
+			"view/title": [
+
+			]
+		}
+	},
+
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "vscode-test"
+	},
+	"dependencies": {
+		"@vscode/codicons": "^0.0.36",
+		"simple-git": "^3.27.0"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.78.0",
+		"@types/glob": "^8.1.0",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "16.x",
+		"eslint": "^8.39.0",
+		"glob": "^8.1.0",
+		"mocha": "^10.2.0",
+		"@vscode/test-electron": "^2.3.0"
+	}
+}
