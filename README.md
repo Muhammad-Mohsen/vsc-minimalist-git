@@ -17,9 +17,9 @@ A Simple Git Extension for VSCode
 1. DONE - set up package json
 1. DONE - test run the extension
 1. UI
-	1. figma design
+	1. DONE - figma design
 	1. theming: https://code.visualstudio.com/api/extension-guides/webview#theming-webview-content (css vars)
-	1. icons: https://stackoverflow.com/questions/68255602/can-i-use-vscode-file-icons-in-a-webview
+	1. DONE - icons
 1. use [simple-git](https://github.com/steveukx/git-js) to implement the commands (other than the graph)
 	- get the native scm extension and wait for it to init to get the repo path, as well as the git binary path to init simple-git
 		- api.ts + service.ts

@@ -19,17 +19,17 @@
 				{
 					"id": "min-git",
 					"title": "Minimalist Git",
-					"icon": "resources/img/activitybar-icon.svg"
+					"icon": "res/img/activitybar-icon.svg"
 				}
 			]
 		},
 		"views": {
 			"min-git": [
 				{
+					"id": "min-git",
 					"type": "webview",
-					"id": "min-git.history",
-					"name": "Graph",
-					"contextualTitle": "Git",
+					"name": "",
+					"contextualTitle": "Minimalist Git",
 					"visibility": "visible"
 				}
 			]
@@ -38,47 +38,48 @@
 		"commands": [
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history",
-				"title": "History",
-				"icon": "$(history)"
+				"command": "min-git.commit",
+				"title": "Commit",
+				"icon": "res/img/commit.svg"
+			},
+
+			{
+				"category": "Minimalist Git",
+				"command": "min-git.stage",
+				"title": "Stage",
+				"icon": "res/img/stage.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history.reset",
-				"title": "Reset History",
-				"icon": "$(discard)"
+				"command": "min-git.unstage",
+				"title": "Unstage",
+				"icon": "res/img/unstage.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history.refresh",
-				"title": "Refresh History",
-				"icon": "$(refresh)"
+				"command": "min-git.stash",
+				"title": "Stash",
+				"icon": "res/img/stash.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history.switch.repo",
-				"title": "Switch Repository",
-				"icon": "$(repo)"
+				"command": "min-git.push",
+				"title": "Push",
+				"icon": "res/img/push.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history.switch.branch",
-				"title": "Select Reference",
-				"icon": "$(git-branch)"
+				"command": "min-git.pull",
+				"title": "Pull",
+				"icon": "res/img/pull.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.history.filter",
-				"title": "Git History",
-				"icon": "$(filter)"
+				"command": "min-git.fetch",
+				"title": "Fetch",
+				"icon": "res/img/fetch.svg"
 			}
-		],
-
-		"menus": {
-			"view/title": [
-
-			]
-		}
+		]
 	},
 
 	"scripts": {
