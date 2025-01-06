@@ -1,4 +1,4 @@
-export class Commit extends HTMLElement {
+module.exports = class Commit extends HTMLElement {
 	// graph
 
 	// tags

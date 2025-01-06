@@ -1,5 +1,5 @@
 {
-	"name": "min-git",
+	"name": "mingit",
 	"displayName": "Minimalist Git",
 	"icon": "resources/logo.png",
 	"description": "TODO",
@@ -9,7 +9,7 @@
 
 	"version": "0.0.1",
 	"engines": { "vscode": "^1.95.0" },
-	"main": "./src/extension.js",
+	"main": "src/backend/extension.js",
 	"activationEvents": [],
 
 	"contributes": {
@@ -17,16 +17,16 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "min-git",
+					"id": "mingit-webview",
 					"title": "Minimalist Git",
 					"icon": "res/img/activitybar-icon.svg"
 				}
 			]
 		},
 		"views": {
-			"min-git": [
+			"mingit-webview": [
 				{
-					"id": "min-git",
+					"id": "mingit-webview",
 					"type": "webview",
 					"name": "",
 					"contextualTitle": "Minimalist Git",
@@ -38,44 +38,44 @@
 		"commands": [
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.commit",
+				"command": "mingit.commit",
 				"title": "Commit",
 				"icon": "res/img/commit.svg"
 			},
 
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.stage",
+				"command": "mingit.stage",
 				"title": "Stage",
 				"icon": "res/img/stage.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.unstage",
+				"command": "mingit.unstage",
 				"title": "Unstage",
 				"icon": "res/img/unstage.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.stash",
+				"command": "mingit.stash",
 				"title": "Stash",
 				"icon": "res/img/stash.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.push",
+				"command": "mingit.push",
 				"title": "Push",
 				"icon": "res/img/push.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.pull",
+				"command": "mingit.pull",
 				"title": "Pull",
 				"icon": "res/img/pull.svg"
 			},
 			{
 				"category": "Minimalist Git",
-				"command": "min-git.fetch",
+				"command": "mingit.fetch",
 				"title": "Fetch",
 				"icon": "res/img/fetch.svg"
 			}

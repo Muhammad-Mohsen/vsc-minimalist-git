@@ -7,7 +7,7 @@
 	font-family: "Iconly";
 	font-style: normal;
 	font-weight: 400;
-	src: url("../../res/font/iconly.woff2") format("woff2");
+	src: url("../../../res/font/iconly.woff2") format("woff2");
 }
 
 [class="ic"], [class^="ic-"], [class*=" ic-"] {

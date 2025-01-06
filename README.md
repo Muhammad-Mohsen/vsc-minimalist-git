@@ -2,33 +2,54 @@
 A Simple Git Extension for VSCode
 
 ## Features
-- one-click pull with `--rebase` as default
-	- unclean repo is automatically cleaned by stashing, and applying the stash
-- one-click push
-	- two-click for `--force`
-- add tags
-- history with graph
-- file log with `--follow` as default
-- compare two commits
-- edit message of any commit
+- 1st level commands
+	- pull with `--rebase` as default
+		- unclean repo is automatically cleaned by stashing, and applying the stash
+	- push
+	- push + `--force`
+	- commit + `--amend`
+- add/remove tags
+- log + graph
+- file log with `--follow`
+- diff two commits
+- edit commits
+	- author
+	- message
 
 ### TODO
-1. DONE - create icon
-1. DONE - set up package json
-1. DONE - test run the extension
-1. UI
-	1. DONE - figma design
-	1. theming: https://code.visualstudio.com/api/extension-guides/webview#theming-webview-content (css vars)
-	1. DONE - icons
-1. use [simple-git](https://github.com/steveukx/git-js) to implement the commands (other than the graph)
-	- get the native scm extension and wait for it to init to get the repo path, as well as the git binary path to init simple-git
-		- api.ts + service.ts
-1. add view toolbar buttons for the commands
-1. add the webview for the history, including working tree changes - without the graph
-	- commit row
-	- branch selector dropdown for history
-1. add the changes tree view
-1. cheat sheet
+- DONE - create extension icon
+- DONE - set up package json
+- DONE - test run the extension
+- DONE - UI
+	- DONE - figma design
+	- DONE - icons
+- DONE - create webview + add it to sidebar
+- toolbar
+	- DONE - add buttons
+	- add button titles
+	- hook up the buttons to vscode commands
+		- webview communication
+- log
+	- commit component
+		- message + author + date + hash
+		- tags
+		- files
+	- graph
+		- separate component or should just each commit go to its parent?
+		- repaint on interaction toggling (expanding/collapsing) a commit
+	- working tree
+		- files
+			- status
+			- double click to diff
+			- discard
+			- stage?
+			- multi-select with ctrl/shift
+			- context menu?
+
+- vscode APIs
+	- posting messages from/to webview
+	- webview set/get state
+### GIT cheat sheet
 	- git configuration
 		```bash
 		# list all
@@ -63,23 +84,10 @@ supposedly this looks good?
 - for the graph, we're supposed to have the segments, and the colors!
 
 https://github.com/bendrucker/git-log-parser
-
 https://github.com/mlange-42/git-graph
-
-- use [VSC webview UI toolike](https://github.com/microsoft/vscode-webview-ui-toolkit)
 
 
 # RECOMMENDED FORMAT?
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
 ## Requirements
 
@@ -115,20 +123,3 @@ Fixed issue #.
 ### 1.1.0
 
 Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

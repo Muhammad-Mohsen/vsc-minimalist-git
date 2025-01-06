@@ -1,0 +1,21 @@
+header {
+	display: flex;
+	margin-block-start: 4px;
+	align-items: center;
+	justify-content: space-between;
+
+	& button.tertiary {
+		width: 28px;
+		color: var(--vscode-icon-foreground);
+		background: transparent;
+
+		&:hover { background: var(--vscode-toolbar-hoverBackground); }
+	}
+
+	& separator {
+		width: 1px;
+		height: 10px;
+		background: var(--vscode-foreground);
+		opacity: .3;
+	}
+}
