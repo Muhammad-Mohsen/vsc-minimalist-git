@@ -16,7 +16,7 @@ A Simple Git Extension for VSCode
 	- author
 	- message
 
-### TODO
+### ROADMAP
 - DONE - create extension icon
 - DONE - set up package json
 - DONE - test run the extension
@@ -24,31 +24,45 @@ A Simple Git Extension for VSCode
 	- DONE - figma design
 	- DONE - icons
 - DONE - create webview + add it to sidebar
+
 - toolbar
 	- DONE - add buttons
-	- add button titles
-	- hook up the buttons to vscode commands
-		- webview communication
+	- DONE - add button titles
+	- DONE - hook up the buttons to vscode commands
+		- DONE - webview communication
+
+- need to do something about the commands
+
+- overflow menu
+	- toolbar
+		- fetch?
+		- amend commit
+		- force push
+		- toggle rebase
+		- change author
+
+- failures
+	- no repository
+	- repository in parent
+
 - log
-	- commit component
-		- message + author + date + hash
-		- tags
-		- files
+	- commit model
+		- graphIndex
+		- hash
+		- message
+		- author
+		- date
+		- refs: { branches, tags }
+		- parents
 	- graph
 		- separate component or should just each commit go to its parent?
-		- repaint on interaction toggling (expanding/collapsing) a commit
-	- working tree
-		- files
-			- status
-			- double click to diff
-			- discard
-			- stage?
-			- multi-select with ctrl/shift
-			- context menu?
 
-- vscode APIs
-	- posting messages from/to webview
-	- webview set/get state
+		-  commresolvingit branches
+			- walk down the commit list, and assign each commit with its branch
+				- then if a commit belongs to multiple branches (is the parent to multiple commits)
+					- use `git branch --contains <commit-hash>` and use the branch listed at the end!!
+			- or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
+
 ### GIT cheat sheet
 	- git configuration
 		```bash
@@ -71,23 +85,41 @@ A Simple Git Extension for VSCode
 		git rebase --continue
 		```
 
-- figure out which commands to use!
-	```bash
-	git log --graph --all -z?? -n 100 HEAD~[x*n]
-	```
-- use `--pretty-print` to easily parse out the commits [here](https://www.nushell.sh/cookbook/parsing_git_log.html)
-supposedly this looks good?
-	```bash
-	git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''     %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
-	```
-- parse commits
-- for the graph, we're supposed to have the segments, and the colors!
+	- automatic `git add .`
+		```bash
+		git commit -am # automatic git add .
+		```
 
-https://github.com/bendrucker/git-log-parser
-https://github.com/mlange-42/git-graph
+	- auto stash
+		```bash
+		git pull --rebase --autostash
+		```
 
+	- amend
+		```bash
+		git add .
+		git commit --amend -m "new msg"
+		# or
+		git commit --amend --no-edit # keep same message
+		```
 
-# RECOMMENDED FORMAT?
+	- stash
+		```bash
+		git stash save name
+		git stash list # list stashes
+		git stash apply index_in_list
+		```
+
+	- rename branch
+		```bash
+		git branch -M # short for --move --force or -m -f
+		```
+
+	- reset
+		```bash
+		git reset --hard origin/branch_name
+		git clean -df
+		```
 
 ## Requirements
 
