@@ -1,44 +1,75 @@
 const vscode = require('vscode');
-const VSC = require('./core/vsc');
 const HomeViewProvider = require('./home-provider');
 
+const VSC = require('./core/vsc');
 const GIT = require('./core/git');
 
 /** @param {vscode.ExtensionContext} context */
 async function activate(context) {
-	const vsc = VSC(context);
-	const git = GIT(vsc.workingDirectory());
+	GIT.setWorkingDirectory(VSC.workingDirectory());
 
-	vsc.registerWebViewProvider('mingit-webview', new HomeViewProvider(context.extensionUri));
+	VSC.registerWebViewProvider(context, 'mingit-webview', new HomeViewProvider(context.extensionUri));
 
-	vsc.registerCommand('mingit.commit', () => {
-
-	});
-
-	vsc.registerCommand('mingit.stage', () => {
-
-	});
-	vsc.registerCommand('mingit.unstage', () => {
-
-	});
-	vsc.registerCommand('mingit.stash', () => {
+	VSC.registerCommand(context, 'mingit.commit', () => {
 
 	});
 
-	vsc.registerCommand('mingit.push', () => {
+	VSC.registerCommand(context, 'mingit.stage', () => {
 
 	});
-	vsc.registerCommand('mingit.pull', async () => {
-		git.pull()
-			.then(() => vsc.showInfoPopup('pull... done'))
-			.catch(reason => vsc.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
+	VSC.registerCommand(context, 'mingit.unstage', () => {
+
 	});
-	vsc.registerCommand('mingit.fetch', () => {
+	VSC.registerCommand(context, 'mingit.stash', () => {
 
 	});
 
-	vsc.registerCommand('mingit.config.author', () => {
+	VSC.registerCommand(context, 'mingit.push', () => {
 
+	});
+	VSC.registerCommand(context, 'mingit.pull', async () => {
+		GIT.log()
+			.then(commits => {
+				console.log(commits);
+				VSC.showInfoPopup('log... done');
+			});
+
+		// GIT.pull()
+		// 	.then(() => VSC.showInfoPopup('pull... done'))
+		// 	.catch(reason => VSC.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
+	});
+	VSC.registerCommand(context, 'mingit.fetch', () => {
+
+	});
+
+	VSC.registerCommand(context, 'mingit.config.author', async () => {
+		const tokenizeInput = value => {
+			let [user, email] = value.split('<');
+			user = user.replace(/\s{2,}/g, ' ').trim();
+			email = email.replace(/<|>/g, '').replace(/\s{2,}/g, ' ').trim();
+
+			return { user, email };
+		}
+		const validateInput = value => {
+			const { user, email } = tokenizeInput(value);
+
+			if (!user) return 'Please enter a username';
+			if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/)) return 'Please enter a valid email';
+			return '';
+		}
+
+		try {
+			const author = await VSC.showInputBox({
+				placeHolder: 'user <email>',
+				validateInput: validateInput
+			});
+
+			const { user, email } = tokenizeInput(author);
+
+			GIT.setConfig('user.name', user)
+			GIT.setConfig('user.email', email);
+
+		} catch {}
 	});
 }
 

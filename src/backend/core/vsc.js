@@ -1,23 +1,31 @@
 const vscode = require('vscode');
 
-/** @param {vscode.ExtensionContext} context */
-function VSC(context) {
+module.exports = (() => {
 
 	/**
 	 * automatically pushes the disposable to the `subscriptions` array
+	 * @param {vscode.ExtensionContext} context
 	 * @param {string} name
 	 * @param {(...args: any[]) => any} callback
 	 */
-	function registerCommand(name, callback) {
+	function registerCommand(context, name, callback) {
 		context.subscriptions.push(vscode.commands.registerCommand(name, callback));
+	}
+	/**
+	 * @param {string} command
+	 * @param {any} params
+	 */
+	function executeCommand(command, ...params) {
+		vscode.commands.executeCommand(command, ...params);
 	}
 
 	/**
+	 * @param {vscode.ExtensionContext} context
 	 * @param {string} name
 	 * @param {vscode.WebviewViewProvider} provider
-	 * @param {{ readonly webviewOptions?: { readonly retainContextWhenHidden?: boolean; }; }} options
+	 * @param {{ readonly webviewOptions?: { readonly retainContextWhenHidden?: boolean; }; }} [options]
 	 */
-	function registerWebViewProvider(name, provider, options = undefined) {
+	function registerWebViewProvider(context, name, provider, options) {
 		context.subscriptions.push(vscode.window.registerWebviewViewProvider(name, provider, options));
 	}
 
@@ -29,6 +37,10 @@ function VSC(context) {
 		return vscode.window.showInformationMessage(message, ...items);
 	}
 
+	/**
+	 * @param {string} message
+	 * @param {any[]} items
+	 */
 	function showWarningPopup(message, ...items) {
 		return vscode.window.showWarningMessage(message, ...items);
 	}
@@ -41,21 +53,27 @@ function VSC(context) {
 		return vscode.window.showErrorMessage(message, ...items);
 	}
 
+
+	/** @param {vscode.InputBoxOptions} options */
+	function showInputBox(options) {
+		return vscode.window.showInputBox(options);
+	}
+
 	function workingDirectory() {
 		return vscode.workspace.workspaceFolders[0].uri.fsPath;
 	}
 
 	return {
 		registerCommand,
+		executeCommand,
 
 		registerWebViewProvider,
 
 		showInfoPopup,
 		showWarningPopup,
 		showErrorPopup,
+		showInputBox,
 
 		workingDirectory,
 	}
-};
-
-module.exports = VSC;
+})();
