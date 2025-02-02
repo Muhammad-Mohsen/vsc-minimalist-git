@@ -1,9 +1,34 @@
-const vscode = require('vscode');
 const simpleGitModule = require('simple-git');
 
 // git wrapper
-module.exports = (/** @type {string} */ cwd) => {
-	const service = simpleGitModule.simpleGit().cwd(cwd);
+module.exports = (() => {
+	const abortController = new AbortController();
+	const service = simpleGitModule.simpleGit({
+		abort: abortController.signal // abortController.abort();
+	});
+
+	/*
+		// custom error handler
+		// https://github.com/steveukx/git-js/blob/main/docs/PLUGIN-ERRORS.md
+		errors(error, result) {
+			// optionally pass through any errors reported before this plugin runs
+			if (error) return error;
+
+			// customise the `errorCode` values to treat as success
+			if (result.exitCode == 0) {
+				return;
+			}
+
+			// the default error messages include both stdOut and stdErr, but that
+			// can be changed here, or completely replaced with some other content
+			return Buffer.concat([...result.stdOut, ...result.stdErr]);
+		}
+	*/
+
+	/** @param {string} cwd */
+	function setWorkingDirectory(cwd) {
+		service.cwd(cwd);
+	}
 
 	/** @param {string[]} [options] */
 	async function pull(options) {
@@ -15,32 +40,79 @@ module.exports = (/** @type {string} */ cwd) => {
 
 	}
 
-	/** @param {string[]} [options] */
-	function log(options) {
+	/** @param {any} [options] */
+	async function log(options) {
+		options ||= {};
 
+		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
+		const logs = await service.raw([ // ?.cwd(repo || this.rootRepoPath).raw
+			'log',
+			// hash, ref, parents, author name, author email, author date, committer date, raw body
+			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
+			'--branches',
+			'--remotes',
+			'--tags',
+			'--graph',
+			'--author-date-order',
+			// '-z',
+			// `--grep=${options.search}`,
+			// `-n ${options.maxLength}`,
+			// `-${options.count}`,
+			options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
+			options.authors ? options.authors.map(author => `--author=${author}`).join(' ') : ''
+		]);
+
+		return logs.split('\x1EEND\x1E').map(commit => {
+			commit = commit.replace(/^\n/, '');
+			const [graph, hash, ref, parents, name, email, date, committerDate, rawBody] = commit.split(/\x1F|\x1ESTART\x1E/);
+
+			// processing
+			const branchIndex = graph.replace('\n', '').indexOf('*') / 2;
+			const body = rawBody.replace(/\n[|\\/\s]+$/, ''); // remove the extra new line and trailing graph remnants!
+			const refs = ref.split(', ').reduce((refs, r) => {
+				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
+				else refs.branches.push(r);
+				return refs;
+
+			}, { branches: [], tags: [] });
+
+			return { branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body };
+		});
 	}
 
-	function setConfig(key, val, global = false) {
-
+	/**
+	 * @param {string} key
+	 * @param {string} val
+	 * @param {boolean} [append]
+	 * @param { 'local' | 'global' | 'system' | 'worktree' } [scope]
+	 */
+	function setConfig(key, val, append, scope) {
+		return service.addConfig(key, val, append || false, scope || 'local');
 	}
+	/**
+	 * @param {any} key
+	 */
 	function getConfig(key) {
-
 	}
 
 	/** @param {string[]} [options] */
 	function stash(options) {
-		service.stash()
+		service.stash();
 	}
 
+	/**
+	 * @param {any} options
+	 */
 	function status(options) {
 
 	}
 	async function isDirty() {
-		// git status --untracked-files=no --porcelain
 		return await service.status({ '--untracked-files': 'no', '--porcelain': null });
 	}
 
 	return {
+		setWorkingDirectory,
+
 		pull,
 		push,
 
@@ -55,4 +127,4 @@ module.exports = (/** @type {string} */ cwd) => {
 
 	};
 
-};
+})();
