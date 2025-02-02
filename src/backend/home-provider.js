@@ -1,4 +1,7 @@
 const vscode = require('vscode');
+
+const VSC = require('./core/vsc');
+const GIT = require('./core/git');
 const util = require('./core/utils');
 
 module.exports = class HomeViewProvider {
@@ -17,16 +20,13 @@ module.exports = class HomeViewProvider {
 		webviewView.webview.options = this._options();
 		webviewView.webview.html = this._render(webviewView.webview);
 		webviewView.webview.onDidReceiveMessage(this._onMessage);
-	}
+		webviewView.onDidChangeVisibility(this._onVisibilityChange);
 
-	/** @param {vscode.WebviewView} panel */
-	revive(panel) {
-		this._view = panel;
+		// webviewView.badge = { tooltip: 'test', value: 5 };
 	}
 
 	_options() {
 		return {
-			// Allow scripts in the webview
 			enableScripts: true,
 			localResourceRoots: [this._extensionURI],
 		}
@@ -37,7 +37,7 @@ module.exports = class HomeViewProvider {
 		const uri = (/** @type {string} */ path) => webview.asWebviewUri(vscode.Uri.joinPath(this._extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
 
-		return `<!DOCTYPE html>
+		return /*html*/`<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
@@ -65,12 +65,22 @@ module.exports = class HomeViewProvider {
 	_onMessage(message) {
 		switch (message.command) {
 			case 'pull':
-				vscode.window.showInformationMessage(message.command);
+				GIT.pull()
+					.then(() => VSC.showInfoPopup('pull... done'))
+					.catch(reason => VSC.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
 				break;
 		}
 	}
 	/** @param {{ command: string, body: any }} message */
-	sendMessage(message) {
+	postMessage(message) {
 		this._view.webview.postMessage(message);
+	}
+
+	/** @param {number} value */
+	setBadge(value) {
+		this._view.badge = { value, tooltip: `${value} pending changes` };
+	}
+	_onVisibilityChange() {
+		if (this._view.visible) this._view.badge = undefined; // remove badge when webview is visible
 	}
 }

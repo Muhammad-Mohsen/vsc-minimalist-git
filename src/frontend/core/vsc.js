@@ -3,3 +3,6 @@
  */
 // @ts-ignore
 export const vsc = acquireVsCodeApi();
+
+// @ts-ignore
+window.vsc = vsc;

@@ -1,17 +1,10 @@
 import HTMLElementBase from "../../core/html-element-base.js";
-import { vsc } from "../../core/vsc.js";
 
 class Toolbar extends HTMLElementBase {
 	connectedCallback() {
 		this._render();
 	}
 
-	fetch() {
-		vsc.postMessage({ command: 'fetch' });
-	}
-	pull() {
-		vsc.postMessage({ command: 'pull' });
-	}
 	push() {
 
 	}
@@ -36,8 +29,8 @@ class Toolbar extends HTMLElementBase {
 
 	_render() {
 		this.innerHTML = `<header>
-			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch();" title="Fetch"></button>
-			<button class="tertiary ic-pull" onclick="${this.handle}.pull();" title="Pull"></button>
+			<button class="tertiary ic-fetch" onclick="vsc.postMessage({ command: 'fetch' });" title="Fetch"></button>
+			<button class="tertiary ic-pull" onclick="vsc.postMessage({ command: 'pull' })" title="Pull"></button>
 			<button class="tertiary ic-push" onclick="${this.handle}.push();" title="Push"></button>
 			<separator></separator>
 			<button class="tertiary ic-stash" onclick="${this.handle}.stash();" title="Stash"></button>
@@ -47,8 +40,8 @@ class Toolbar extends HTMLElementBase {
 			<separator></separator>
 			<button class="tertiary ic-commit" onclick="${this.handle}.commit();" title="Commit"></button>
 
-			<!-- <separator></separator>
-			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button> --> <!-- ?? -->
+			<!-- <separator></separator> --> <!-- ?? -->
+			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button>
 		</header>`;
 	}
 }
