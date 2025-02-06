@@ -3,25 +3,26 @@
  */
 
 @font-face {
-	font-display: auto;
-	font-family: "Iconly";
-	font-style: normal;
-	font-weight: 400;
+  font-display: auto;
+  font-family: "Iconly";
+  font-style: normal;
+  font-weight: 400;
 	src: url("../../../res/font/iconly.woff2") format("woff2");
 }
 
 [class="ic"], [class^="ic-"], [class*=" ic-"] {
-	font-family: "Iconly" !important;
-	text-rendering: auto;
-	line-height: 1;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
+  font-family: "Iconly" !important;
+  font-style: normal;
+  text-rendering: auto;
+  line-height: 1;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
 .ic-separator:before { content: "\e003"; }
 .ic-overflow:before { content: "\e006"; }
 .ic-origin:before { content: "\e007"; }
-.ic-label:before { content: "\e008"; }
+.ic-tag:before { content: "\e008"; }
 .ic-commit:before { content: "\e00a"; }
 .ic-unstage:before { content: "\e00b"; }
 .ic-stash:before { content: "\e00c"; }
@@ -29,3 +30,5 @@
 .ic-push:before { content: "\e00e"; }
 .ic-pull:before { content: "\e00f"; }
 .ic-fetch:before { content: "\e010"; }
+.ic-tag-outline:before { content: "\e000"; }
+.ic-branch:before { content: "\e001"; }
