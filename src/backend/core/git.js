@@ -58,25 +58,34 @@ module.exports = (() => {
 			// `--grep=${options.search}`,
 			// `-n ${options.maxLength}`,
 			// `-${options.count}`,
-			options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
-			options.authors ? options.authors.map(author => `--author=${author}`).join(' ') : ''
+			// options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
+			// options.authors ? options.authors.map(author => `--author=${author}`).join(' ') : ''
 		]);
 
-		return logs.split('\x1EEND\x1E').map(commit => {
+		return logs.split('\x1EEND\x1E').reduce((response, commit) => {
 			commit = commit.replace(/^\n/, '');
+			if (!commit) return response;
+
 			const [graph, hash, ref, parents, name, email, date, committerDate, rawBody] = commit.split(/\x1F|\x1ESTART\x1E/);
 
 			// processing
 			const branchIndex = graph.replace('\n', '').indexOf('*') / 2;
-			const body = rawBody.replace(/\n[|\\/\s]+$/, ''); // remove the extra new line and trailing graph remnants!
+			const body = rawBody.replace(/\n[|\\/\s]+$/, '') || ''; // remove the extra new line and trailing graph remnants!
 			const refs = ref.split(', ').reduce((refs, r) => {
 				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
-				else refs.branches.push(r);
+				else if (r) refs.branches.push(r);
 				return refs;
 
 			}, { branches: [], tags: [] });
 
-			return { branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body };
+			if (branchIndex + 1 > response.branchCount) response.branchCount = branchIndex + 1;
+			response.commitList.push({ branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body });
+
+			return response;
+		}, {
+			commitList: [],
+			branchCount: 0,
+			colors: ['#0085d9', '#d9008f', '#00d90a', '#d98500', '#a300d9', '#ff0000', '#00d9cc', '#e138e8', '#85d900', '#dc5b23', '#6f24d6', '#ffcc00'],
 		});
 	}
 

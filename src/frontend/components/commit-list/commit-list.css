@@ -1,0 +1,38 @@
+mingit-commit-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	& commit {
+		display: flex;
+		align-items: center;
+		overflow-x: hidden;
+
+		& cell { flex-shrink: 0; width: 20px; }
+		& .marker::before {
+			content: '';
+			display: block;
+			width: 8px;
+			height: 8px;
+			border-radius: 50px;
+			background: var(--branch-color);
+		}
+
+		& .col { overflow-x: hidden; }
+		& .row {
+			display: flex;
+			align-items: baseline;
+			gap: 8px;
+			max-width: 100%;
+		}
+
+		& .secondary { opacity: .7; }
+
+		& .commit-body {
+			font-weight: 600;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+}
