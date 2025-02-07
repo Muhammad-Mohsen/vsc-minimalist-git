@@ -12,10 +12,11 @@ mingit-commit-list {
 		& .marker::before {
 			content: '';
 			display: block;
-			width: 8px;
-			height: 8px;
+			width: 10px;
+			height: 10px;
 			border-radius: 50px;
 			background: var(--branch-color);
+			outline: 3px solid var(--vscode-sideBarTitle-background);
 		}
 
 		& .col { overflow-x: hidden; }
@@ -33,6 +34,29 @@ mingit-commit-list {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
+		}
+	}
+
+	& connectors {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+
+		& con {
+			position: absolute;
+			border-inline-end: 2px solid;
+			color: var(--branch-color);
+		}
+		& .right {
+			border-block-start: 2px solid;
+			border-start-end-radius: 8px; /* ouch!! top-right */
+			translate: 2px;
+		}
+		& .left {
+			border-block-end: 2px solid;
+			border-end-end-radius: 8px; /* bottom-right */
+			translate: 2px 3px;
 		}
 	}
 }

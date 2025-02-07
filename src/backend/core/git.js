@@ -69,7 +69,7 @@ module.exports = (() => {
 			const [graph, hash, ref, parents, name, email, date, committerDate, rawBody] = commit.split(/\x1F|\x1ESTART\x1E/);
 
 			// processing
-			const branchIndex = graph.replace('\n', '').indexOf('*') / 2;
+			const branchIndex = graph.substring(graph.lastIndexOf('\n') + 1).indexOf('*') / 2;
 			const body = rawBody.replace(/\n[|\\/\s]+$/, '') || ''; // remove the extra new line and trailing graph remnants!
 			const refs = ref.split(', ').reduce((refs, r) => {
 				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
