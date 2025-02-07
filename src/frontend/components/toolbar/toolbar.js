@@ -28,7 +28,7 @@ class Toolbar extends HTMLElementBase {
 	}
 
 	_render() {
-		this.innerHTML = `<header>
+		this.innerHTML = /*html*/`
 			<button class="tertiary ic-fetch" onclick="vsc.postMessage({ command: 'fetch' });" title="Fetch"></button>
 			<button class="tertiary ic-pull" onclick="vsc.postMessage({ command: 'pull' })" title="Pull"></button>
 			<button class="tertiary ic-push" onclick="${this.handle}.push();" title="Push"></button>
@@ -42,7 +42,7 @@ class Toolbar extends HTMLElementBase {
 
 			<!-- <separator></separator> --> <!-- ?? -->
 			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button>
-		</header>`;
+		`;
 	}
 }
 
