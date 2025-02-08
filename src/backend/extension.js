@@ -28,15 +28,9 @@ async function activate(context) {
 
 	});
 	VSC.registerCommand(context, 'mingit.pull', async () => {
-		GIT.log()
-			.then(commits => {
-				console.log(commits);
-				VSC.showInfoPopup('log... done');
-			});
-
-		// GIT.pull()
-		// 	.then(() => VSC.showInfoPopup('pull... done'))
-		// 	.catch(reason => VSC.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
+		GIT.pull()
+			.then(() => VSC.showInfoPopup('pull... done'))
+			.catch(reason => VSC.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
 	});
 	VSC.registerCommand(context, 'mingit.fetch', () => {
 
