@@ -19,8 +19,8 @@ module.exports = class HomeViewProvider {
 
 		webviewView.webview.options = this._options();
 		webviewView.webview.html = this._render(webviewView.webview);
-		webviewView.webview.onDidReceiveMessage((message) => this._onMessage(message));
-		webviewView.onDidChangeVisibility(() => this._onVisibilityChange());
+		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
+		webviewView.onDidChangeVisibility(() => this.#onVisibilityChange());
 
 		// webviewView.badge = { tooltip: 'test', value: 5 };
 	}
@@ -65,7 +65,7 @@ module.exports = class HomeViewProvider {
 	}
 
 	/** @param {{ command: string, body: any }} message */
-	async _onMessage(message) {
+	async #onMessage(message) {
 		switch (message.command) {
 			case 'pull':
 				VSC.executeCommand('mingit.pull');
@@ -73,6 +73,10 @@ module.exports = class HomeViewProvider {
 
 			case 'load':
 				GIT.log().then(commitList => this.postMessage({ command: 'logs', body: commitList }));
+				break;
+
+			case 'filter':
+				GIT.log({ filters: message.body.value }).then(commitList => this.postMessage({ command: 'logs', body: commitList }));
 				break;
 		}
 	}
@@ -85,7 +89,7 @@ module.exports = class HomeViewProvider {
 	setBadge(value) {
 		this._view.badge = { value, tooltip: `${value} pending changes` };
 	}
-	_onVisibilityChange() {
+	#onVisibilityChange() {
 		if (this._view.visible) this._view.badge = undefined; // remove badge when webview is visible
 	}
 }

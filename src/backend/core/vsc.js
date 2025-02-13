@@ -16,7 +16,7 @@ module.exports = (() => {
 	 * @param {any} params
 	 */
 	function executeCommand(command, ...params) {
-		vscode.commands.executeCommand(command, ...params);
+		return vscode.commands.executeCommand(command, ...params);
 	}
 
 	/**
@@ -63,6 +63,10 @@ module.exports = (() => {
 		return vscode.workspace.workspaceFolders[0].uri.fsPath;
 	}
 
+	function isDark() {
+		return [vscode.ColorThemeKind.Dark, vscode.ColorThemeKind.HighContrast].includes(vscode.window.activeColorTheme.kind);
+	}
+
 	return {
 		registerCommand,
 		executeCommand,
@@ -75,5 +79,6 @@ module.exports = (() => {
 		showInputBox,
 
 		workingDirectory,
+		isDark,
 	}
 })();

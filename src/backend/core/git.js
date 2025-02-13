@@ -44,6 +44,7 @@ module.exports = (() => {
 	async function log(options) {
 		options ||= {};
 
+		// produce the issue: since: 8 feb 2025 00:00
 		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		const logs = await service.raw([ // ?.cwd(repo || this.rootRepoPath).raw
 			'log',
@@ -54,13 +55,14 @@ module.exports = (() => {
 			'--tags',
 			'--graph',
 			'--author-date-order',
-			// '-z',
+			logFilters(options?.filters),
+			'-i', // case insensitive (for filtering)
+			// '--topo-order',
 			// `--grep=${options.search}`,
 			// `-n ${options.maxLength}`,
 			// `-${options.count}`,
 			// options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
-			// options.authors ? options.authors.map(author => `--author=${author}`).join(' ') : ''
-		]);
+		].filter(p => p));
 
 		return logs.split('\x1EEND\x1E').reduce((response, commit) => {
 			commit = commit.replace(/^\n/, '');
@@ -87,6 +89,20 @@ module.exports = (() => {
 			branchCount: 0,
 			colors: ['#0085d9', '#d9008f', '#00d90a', '#d98500', '#a300d9', '#ff0000', '#00d9cc', '#e138e8', '#85d900', '#dc5b23', '#6f24d6', '#ffcc00'],
 		});
+	}
+	function logFilters(filterString) {
+		if (!filterString) return '';
+
+		function filterBy(by) {
+			const others = ['grep', 'by', 'before', 'after'].filter(f => f != by);
+			const val = filterString.replace(new RegExp(`.*${by}:`, 'i'), '').replace(new RegExp(`(${others.join('|')}):.*`, 'i'), '');
+
+			if (!val) return '';
+			else if (by == 'by') return val.split(',').filter(a => a.trim()).map(a => `--author=${a}`).join(' ');
+			else return ` --${by}=${val}`;
+		}
+
+		return (filterBy('grep') + filterBy('by') + filterBy('before') + filterBy('after')).trim();
 	}
 
 	/**

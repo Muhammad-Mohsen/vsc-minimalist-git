@@ -1,4 +1,5 @@
 import HTMLElementBase from "../../core/html-element-base.js";
+import { vsc } from "../../core/vsc.js";
 
 class Toolbar extends HTMLElementBase {
 	connectedCallback() {
@@ -27,6 +28,10 @@ class Toolbar extends HTMLElementBase {
 
 	}
 
+	filter(event) {
+		vsc.postMessage({ command: 'filter', body: { value: event.target.value } });
+	}
+
 	_render() {
 		this.innerHTML = /*html*/`
 			<button class="tertiary ic-fetch" onclick="vsc.postMessage({ command: 'fetch' });" title="Fetch"></button>
@@ -42,6 +47,8 @@ class Toolbar extends HTMLElementBase {
 
 			<!-- <separator></separator> --> <!-- ?? -->
 			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button>
+
+			<input placeholder="Search" title="[grep: {search_query}] [by: {author}[,{author}]] [before: {date}] [after: {date}]" onchange="${this.handle}.filter(event);">
 		`;
 	}
 }

@@ -1,16 +1,17 @@
 mingit-toolbar {
-	position: sticky;
-    top: 0;
+	position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
+	flex-wrap: wrap;
     margin-block: 0;
-    padding-block: 4px;
-    background-color: var(--vscode-sideBarTitle-background);
+    padding: 4px var(--container-padding);
     z-index: 1;
+	background: var(--vscode-sideBarTitle-background);
 
 	& button.tertiary {
 		width: 28px;
+		height: 28px;
 		color: var(--vscode-icon-foreground);
 		background: transparent;
 
@@ -22,5 +23,10 @@ mingit-toolbar {
 		height: 10px;
 		background: var(--vscode-foreground);
 		opacity: .3;
+	}
+
+	& input {
+		flex: 1 0 100%;
+		margin-block-start: 4px;
 	}
 }

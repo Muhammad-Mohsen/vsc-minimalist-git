@@ -1,27 +1,26 @@
 :root {
-	--container-padding: 16px;
-	--input-padding-vertical: 6px;
-	--input-padding-horizontal: 4px;
+	--container-padding: 12px;
+	--input-padding-vertical: 4px;
+	--input-padding-horizontal: 6px;
 	--input-margin-vertical: 4px;
 	--input-margin-horizontal: 0;
 }
 
 body {
-	padding: 0 var(--container-padding);
+	padding: 0;
 	color: var(--vscode-foreground);
 	/* background-color: var(--vscode-editor-background); */
 	background: var(--vscode-sideBarTitle-background);
 	font-size: var(--vscode-font-size);
 	font-weight: var(--vscode-font-weight);
 	font-family: var(--vscode-font-family);
+	overflow: hidden;
 }
 
-ol, ul { padding-left: var(--container-padding); }
-
-body > *, form > * {
+/* body > *, form > * {
 	margin-block-start: var(--input-margin-vertical);
 	margin-block-end: var(--input-margin-vertical);
-}
+} */
 
 *:focus { outline-color: var(--vscode-focusBorder) !important; }
 
@@ -59,12 +58,14 @@ input:not([type='checkbox']),
 textarea {
 	display: block;
 	width: 100%;
-	border: none;
-	font-family: var(--vscode-font-family);
 	padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+	border: none;
+	border-radius: 2px;
 	color: var(--vscode-input-foreground);
-	outline-color: var(--vscode-input-border);
 	background-color: var(--vscode-input-background);
+	outline-color: var(--vscode-input-border);
+	font-family: var(--vscode-font-family);
+	line-height: 18px;
 }
 
 input::placeholder, textarea::placeholder { color: var(--vscode-input-placeholderForeground); }

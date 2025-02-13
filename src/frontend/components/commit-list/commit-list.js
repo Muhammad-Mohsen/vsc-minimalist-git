@@ -4,28 +4,28 @@ import { vsc } from "../../core/vsc.js";
 class CommitList extends HTMLElementBase {
 
 	connectedCallback() {
-		window.addEventListener('message', (event) => this._onMessage(event));
+		window.addEventListener('message', (event) => this.#onMessage(event));
 		vsc.postMessage({ command: 'load' });
 	}
 
 	/** @param {MessageEvent} event */
-	_onMessage(event) {
+	#onMessage(event) {
 		console.log(event.data);
 
 		const message = event.data;
-		if (message.command == 'logs') this._render(message.body);
+		if (message.command == 'logs') this.#render(message.body);
 	}
 
-	_render(logs) {
+	#render(logs) {
 		this.innerHTML = '<connectors></connectors>' + logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
 			return /*html*/`<commit>
-					${this._markers(c, logs.branchCount, logs.colors)}
+					${this.#renderVertices(c, logs.branchCount, logs.colors)}
 					<div class="col">
 						<div class="row">
-							${this._branches(c)}
-							${this._tags(c)}
+							${this.#renderBranches(c)}
+							${this.#renderTags(c)}
 							<p class="commit-body" title="${c.body}">${c.body}</p>
 						</div>
 						<div class="row secondary">
@@ -37,10 +37,10 @@ class CommitList extends HTMLElementBase {
 				</commit>`
 		}).join('');
 
-		this._connectors();
+		this.#renderEdges();
 	}
 
-	_markers(commit, count, colors) {
+	#renderVertices(commit, count, colors) {
 		return new Array(count).fill('')
 			.map((b, i) => {
 				if (i != commit.branchIndex) return '<cell></cell>';
@@ -48,44 +48,65 @@ class CommitList extends HTMLElementBase {
 			})
 			.join('');
 	}
-	_connectors() {
+	#renderEdges() {
 		const connectorMap = {};
 		this.querySelectorAll('cell').forEach(c => connectorMap[c.getAttribute('hash')] = c);
 
-		let connectorHTML = '';
-		Object.values(connectorMap).forEach(c => {
-			c.getAttribute('parents')?.split(',')?.forEach(hash => {
-				const p = connectorMap[hash];
+		const containerBounds = this.querySelector('connectors').getBoundingClientRect();
 
-				if (!p) return; // assume that all parents are reachable
+		let connectorHTML = '';
+		Object.values(connectorMap).forEach(c => { // for each commit
+			const parents = c.getAttribute('parents')?.split(',').filter(p => p); // remove empty parents
+			parents?.forEach(hash => {
+				const p = connectorMap[hash] || c; // if parent is unreachable (due to filtering/paging) set the parent to itself
 
 				const bounds = c.getBoundingClientRect();
 				const parentBounds = p.getBoundingClientRect();
 
 				const bend = bounds.x - parentBounds.x;
-				const bendClass = bend < 0 ? 'right'
+				let qualifier = bend < 0 ? 'right'
 					: bend > 0 ? 'left'
 					: '';
 
-				let color = bendClass == 'right' ? p : c;
+				if (qualifier == 'left' && this.#hasCollisions(c, p)) qualifier = 'right flip';
+				if (qualifier == '' && this.#hasCollisions(c, p)) qualifier = 'orphan';
+				if (c == p) qualifier = 'orphan'; // parent is unreachable
+
+				let color = qualifier.includes('right') ? p : c;
 				color = color.getAttribute('style');
 
-				connectorHTML += `<con style="top: ${bounds.y + 4}px;
-					left: ${Math.min(bounds.x, parentBounds.x) + 4}px;
+				connectorHTML += `<con style="top: ${bounds.y - containerBounds.y}px;
+					left: ${Math.min(bounds.x, parentBounds.x)}px;
 					width: ${Math.abs(bounds.x - parentBounds.x)}px;
 					height: ${Math.abs(bounds.y - parentBounds.y)}px;
 					${color}"
-					class="${bendClass}"></con>`.replace(/\t|\n/g, '');
+					class="${qualifier}"></con>`.replace(/\t|\n/g, '');
 			});
 		});
 
 		this.querySelector('connectors').innerHTML = connectorHTML;
 	}
-	_branches(commit) {
+	#hasCollisions(c, p) {
+		const commit = c.parentElement;
+		const parentCommit = p.parentElement;
+
+		const list = [...commit.parentElement.children];
+		const commitIndex = list.indexOf(commit);
+		const parentCommitIndex = list.indexOf(parentCommit);
+		const branchIndex = [...commit.children].indexOf(c);
+
+		for (let hitTestCommit of list.slice(commitIndex + 1, parentCommitIndex)) {
+			if (hitTestCommit.querySelector(`cell:nth-child(${branchIndex + 1})`).classList.contains('marker')) return true;
+		}
+
+		return false;
+	}
+
+	#renderBranches(commit) {
 		if (!commit.refs.branches.length) return '';
 		return `<i class="ic-branch" title="${commit.refs.branches.join('\n')}"></i>`;
 	}
-	_tags(commit) {
+	#renderTags(commit) {
 		if (!commit.refs.tags.length) return '';
 		return `<i class="ic-tag" title="${commit.refs.tags.join('\n')}"></i>`;
 	}
