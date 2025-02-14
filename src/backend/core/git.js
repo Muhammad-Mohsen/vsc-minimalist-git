@@ -44,7 +44,6 @@ module.exports = (() => {
 	async function log(options) {
 		options ||= {};
 
-		// produce the issue: since: 8 feb 2025 00:00
 		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		const logs = await service.raw([ // ?.cwd(repo || this.rootRepoPath).raw
 			'log',
@@ -55,7 +54,7 @@ module.exports = (() => {
 			'--tags',
 			'--graph',
 			'--author-date-order',
-			logFilters(options?.filters),
+			...logFilters(options?.filters),
 			'-i', // case insensitive (for filtering)
 			// '--topo-order',
 			// `--grep=${options.search}`,
@@ -72,7 +71,11 @@ module.exports = (() => {
 
 			// processing
 			const branchIndex = graph.substring(graph.lastIndexOf('\n') + 1).indexOf('*') / 2;
-			const body = rawBody.replace(/\n[|\\/\s]+$/, '') || ''; // remove the extra new line and trailing graph remnants!
+
+			const body = rawBody
+				.replace(/\n[|\\/\s]+$/, '') // remove the extra new line and trailing graph remnants!
+				.replace(new RegExp(`\n.{${(branchIndex + 1) * 2}}`, 'g'), '\n'); // remove graph detritus from multi-line commit bodies
+
 			const refs = ref.split(', ').reduce((refs, r) => {
 				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
 				else if (r) refs.branches.push(r);
@@ -84,25 +87,26 @@ module.exports = (() => {
 			response.commitList.push({ branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body });
 
 			return response;
-		}, {
+
+		}, { // accumulator
 			commitList: [],
 			branchCount: 0,
 			colors: ['#0085d9', '#d9008f', '#00d90a', '#d98500', '#a300d9', '#ff0000', '#00d9cc', '#e138e8', '#85d900', '#dc5b23', '#6f24d6', '#ffcc00'],
 		});
 	}
 	function logFilters(filterString) {
-		if (!filterString) return '';
+		if (!filterString) return [''];
 
 		function filterBy(by) {
 			const others = ['grep', 'by', 'before', 'after'].filter(f => f != by);
 			const val = filterString.replace(new RegExp(`.*${by}:`, 'i'), '').replace(new RegExp(`(${others.join('|')}):.*`, 'i'), '');
 
 			if (!val) return '';
-			else if (by == 'by') return val.split(',').filter(a => a.trim()).map(a => `--author=${a}`).join(' ');
-			else return ` --${by}=${val}`;
+			else if (by == 'by') return val.split(',').filter(a => a.trim()).map(a => `--author=${a.trim()}`).join(' ');
+			else return `--${by}=${val.trim()}`;
 		}
 
-		return (filterBy('grep') + filterBy('by') + filterBy('before') + filterBy('after')).trim();
+		return [filterBy('grep'), filterBy('by'), filterBy('before'), filterBy('after')];
 	}
 
 	/**
