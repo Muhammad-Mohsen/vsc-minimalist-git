@@ -23,11 +23,11 @@ mingit-commit-list {
 			content: '';
 			display: block;
 			width: 10px;
-			height: 10px;
+			height: 2px;
 			border-radius: 50px;
-			border: 2px solid var(--branch-color);
+			border: 1px solid var(--branch-color);
 			background: var(--vscode-sideBarTitle-background);
-			/* outline: 3px solid var(--vscode-sideBarTitle-background); */
+			outline: 1px solid var(--vscode-sideBarTitle-background);
 		}
 
 		& .col { overflow-x: hidden; }
@@ -58,21 +58,21 @@ mingit-commit-list {
 			position: absolute;
 			border-inline-end: 2px solid;
 			color: var(--branch-color);
-			translate: 4px 6px;
+			translate: 4px 2px;
 		}
 		& .right {
 			border-block-start: 2px solid;
-			border-start-end-radius: 16px; /* ouch!! top-right */
-			translate: 6px 4px;
+			border-start-end-radius: 8px; /* ouch!! top-right */
+			translate: 6px 0;
 		}
 		& .left {
 			border-block-end: 2px solid;
-			border-end-end-radius: 16px; /* bottom-right */
-			translate: 6px 6px;
+			border-end-end-radius: 8px; /* bottom-right */
+			translate: 6px 2px;
 		}
 		& .flip {
 			scale: -1 1;
-			translate: 4px 4px;
+			translate: 4px 0;
 		}
 		& .orphan {
 			height: 19px !important;
