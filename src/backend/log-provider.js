@@ -4,7 +4,7 @@ const VSC = require('./core/vsc');
 const GIT = require('./core/git');
 const util = require('./core/utils');
 
-module.exports = class HomeViewProvider {
+module.exports = class LogViewProvider {
 	/** @type {vscode.WebviewView} */
 	_view;
 

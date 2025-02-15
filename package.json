@@ -17,16 +17,16 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "mingit-webview",
+					"id": "mingit-container",
 					"title": "Minimalist Git",
 					"icon": "res/img/activitybar-icon.svg"
 				}
 			]
 		},
 		"views": {
-			"mingit-webview": [
+			"mingit-container": [
 				{
-					"id": "mingit-webview",
+					"id": "mingit-log-view",
 					"type": "webview",
 					"name": "",
 					"contextualTitle": "Minimalist Git",
@@ -78,6 +78,11 @@
 				"command": "mingit.fetch",
 				"title": "Fetch",
 				"icon": "res/img/fetch.svg"
+			},
+			{
+				"category": "Minimalist Git",
+				"command": "mingit.config.author",
+				"title": "Author"
 			}
 		]
 	},
