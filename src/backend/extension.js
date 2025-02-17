@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const LogViewProvider = require('./log-provider');
+const MainViewProvider = require('./main-view-provider');
 
 const VSC = require('./core/vsc');
 const GIT = require('./core/git');
@@ -8,7 +8,10 @@ const GIT = require('./core/git');
 async function activate(context) {
 	GIT.setWorkingDirectory(VSC.workingDirectory());
 
-	VSC.registerWebViewProvider(context, 'mingit-log-view', new LogViewProvider(context.extensionUri));
+	VSC.registerWebViewProvider(context, 'mingit-main-view',
+		new MainViewProvider(context.extensionUri),
+		{ webviewOptions: { retainContextWhenHidden: true }
+	});
 
 	VSC.registerCommand(context, 'mingit.commit', () => {
 

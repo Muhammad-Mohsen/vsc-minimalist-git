@@ -4,7 +4,7 @@ const VSC = require('./core/vsc');
 const GIT = require('./core/git');
 const util = require('./core/utils');
 
-module.exports = class LogViewProvider {
+module.exports = class MainViewProvider {
 	/** @type {vscode.WebviewView} */
 	_view;
 
@@ -17,15 +17,15 @@ module.exports = class LogViewProvider {
 	resolveWebviewView(webviewView) {
 		this._view = webviewView;
 
-		webviewView.webview.options = this._options();
-		webviewView.webview.html = this._render(webviewView.webview);
+		webviewView.webview.options = this.#options();
+		webviewView.webview.html = this.#render(webviewView.webview);
 		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
 		webviewView.onDidChangeVisibility(() => this.#onVisibilityChange());
 
 		// webviewView.badge = { tooltip: 'test', value: 5 };
 	}
 
-	_options() {
+	#options() {
 		return {
 			enableScripts: true,
 			localResourceRoots: [this._extensionURI],
@@ -33,7 +33,7 @@ module.exports = class LogViewProvider {
 	}
 
 	/** @param {vscode.Webview} webview */
-	_render(webview) {
+	#render(webview) {
 		const uri = (/** @type {string} */ path) => webview.asWebviewUri(vscode.Uri.joinPath(this._extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
 
@@ -50,16 +50,17 @@ module.exports = class LogViewProvider {
 
 				<link href="${uri('src/frontend/components/toolbar/toolbar.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/components/commit-list/commit-list.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/components/change-list/change-list.css')}" rel="stylesheet">
 
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/core/vsc.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/core/html-element-base.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/toolbar/toolbar.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/commit-list/commit-list.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
 
 			</head>
 	  		<body>
-				<mingit-toolbar></mingit-toolbar>
 				<mingit-commit-list></mingit-commit-list>
+				<mingit-change-list></mingit-change-list>
 			</body>
 			</html>`;
 	}
@@ -71,8 +72,12 @@ module.exports = class LogViewProvider {
 				VSC.executeCommand('mingit.pull');
 				break;
 
-			case 'load':
-				GIT.log().then(commitList => this.postMessage({ command: 'logs', body: commitList }));
+			case 'getlog':
+				GIT.log().then(commitList => this.postMessage({ command: 'log', body: commitList }));
+				break;
+
+			case 'getstatus':
+				GIT.status().then(status => this.postMessage({ command: 'status', body: status }));
 				break;
 
 			case 'filter':
@@ -90,6 +95,6 @@ module.exports = class LogViewProvider {
 		this._view.badge = { value, tooltip: `${value} pending changes` };
 	}
 	#onVisibilityChange() {
-		if (this._view.visible) this._view.badge = undefined; // remove badge when webview is visible
+		if (this._view.visible) this._view.badge = undefined; // remove badge when webview is visible + TODO refresh the data
 	}
 }
