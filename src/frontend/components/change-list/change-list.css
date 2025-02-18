@@ -1,0 +1,45 @@
+mingit-change-list {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+
+	change-list {
+		flex-grow: 1;
+		width: calc(100% + 2px);
+		overflow: hidden auto;
+	}
+
+	& file {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		width: calc(100% - 2px);
+		padding: 2px 12px 3px;
+		user-select: none;
+
+		&:hover { background: var(--vscode-toolbar-hoverBackground); }
+
+		&.selected { background: var(--vscode-list-activeSelectionBackground); }
+		&:focus {
+			background: var(--vscode-list-activeSelectionBackground);
+			outline: 1px solid var(--vscode-list-focusOutline);
+			outline-offset: -1px;
+		}
+
+		& span {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		& .secondary {
+			font-size: .9em;
+			opacity: .6;
+		}
+
+		& decorations {
+			margin-inline-start: auto;
+			font-family: var(--vscode-editor-font-family);
+		}
+	}
+}
