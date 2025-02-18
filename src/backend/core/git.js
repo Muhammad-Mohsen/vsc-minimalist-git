@@ -57,7 +57,6 @@ module.exports = (() => {
 			...logFilters(options?.filters),
 			'-i', // case insensitive (for filtering)
 			// '--topo-order',
-			// `--grep=${options.search}`,
 			// `-n ${options.maxLength}`,
 			// `-${options.count}`,
 			// options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
@@ -91,7 +90,7 @@ module.exports = (() => {
 		}, { // accumulator
 			commitList: [],
 			branchCount: 0,
-			colors: ['#0085d9', '#d9008f', '#00d90a', '#d98500', '#a300d9', '#ff0000', '#00d9cc', '#e138e8', '#85d900', '#dc5b23', '#6f24d6', '#ffcc00'],
+			colors: ['#75BEFF', '#FFB000', '#7A457A', '#8DE8A5', '#7E86A6', '#ff0000', '##80C566', '##E552EB', '#C2C500', '#DC5B23', '#6f24d6', '#ffcc00'],
 		});
 	}
 	function logFilters(filterString) {
@@ -133,7 +132,7 @@ module.exports = (() => {
 	 * @param {any} options
 	 */
 	function status(options) {
-
+		return service.status(options);
 	}
 	async function isDirty() {
 		return await service.status({ '--untracked-files': 'no', '--porcelain': null });

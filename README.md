@@ -16,52 +16,75 @@ A Simple Git Extension for VSCode
 	- author
 	- message
 
-### ROADMAP
+### TODO
 - DONE - create extension icon
 - DONE - set up package json
 - DONE - test run the extension
 - DONE - UI
-	- DONE - figma design
+	- DONE - design
 	- DONE - icons
 - DONE - create webview + add it to sidebar
 
-- toolbar
+- DONE - toolbar
 	- DONE - add buttons
 	- DONE - add button titles
 	- DONE - hook up the buttons to vscode commands
 		- DONE - webview communication
 
-- need to do something about the commands
+- DONE - log
+	- DONE - parse command output
+	- DONE - render message, date, author
+	- DONE - clean message from graph edges stuck to it
+	- DONE - graph
+		- separate component or should just each commit go to its parent?
 
-- overflow menu
+		- resolving branches
+			- walk down the commit list, and assign each commit with its branch
+				- then if a commit belongs to multiple branches (is the parent to multiple commits)
+					- use `git branch --contains <commit-hash>` and use the branch listed at the end!! this won't work...the commit will belong to both branches :)
+			- DONE - or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
+				- DONE - reserve space for commit marker based on index
+				- DONE - move edges to be under the cell element
+					- DONE - make the marker smaller
+					- DONE - edge bend resolution
+						- DONE - color: if multiple parents, take the color of the parent
+						- DONE - direction: if multiple parents + -ve direction + hits other markers, flip it!!
+
+	- DONE - search
+	- DONE - selection + multi-selection
+	- onclick show changes
+	- working tree
+
+- changes
+	- DONE - working tree changes
+		- DONE - dispatch load event
+		- NOT NEEDED - parse `git status`
+		- render file
+			- DONE - uri
+			- DONE - decorator
+			- icon? (possibly use extension)
+		- DONE - selection
+	- onclick show diff
+
+- commands (overflow menus)
 	- toolbar
 		- fetch?
 		- amend commit
 		- force push
 		- toggle rebase
 		- change author
+	- commits
+		- add tag
+		- checkout
+		- cherry pick
+		- merge
+		- ...
+	- files
+		- stage/unstage
 
 - failures
 	- no repository
 	- repository in parent
-
-- log
-	- commit model
-		- graphIndex
-		- hash
-		- message
-		- author
-		- date
-		- refs: { branches, tags }
-		- parents
-	- graph
-		- separate component or should just each commit go to its parent?
-
-		-  commresolvingit branches
-			- walk down the commit list, and assign each commit with its branch
-				- then if a commit belongs to multiple branches (is the parent to multiple commits)
-					- use `git branch --contains <commit-hash>` and use the branch listed at the end!!
-			- or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
 
 ### GIT cheat sheet
 	- git configuration
