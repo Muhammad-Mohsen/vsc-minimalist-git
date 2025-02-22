@@ -32,3 +32,4 @@
 .ic-fetch:before { content: "\e010"; }
 .ic-tag-outline:before { content: "\e000"; }
 .ic-branch:before { content: "\e001"; }
+.ic-head:before { content: "\e002"; }
