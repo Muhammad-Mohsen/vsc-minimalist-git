@@ -15,6 +15,7 @@ mingit-change-list {
 		gap: 6px;
 		width: calc(100% - 2px);
 		padding: 2px 12px 3px;
+		cursor: pointer;
 		user-select: none;
 
 		&:hover { background: var(--vscode-toolbar-hoverBackground); }
@@ -40,6 +41,10 @@ mingit-change-list {
 		& decorations {
 			margin-inline-start: auto;
 			font-family: var(--vscode-editor-font-family);
+
+			&.M { color: var(--vscode-gitDecoration-modifiedResourceForeground); }
+			& .insertions, &.A { color: var(--vscode-gitDecoration-addedResourceForeground); }
+			& .deletions, &.D { color: var(--vscode-gitDecoration-deletedResourceForeground); }
 		}
 	}
 }

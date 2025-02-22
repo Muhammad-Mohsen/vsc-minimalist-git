@@ -3,10 +3,34 @@ mingit-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+	flex-wrap: wrap;
     padding: 8px;
 	background: var(--vscode-sideBarTitle-background);
 	border-block-start: 1px solid var(--vscode-sideBarSectionHeader-border);
     z-index: 1;
+
+	& .commit-row {
+		position: relative;
+		flex-basis: 100%;
+		margin-block-end: 4px;
+
+		& input { padding-inline-end: 36px; }
+		& button {
+			position: absolute;
+			inset: 0 0 auto auto;
+			width: 26px !important;
+			height: 26px !important;
+			border-radius: 0 2px 2px 0;
+		}
+		& button::after { /* separator */
+			content: '';
+			position: absolute;
+			inset: 6px auto 6px -4px;
+			width: 1px;
+			background: var(--vscode-foreground);
+			opacity: .3;
+		}
+	}
 
 	& button.tertiary {
 		width: 28px;
@@ -22,5 +46,10 @@ mingit-toolbar {
 		height: 10px;
 		background: var(--vscode-foreground);
 		opacity: .3;
+	}
+
+	& :disabled {
+		opacity: .3;
+		pointer-events: none;
 	}
 }

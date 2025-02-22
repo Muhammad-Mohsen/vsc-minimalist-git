@@ -25,27 +25,23 @@ module.exports = (() => {
 		}
 	*/
 
-	/** @param {string} cwd */
 	function setWorkingDirectory(cwd) {
 		service.cwd(cwd);
 	}
 
-	/** @param {string[]} [options] */
 	async function pull(options) {
 		await service.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
 	}
 
-	/** @param {string[]} [options] */
 	function push(options) {
 
 	}
 
-	/** @param {any} [options] */
 	async function log(options) {
 		options ||= {};
 
 		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
-		const logs = await service.raw([ // ?.cwd(repo || this.rootRepoPath).raw
+		const logs = await service.raw([
 			'log',
 			// hash, ref, parents, author name, author email, author date, committer date, raw body
 			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
@@ -56,10 +52,6 @@ module.exports = (() => {
 			'--author-date-order',
 			...logFilters(options?.filters),
 			'-i', // case insensitive (for filtering)
-			// '--topo-order',
-			// `-n ${options.maxLength}`,
-			// `-${options.count}`,
-			// options.skip ? `--skip=${options.skip}` : '', // should probably use 'before <hash>'
 		].filter(p => p));
 
 		return logs.split('\x1EEND\x1E').reduce((response, commit) => {
@@ -77,10 +69,13 @@ module.exports = (() => {
 
 			const refs = ref.split(', ').reduce((refs, r) => {
 				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
+				else if (r.startsWith('origin')) refs.origin = r;
+				else if (r.startsWith('HEAD')) refs.head = r;
 				else if (r) refs.branches.push(r);
+
 				return refs;
 
-			}, { branches: [], tags: [] });
+			}, { branches: [], tags: [], head: null, origin: null });
 
 			if (branchIndex + 1 > response.branchCount) response.branchCount = branchIndex + 1;
 			response.commitList.push({ branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body });
@@ -108,34 +103,46 @@ module.exports = (() => {
 		return [filterBy('grep'), filterBy('by'), filterBy('before'), filterBy('after')];
 	}
 
-	/**
-	 * @param {string} key
-	 * @param {string} val
-	 * @param {boolean} [append]
-	 * @param { 'local' | 'global' | 'system' | 'worktree' } [scope]
-	 */
 	function setConfig(key, val, append, scope) {
 		return service.addConfig(key, val, append || false, scope || 'local');
 	}
-	/**
-	 * @param {any} key
-	 */
 	function getConfig(key) {
 	}
 
-	/** @param {string[]} [options] */
 	function stash(options) {
 		service.stash();
 	}
 
-	/**
-	 * @param {any} options
-	 */
-	function status(options) {
-		return service.status(options);
+	async function diff(options) {
+		const diff = (await service.diff([...options, '--raw', '--numstat']))
+			.split('\n') // split output
+			.slice(0, -1); // remove empty last element
+
+		const raw = diff.filter(d => d.startsWith(':')); // --raw output (to show added/deleted files)
+		const numstat = diff.filter(d => !d.startsWith(':')); // --numstat output
+
+		return {
+			files: numstat.map((n, i) => {
+				n = n.split('\t');
+				return {
+					insertions: parseInt(n[0]),
+					deletions: parseInt(n[1]),
+					path: n[2],
+					working_dir: raw[i].split('\t')[0].slice(-1)
+				};
+			})
+		};
 	}
-	async function isDirty() {
-		return await service.status({ '--untracked-files': 'no', '--porcelain': null });
+	function status() {
+		return service.status(['-u', '--show-stash']);
+	}
+
+	async function state(options) {
+		return {
+			logs: await log(options),
+			status: await status()
+			// TODO add stashes
+		}
 	}
 
 	return {
@@ -149,10 +156,10 @@ module.exports = (() => {
 
 		stash,
 
+		state,
 		log,
 		status,
-		isDirty,
-
+		diff,
 	};
 
 })();

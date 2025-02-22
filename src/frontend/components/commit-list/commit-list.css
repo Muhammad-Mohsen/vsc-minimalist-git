@@ -9,7 +9,7 @@ mingit-commit-list {
 	& commit-list {
 		position: relative;
 		display: block;
-		max-height: calc(100vh - 200px);
+		max-height: calc(100vh - 250px);
 		width: calc(100% + 2px);
 		padding: 12px 0;
 		resize: vertical;
@@ -28,7 +28,7 @@ mingit-commit-list {
 		&:hover {
 			background: var(--vscode-toolbar-hoverBackground);
 
-			vertix::before { border-color: var(--vscode-foreground) !important; }
+			vertex::before { border-color: var(--vscode-foreground) !important; }
 			edge {
 				border-color: var(--vscode-foreground) !important;
 				outline: 1px solid var(--vscode-sideBarTitle-background);
@@ -72,7 +72,7 @@ mingit-commit-list {
 		}
 
 		/* graph */
-		& vertix {
+		& vertex {
 			position: relative;
 			flex-shrink: 0;
 			width: 16px;
@@ -115,6 +115,13 @@ mingit-commit-list {
 				height: 19px !important;
 				border-inline-end-style: dotted;
 			}
+		}
+
+		&.working-tree {
+			font-style: italic;
+
+			& edge:not(.orphan) { border-inline-end-style: dashed; }
+			& .filled::before { border-radius: 50px; }
 		}
 	}
 }

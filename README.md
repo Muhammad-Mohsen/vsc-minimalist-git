@@ -35,6 +35,11 @@ A Simple Git Extension for VSCode
 	- DONE - parse command output
 	- DONE - render message, date, author
 	- DONE - clean message from graph edges stuck to it
+	- decorators
+		- DONE - branch
+		- DONE - tag
+		- origin
+		- head
 	- DONE - graph
 		- separate component or should just each commit go to its parent?
 
@@ -49,22 +54,27 @@ A Simple Git Extension for VSCode
 					- DONE - edge bend resolution
 						- DONE - color: if multiple parents, take the color of the parent
 						- DONE - direction: if multiple parents + -ve direction + hits other markers, flip it!!
-
 	- DONE - search
 	- DONE - selection + multi-selection
-	- onclick show changes
-	- working tree
+	- onclick: show diff
+	- DONE - working tree
+		- DONE - 4 moving parts here
+			- log + status+ status update + log update/filter
+			- easy solution here is to just combine the log + status calls into a single response then render everything when we get the response
+
+		- DONE - get the `branchIndex` of the head of the current branch (in the `status` response) and use it as the index for the `working tree` entry
+		- DONE - onclick: show status
 
 - changes
 	- DONE - working tree changes
 		- DONE - dispatch load event
 		- NOT NEEDED - parse `git status`
-		- render file
+		- DONE - render file
 			- DONE - uri
 			- DONE - decorator
-			- icon? (possibly use extension)
 		- DONE - selection
 	- onclick show diff
+	- commit message input + inline commit button
 
 - commands (overflow menus)
 	- toolbar

@@ -72,19 +72,21 @@ module.exports = class MainViewProvider {
 				VSC.executeCommand('mingit.pull');
 				break;
 
-			case 'getlog':
-				GIT.log().then(commitList => this.postMessage({ command: 'log', body: commitList }));
-				break;
-
 			case 'getstatus':
 				GIT.status().then(status => this.postMessage({ command: 'status', body: status }));
 				break;
 
+			case 'getlog':
 			case 'filter':
-				GIT.log({ filters: message.body.value }).then(commitList => this.postMessage({ command: 'logs', body: commitList }));
+				GIT.state({ filters: message.body?.value }).then(state => this.postMessage({ command: 'state', body: state }));
+				break;
+
+			case 'getdiff':
+				GIT.diff(message.body.hashes).then(diff => this.postMessage({ command: 'diff', body: diff }));
 				break;
 		}
 	}
+
 	/** @param {{ command: string, body: any }} message */
 	postMessage(message) {
 		this._view.webview.postMessage(message);
