@@ -31,7 +31,7 @@ mingit-commit-list {
 			vertex::before { border-color: var(--vscode-foreground) !important; }
 			edge {
 				border-color: var(--vscode-foreground) !important;
-				outline: 1px solid var(--vscode-sideBarTitle-background);
+				/* outline: 1px solid var(--vscode-sideBarTitle-background); */
 				z-index: 1;
 			}
 		}
