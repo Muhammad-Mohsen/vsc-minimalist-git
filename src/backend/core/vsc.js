@@ -67,6 +67,13 @@ module.exports = (() => {
 		return [vscode.ColorThemeKind.Dark, vscode.ColorThemeKind.HighContrast].includes(vscode.window.activeColorTheme.kind);
 	}
 
+	async function gitExtension() {
+		const ext = vscode.extensions.getExtension('vscode.git');
+		const api = ext.isActive ? ext.exports : await ext.activate();
+
+		return api.getAPI(1);
+	}
+
 	return {
 		registerCommand,
 		executeCommand,
@@ -80,5 +87,7 @@ module.exports = (() => {
 
 		workingDirectory,
 		isDark,
+
+		gitExtension,
 	}
 })();

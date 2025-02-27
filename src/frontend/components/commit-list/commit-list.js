@@ -18,11 +18,9 @@ class CommitList extends HTMLElementBase {
 		event.currentTarget.classList.add('selected');
 
 		selections = this.querySelectorAll('commit.selected');
-		const hashes = Array.from(selections).map(s => s.getAttribute('hash'));
-		if (hashes.length == 1) hashes.unshift(hashes[0] + '~'); // prepend the previous commit
-		else hashes.reverse(); // reverse the commits so that the older is first
+		const hashes = Array.from(selections).map(s => s.getAttribute('hash')).reverse(); // reverse the commits so that the older is first
 
-		this.postMessage({ command: 'getdiff', body: { hashes: [hashes.join('..')] } });
+		this.postMessage({ command: 'getdiff', body: { hashes } });
 	}
 	onWorkingTreeClick() {
 		this.querySelectorAll('commit.selected').forEach(c => c.classList.remove('selected')); // clear any previously-selected commits

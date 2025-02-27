@@ -1,36 +1,27 @@
 const simpleGitModule = require('simple-git');
+const vsc = require('./vsc');
 
 // git wrapper
 module.exports = (() => {
+	let ext;
+	vsc.gitExtension().then(e => ext = e);
+
+	const diffCache = {}; // TODO purge on repo update
+
 	const abortController = new AbortController();
 	const service = simpleGitModule.simpleGit({
 		abort: abortController.signal // abortController.abort();
 	});
 
-	/*
-		// custom error handler
-		// https://github.com/steveukx/git-js/blob/main/docs/PLUGIN-ERRORS.md
-		errors(error, result) {
-			// optionally pass through any errors reported before this plugin runs
-			if (error) return error;
-
-			// customise the `errorCode` values to treat as success
-			if (result.exitCode == 0) {
-				return;
-			}
-
-			// the default error messages include both stdOut and stdErr, but that
-			// can be changed here, or completely replaced with some other content
-			return Buffer.concat([...result.stdOut, ...result.stdErr]);
-		}
-	*/
-
 	function setWorkingDirectory(cwd) {
 		service.cwd(cwd);
 	}
 
+	function fetch(options) {
+		return service.fetch(options);
+	}
 	async function pull(options) {
-		await service.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
+		return service.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
 	}
 
 	function push(options) {
@@ -114,14 +105,21 @@ module.exports = (() => {
 	}
 
 	async function diff(options) {
-		const diff = (await service.diff([...options, '--raw', '--numstat']))
+		//if (diffCache[options.join('')]) return diffCache[options[0]];
+
+		let diff = options.length == 1
+			? await service.show([options[0], '--raw', '--numstat', '--oneline'])
+			: await service.diff([options.join('..'), '--raw', '--numstat']);
+
+		diff = diff
 			.split('\n') // split output
-			.slice(0, -1); // remove empty last element
+			.slice(options.length == 1 ? 1 : 0, -1); // remove empty last element (and first element if `git-show` was used)
 
-		const raw = diff.filter(d => d.startsWith(':')); // --raw output (to show added/deleted files)
-		const numstat = diff.filter(d => !d.startsWith(':')); // --numstat output
+		const raw = diff.filter(d => d.startsWith(':')); // shows state (added/deleted/renamed/etc.)
+		const numstat = diff.filter(d => !d.startsWith(':')); // shows additions/deletions/etc.
 
-		return {
+		diffCache[options[0]] = {
+			hashes: options, // send the hashes back up so they can be used when showing the actual file diffs
 			files: numstat.map((n, i) => {
 				n = n.split('\t');
 				return {
@@ -132,6 +130,8 @@ module.exports = (() => {
 				};
 			})
 		};
+
+		return diffCache[options[0]];
 	}
 	function status() {
 		return service.status(['-u', '--show-stash']);
@@ -145,9 +145,14 @@ module.exports = (() => {
 		}
 	}
 
+	function uri(path, commit) {
+		return ext.toGitUri(path, commit);
+	}
+
 	return {
 		setWorkingDirectory,
 
+		fetch,
 		pull,
 		push,
 
@@ -160,6 +165,8 @@ module.exports = (() => {
 		log,
 		status,
 		diff,
+
+		uri,
 	};
 
 })();
