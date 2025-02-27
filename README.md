@@ -74,27 +74,33 @@ A Simple Git Extension for VSCode
 			- DONE - decorator
 		- DONE - selection
 	- onclick show diff
-	- commit message input + inline commit button
+	- DONE - commit message input + inline commit button
 
 - commands (overflow menus)
 	- toolbar
-		- fetch?
-		- amend commit
-		- force push
-		- toggle rebase
-		- change author
-	- commits
+		- DONE - fetch
+		- overflow
+			- toggle `--rebase`
+			- toggle `--autostash`
+			- change author
+			- force push
+	- commits (context menu)
 		- add tag
 		- checkout
 		- cherry pick
 		- merge
 		- ...
-	- files
-		- stage/unstage
+	- files (context menu)
+		- stage/unstage selected
+		- discard selected
 
-- failures
-	- no repository
+- repo detections
+	- no git!!
+	- no repository/workspace
 	- repository in parent
+	- changes
+
+- 'welcome' screen
 
 ### GIT cheat sheet
 	- git configuration
