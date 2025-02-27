@@ -1,45 +1,45 @@
 const vscode = require('vscode');
 const MainViewProvider = require('./main-view-provider');
 
-const VSC = require('./core/vsc');
-const GIT = require('./core/git');
+const vsc = require('./core/vsc');
+const git = require('./core/git');
 
 /** @param {vscode.ExtensionContext} context */
 async function activate(context) {
-	GIT.setWorkingDirectory(VSC.workingDirectory());
+	git.setWorkingDirectory(vsc.workingDirectory());
 
-	VSC.registerWebViewProvider(context, 'mingit-main-view',
+	vsc.registerWebViewProvider(context, 'mingit-main-view',
 		new MainViewProvider(context.extensionUri),
 		{ webviewOptions: { retainContextWhenHidden: true }
 	});
 
-	VSC.registerCommand(context, 'mingit.commit', () => {
+	vsc.registerCommand(context, 'mingit.commit', () => {
 
 	});
 
-	VSC.registerCommand(context, 'mingit.stage', () => {
+	vsc.registerCommand(context, 'mingit.stage', () => {
 
 	});
-	VSC.registerCommand(context, 'mingit.unstage', () => {
+	vsc.registerCommand(context, 'mingit.unstage', () => {
 
 	});
-	VSC.registerCommand(context, 'mingit.stash', () => {
-
-	});
-
-	VSC.registerCommand(context, 'mingit.push', () => {
-
-	});
-	VSC.registerCommand(context, 'mingit.pull', async () => {
-		GIT.pull()
-			.then(() => VSC.showInfoPopup('pull... done'))
-			.catch(reason => VSC.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
-	});
-	VSC.registerCommand(context, 'mingit.fetch', () => {
+	vsc.registerCommand(context, 'mingit.stash', () => {
 
 	});
 
-	VSC.registerCommand(context, 'mingit.config.author', async () => {
+	vsc.registerCommand(context, 'mingit.push', () => {
+
+	});
+	vsc.registerCommand(context, 'mingit.pull', async () => {
+		git.pull()
+			.then(() => vsc.showInfoPopup('pull... done'))
+			.catch(reason => vsc.showErrorPopup(`pull failed ${reason.message.replace(/error:/g, '')}`));
+	});
+	vsc.registerCommand(context, 'mingit.fetch', () => {
+
+	});
+
+	vsc.registerCommand(context, 'mingit.config.author', async () => {
 		const tokenizeInput = value => {
 			let [user, email] = value.split('<');
 			user = user.replace(/\s{2,}/g, ' ').trim();
@@ -56,15 +56,15 @@ async function activate(context) {
 		}
 
 		try {
-			const author = await VSC.showInputBox({
+			const author = await vsc.showInputBox({
 				placeHolder: 'user <email>',
 				validateInput: validateInput
 			});
 
 			const { user, email } = tokenizeInput(author);
 
-			GIT.setConfig('user.name', user)
-			GIT.setConfig('user.email', email);
+			git.setConfig('user.name', user)
+			git.setConfig('user.email', email);
 
 		} catch {}
 	});
