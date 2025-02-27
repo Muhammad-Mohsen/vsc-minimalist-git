@@ -4,7 +4,7 @@ mingit-toolbar {
     align-items: center;
     justify-content: space-between;
 	flex-wrap: wrap;
-    padding: 8px;
+    padding: 12px;
 	background: var(--vscode-sideBarTitle-background);
 	border-block-start: 1px solid var(--vscode-sideBarSectionHeader-border);
     z-index: 1;
