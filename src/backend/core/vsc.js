@@ -59,8 +59,12 @@ module.exports = (() => {
 		return vscode.window.showInputBox(options);
 	}
 
-	function workingDirectory() {
+	function basePath() {
 		return vscode.workspace.workspaceFolders[0].uri.fsPath;
+	}
+	/** @param {string} path */
+	function absoluteURI(path) {
+		return vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, path);
 	}
 
 	function isDark() {
@@ -85,7 +89,8 @@ module.exports = (() => {
 		showErrorPopup,
 		showInputBox,
 
-		workingDirectory,
+		basePath,
+		absoluteURI,
 		isDark,
 
 		gitExtension,

@@ -35,25 +35,25 @@ A Simple Git Extension for VSCode
 	- DONE - parse command output
 	- DONE - render message, date, author
 	- DONE - clean message from graph edges stuck to it
-	- decorators
+	- DONE - decorators
 		- DONE - branch
 		- DONE - tag
-		- origin
-		- head
+		- DONE - origin
+		- DONE - head
 	- DONE - graph
-		- separate component or should just each commit go to its parent?
 
-		- resolving branches
-			- walk down the commit list, and assign each commit with its branch
-				- then if a commit belongs to multiple branches (is the parent to multiple commits)
-					- use `git branch --contains <commit-hash>` and use the branch listed at the end!! this won't work...the commit will belong to both branches :)
-			- DONE - or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
-				- DONE - reserve space for commit marker based on index
-				- DONE - move edges to be under the cell element
-					- DONE - make the marker smaller
-					- DONE - edge bend resolution
-						- DONE - color: if multiple parents, take the color of the parent
-						- DONE - direction: if multiple parents + -ve direction + hits other markers, flip it!!
+	- DONE - resolving branches
+		- DOESN'T WORK - walk down the commit list, and assign each commit with its branch
+			- then if a commit belongs to multiple branches (is the parent to multiple commits)
+				- use `git branch --contains <commit-hash>` and use the branch listed at the end!! this won't work...the commit will belong to both branches :)
+		- DONE - or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
+			- DONE - reserve space for commit marker based on index
+			- DONE - move edges to be under the cell element
+				- DONE - make the marker smaller
+				- DONE - 'edge bend' resolution
+					- DONE - color: if multiple parents, take the color of the parent
+					- DONE - direction: if multiple parents + -ve direction + hits other markers, flip it!!
+
 	- DONE - search
 	- DONE - selection + multi-selection
 	- onclick: show diff
@@ -73,7 +73,7 @@ A Simple Git Extension for VSCode
 			- DONE - uri
 			- DONE - decorator
 		- DONE - selection
-	- onclick show diff
+	- DONE - onclick show diff
 	- DONE - commit message input + inline commit button
 
 - commands (overflow menus)
@@ -95,12 +95,11 @@ A Simple Git Extension for VSCode
 		- discard selected
 
 - repo detections
-	- no git!!
-	- no repository/workspace
+	- 'welcome' screen
+		- no git!!
+		- no workspace/repository
 	- repository in parent
 	- changes
-
-- 'welcome' screen
 
 ### GIT cheat sheet
 	- git configuration

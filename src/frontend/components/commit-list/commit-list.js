@@ -12,7 +12,7 @@ class CommitList extends HTMLElementBase {
 		if (message.command == 'state') this.#renderCommits(message.body);
 	}
 
-	onCommitClick(event) {
+	onClick(event) {
 		let selections = this.querySelectorAll('commit.selected');
 		if (!event.ctrlKey || selections.length >= 2) selections.forEach(c => c.classList.remove('selected'));
 		event.currentTarget.classList.add('selected');
@@ -21,10 +21,6 @@ class CommitList extends HTMLElementBase {
 		const hashes = Array.from(selections).map(s => s.getAttribute('hash')).reverse(); // reverse the commits so that the older is first
 
 		this.postMessage({ command: 'getdiff', body: { hashes } });
-	}
-	onWorkingTreeClick() {
-		this.querySelectorAll('commit.selected').forEach(c => c.classList.remove('selected')); // clear any previously-selected commits
-		this.postMessage({ command: 'getstatus' });
 	}
 
 	filter(event) {
@@ -41,7 +37,7 @@ class CommitList extends HTMLElementBase {
 		this.querySelector('commit-list').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<commit onclick="${this.handle}.onCommitClick(event, '${c.hash}')" hash="${c.hash}" tabindex="0">
+			return /*html*/`<commit onclick="${this.handle}.onClick(event, '${c.hash}')" hash="${c.hash}" tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
@@ -66,7 +62,7 @@ class CommitList extends HTMLElementBase {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
 
 		this.querySelector('commit-list').insertAdjacentHTML('afterbegin', /*html*/`
-			<commit class="working-tree" onclick="${this.handle}.onWorkingTreeClick()" tabindex="0">
+			<commit class="working-tree" onclick="${this.handle}.onClick(event, '')" hash="" tabindex="0">
 				${this.#renderVertex({ hash: '', branchIndex: parent.branchIndex, parents: [parent.hash] }, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<p class="commit-body" title="Working Tree">Working Tree</p>

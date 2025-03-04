@@ -21,12 +21,13 @@ class ChangesList extends HTMLElementBase {
 		}
 	}
 
-	onFileClick(event, path) {
+	onFileClick(event, name, path, decorator, hashes) {
 		event.stopPropagation();
 		if (!event.ctrlKey) this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 		event.currentTarget.classList.add('selected');
 
-		// TODO show diff of 'path'
+		// show diff of 'path'
+		this.postMessage({ command: 'diffeditor', body: { name, path, decorator, hashes: hashes.split(',') } });
 	}
 	clearSelection() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
@@ -35,23 +36,19 @@ class ChangesList extends HTMLElementBase {
 	#render() {
 		this.innerHTML = `<mingit-toolbar></mingit-toolbar><change-list onclick="${this.handle}.clearSelection()"></change-list>`;
 	}
-
 	#renderChanges(status) {
-		const name = (path) => path.split(/\\|\//).pop();
-
 		this.querySelector('change-list').innerHTML =
-			status.files.map(f => /*html*/`<file title="${f.path}" onclick="${this.handle}.onFileClick(event, '${f.path}')" tabindex="0">
-				<span>${name(f.path)}</span><span class="secondary">${f.path}</span>
+			status.files.map(f => /*html*/`<file title="${f.path}" onclick="${this.handle}.onFileClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
+				<span>${f.name}</span><span class="secondary">${f.path}</span>
 				${this.#renderDecorations(f)}
 			</file>`).join('');
 	}
 	#renderDecorations(file) {
-		if (file.insertions || file.deletions) return /*html*/`<decorations>
-				${file.insertions ? `<span class="insertions">+${file.insertions}</span>` : ''}
-				${file.deletions ? `<span class="deletions">-${file.deletions}</span>` : ''}
-			</decorations>`;
-
-		return `<decorations class="${file.working_dir.trim() || file.index}">${file.working_dir.trim() || file.index}</decorations>`;
+		if (file.decorator) return `<decorations class="${file.decorator.trim() || file.index}">${file.decorator.trim() || file.index}</decorations>`;
+		else return /*html*/`<decorations>
+			${file.insertions ? `<span class="insertions">+${file.insertions}</span>` : ''}
+			${file.deletions ? `<span class="deletions">-${file.deletions}</span>` : ''}
+		</decorations>`;
 	}
 }
 

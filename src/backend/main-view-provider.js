@@ -1,21 +1,18 @@
 const vscode = require('vscode');
 
-const VSC = require('./core/vsc');
-const GIT = require('./core/git');
+const vsc = require('./core/vsc');
+const git = require('./core/git');
 const util = require('./core/utils');
 
 module.exports = class MainViewProvider {
 	/** @type {vscode.WebviewView} */
-	_view;
+	#view;
+	#extensionURI;
 
-	_extensionURI;
+	constructor(extensionURI) { this.#extensionURI = extensionURI; }
 
-	/** @param {vscode.Uri} extensionURI */
-	constructor(extensionURI) { this._extensionURI = extensionURI; }
-
-	/** @param {vscode.WebviewView} webviewView */
 	resolveWebviewView(webviewView) {
-		this._view = webviewView;
+		this.#view = webviewView;
 
 		webviewView.webview.options = this.#options();
 		webviewView.webview.html = this.#render(webviewView.webview);
@@ -28,13 +25,13 @@ module.exports = class MainViewProvider {
 	#options() {
 		return {
 			enableScripts: true,
-			localResourceRoots: [this._extensionURI],
+			localResourceRoots: [this.#extensionURI],
 		}
 	}
 
 	/** @param {vscode.Webview} webview */
 	#render(webview) {
-		const uri = (/** @type {string} */ path) => webview.asWebviewUri(vscode.Uri.joinPath(this._extensionURI, path));
+		const uri = (/** @type {string} */ path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
 
 		return /*html*/`<!DOCTYPE html>
@@ -69,34 +66,47 @@ module.exports = class MainViewProvider {
 	async #onMessage(message) {
 		switch (message.command) {
 			case 'pull':
-				VSC.executeCommand('mingit.pull');
+				vsc.executeCommand('mingit.pull');
 				break;
 
 			case 'getstatus':
-				GIT.status().then(status => this.postMessage({ command: 'status', body: status }));
+				git.status().then(status => this.#postMessage({ command: 'status', body: status }));
+				break;
+
+			case 'fetch':
+				await git.fetch();
+				vsc.showInfoPopup('fetch... done');
+				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
 				break;
 
 			case 'getlog':
 			case 'filter':
-				GIT.state({ filters: message.body?.value }).then(state => this.postMessage({ command: 'state', body: state }));
+				const state = await git.state({ filters: message.body?.value });
+				this.#postMessage({ command: 'state', body: state });
+				this.#setBadge(state.status.files.length);
 				break;
 
 			case 'getdiff':
-				GIT.diff(message.body.hashes).then(diff => this.postMessage({ command: 'diff', body: diff }));
+				git.diff(message.body.hashes).then(diff => this.#postMessage({ command: 'diff', body: diff }));
+				break;
+
+			case 'diffeditor':
+				const { left, right, title } = git.resolveDiffURIs(message.body);
+				if (!left || !right) vsc.executeCommand('vscode.open', left || right, null, title);
+				else vsc.executeCommand('vscode.diff', left, right, title);
 				break;
 		}
 	}
 
 	/** @param {{ command: string, body: any }} message */
-	postMessage(message) {
-		this._view.webview.postMessage(message);
+	#postMessage(message) {
+		this.#view.webview.postMessage(message);
 	}
 
-	/** @param {number} value */
-	setBadge(value) {
-		this._view.badge = { value, tooltip: `${value} pending changes` };
+	#setBadge(value) {
+		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : undefined;
 	}
 	#onVisibilityChange() {
-		if (this._view.visible) this._view.badge = undefined; // remove badge when webview is visible + TODO refresh the data
+		// if (this._view.visible) this._view.badge = undefined;
 	}
 }
