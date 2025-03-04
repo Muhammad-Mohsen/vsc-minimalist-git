@@ -42,24 +42,28 @@ code {
 }
 
 button {
-	border: none;
-	border-radius: 4px;
-	padding: var(--input-padding-vertical) var(--input-padding-horizontal);
 	width: 100%;
-	text-align: center;
-	outline: 1px solid transparent;
+	padding: 6px;
+	border: none;
+	border-radius: 2px;
 	color: var(--vscode-button-foreground);
 	background: var(--vscode-button-background);
+	text-align: center;
+	outline: 1px solid transparent;
+	outline-offset: 2px;
 	transition: background .2s, outline-color .2s;
 }
 button:hover {
 	cursor: pointer;
 	background: var(--vscode-button-hoverBackground);
 }
+button:focus { outline-color: transparent !important; }
+button:focus-visible { outline-color: var(--vscode-focusBorder) !important; }
 
 button.secondary {
 	color: var(--vscode-button-secondaryForeground);
 	background: var(--vscode-button-secondaryBackground);
+	outline-offset: 0;
 }
 button.secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
 

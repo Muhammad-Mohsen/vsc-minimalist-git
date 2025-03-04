@@ -46,16 +46,19 @@ module.exports = class MainViewProvider {
 				<link href="${uri('src/frontend/css/iconly.css')}" rel="stylesheet">
 
 				<link href="${uri('src/frontend/components/toolbar/toolbar.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/components/welcome/welcome.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/components/commit-list/commit-list.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/components/change-list/change-list.css')}" rel="stylesheet">
 
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/core/html-element-base.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/welcome/welcome.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/toolbar/toolbar.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/commit-list/commit-list.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
 
 			</head>
 	  		<body>
+				<!-- <mingit-welcome></mingit-welcome> -->
 				<mingit-commit-list></mingit-commit-list>
 				<mingit-change-list></mingit-change-list>
 			</body>
