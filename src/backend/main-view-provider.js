@@ -18,8 +18,6 @@ module.exports = class MainViewProvider {
 		webviewView.webview.html = this.#render(webviewView.webview);
 		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
 		webviewView.onDidChangeVisibility(() => this.#onVisibilityChange());
-
-		// webviewView.badge = { tooltip: 'test', value: 5 };
 	}
 
 	#options() {
@@ -31,7 +29,7 @@ module.exports = class MainViewProvider {
 
 	/** @param {vscode.Webview} webview */
 	#render(webview) {
-		const uri = (/** @type {string} */ path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
+		const uri = (path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
 
 		return /*html*/`<!DOCTYPE html>
@@ -106,10 +104,12 @@ module.exports = class MainViewProvider {
 		this.#view.webview.postMessage(message);
 	}
 
+	#onVisibilityChange() {
+		// update the webview on visible...when it's invisible, it won't respond to any events
+		if (this.#view.visible) git.status().then(status => this.#postMessage({ command: 'status', body: status }));
+	}
+
 	#setBadge(value) {
 		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : undefined;
-	}
-	#onVisibilityChange() {
-		// if (this._view.visible) this._view.badge = undefined;
 	}
 }

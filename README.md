@@ -96,10 +96,12 @@ A Simple Git Extension for VSCode
 
 - repo detections
 	- 'welcome' screen
+		- DONE - html
 		- no git!!
 		- no workspace/repository
 	- repository in parent
 	- changes
+- DONE - visibility change
 
 ### GIT cheat sheet
 	- git configuration
