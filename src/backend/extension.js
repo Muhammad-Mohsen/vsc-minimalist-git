@@ -6,13 +6,12 @@ const git = require('./core/git');
 
 /** @param {vscode.ExtensionContext} context */
 async function activate(context) {
-	git.setWorkingDirectory(vsc.basePath());
-
 	vsc.registerWebViewProvider(context, 'mingit-main-view',
 		new MainViewProvider(context.extensionUri),
 		{ webviewOptions: { retainContextWhenHidden: true }
 	});
 
+	// COMMANDS
 	vsc.registerCommand(context, 'mingit.commit', () => {
 
 	});

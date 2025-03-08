@@ -59,8 +59,11 @@ module.exports = (() => {
 		return vscode.window.showInputBox(options);
 	}
 
-	function basePath() {
-		return vscode.workspace.workspaceFolders[0].uri.fsPath;
+	function workspaceFolder() {
+		return vscode.workspace.workspaceFolders[0];
+	}
+	function workspacePath() {
+		return workspaceFolder().uri.fsPath;
 	}
 	/** @param {string} path */
 	function absoluteURI(path) {
@@ -89,7 +92,8 @@ module.exports = (() => {
 		showErrorPopup,
 		showInputBox,
 
-		basePath,
+		workspaceFolder,
+		workspacePath,
 		absoluteURI,
 		isDark,
 

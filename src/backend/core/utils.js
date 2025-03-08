@@ -1,3 +1,5 @@
+const path = require('path');
+
 function getNonce() {
 	let text = '';
 	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -7,4 +9,8 @@ function getNonce() {
 	return text;
 }
 
-module.exports = { getNonce };
+function sameDir(dir, other) {
+	return path.normalize(dir).toLowerCase() == path.normalize(other).toLowerCase();
+}
+
+module.exports = { getNonce, sameDir };

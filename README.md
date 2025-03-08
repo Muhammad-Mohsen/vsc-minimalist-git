@@ -79,6 +79,7 @@ A Simple Git Extension for VSCode
 - commands (overflow menus)
 	- toolbar
 		- DONE - fetch
+		- DONE - commit
 		- overflow
 			- toggle `--rebase`
 			- toggle `--autostash`
@@ -94,14 +95,18 @@ A Simple Git Extension for VSCode
 		- stage/unstage selected
 		- discard selected
 
-- repo detections
-	- 'welcome' screen
+- DONE - repo detections
+	- DONE - 'welcome' screen
 		- DONE - html
-		- no git!!
-		- no workspace/repository
-	- repository in parent
-	- changes
+		- DONE - no git!!
+		- DONE - no workspace/repository
+	- DONE - repository in parent...automatically opened!
+		- DONE - show a notification message
+	- DONE - changes
 - DONE - visibility change
+- DONE - loading bar
+	- show on postMessage
+	- hide on onMessage
 
 ### GIT cheat sheet
 	- git configuration

@@ -3,15 +3,44 @@ const vsc = require('./vsc');
 
 // git wrapper
 module.exports = (() => {
-	const diffCache = {}; // TODO purge on repo update
+	let diffCache = {};
+	let onchange; // repo change handler
 
 	let builtInGit;
-	vsc.gitExtension().then(e => builtInGit = e);
+	vsc.gitExtension().then(git => {
+		builtInGit = git;
+
+		builtInGit.onDidOpenRepository(repo => {
+			repo.state.onDidChange(() => { // TODO dispose!
+				diffCache = {}; // purge the cache
+				onchange();
+			});
+		});
+	});
 
 	const abortController = new AbortController();
 	const simpleGit = simpleGitModule.simpleGit({
 		abort: abortController.signal // abortController.abort();
 	});
+
+	async function isInstalled() {
+		try {
+			await simpleGit.version();
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	async function isRepo() {
+		return await simpleGit.checkIsRepo();
+	}
+
+	async function repoPath() {
+		// return builtInGit.repositories[0].rootUri.fsPath;
+		// or
+		return await simpleGit.revparse(['--show-toplevel']);
+	}
 
 	function setWorkingDirectory(cwd) {
 		simpleGit.cwd(cwd);
@@ -23,9 +52,13 @@ module.exports = (() => {
 	async function pull(options) {
 		return simpleGit.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
 	}
-
 	function push(options) {
 
+	}
+
+	async function commit(options) {
+		await simpleGit.add(options.files);
+		return simpleGit.commit(options.message, options.files);
 	}
 
 	async function log(options) {
@@ -230,12 +263,21 @@ module.exports = (() => {
 		return hash.substring(0, 6) + '~';
 	}
 
+	function setOnChangeListener(listener) {
+		onchange = listener;
+	}
+
 	return {
+		isInstalled,
 		setWorkingDirectory,
+		isRepo,
+		repoPath,
 
 		fetch,
 		pull,
 		push,
+
+		commit,
 
 		setConfig,
 		getConfig,
@@ -250,6 +292,8 @@ module.exports = (() => {
 
 		uri,
 		shortHash,
+
+		setOnChangeListener,
 	};
 
 })();

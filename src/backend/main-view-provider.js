@@ -9,13 +9,24 @@ module.exports = class MainViewProvider {
 	#view;
 	#extensionURI;
 
-	constructor(extensionURI) { this.#extensionURI = extensionURI; }
+	constructor(extensionURI) {
+		this.#extensionURI = extensionURI;
 
-	resolveWebviewView(webviewView) {
+		git.setWorkingDirectory(vsc.workspacePath());
+		git.setOnChangeListener(() => this.#onRepoChange());
+
+		git.repoPath().then(repoPath => {
+			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
+				vsc.showInfoPopup('Opened repository in parent directory.');
+			}
+		});
+	}
+
+	async resolveWebviewView(webviewView) {
 		this.#view = webviewView;
 
 		webviewView.webview.options = this.#options();
-		webviewView.webview.html = this.#render(webviewView.webview);
+		webviewView.webview.html = await this.#render(webviewView.webview);
 		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
 		webviewView.onDidChangeVisibility(() => this.#onVisibilityChange());
 	}
@@ -28,9 +39,10 @@ module.exports = class MainViewProvider {
 	}
 
 	/** @param {vscode.Webview} webview */
-	#render(webview) {
+	async #render(webview) {
 		const uri = (path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
+		const showWelcome = await this.#showWelcome();
 
 		return /*html*/`<!DOCTYPE html>
 			<html lang="en">
@@ -56,9 +68,10 @@ module.exports = class MainViewProvider {
 
 			</head>
 	  		<body>
-				<!-- <mingit-welcome></mingit-welcome> -->
-				<mingit-commit-list></mingit-commit-list>
-				<mingit-change-list></mingit-change-list>
+				${ showWelcome
+					? '<mingit-welcome></mingit-welcome>'
+					: '<mingit-commit-list></mingit-commit-list><mingit-change-list></mingit-change-list>'
+				}
 			</body>
 			</html>`;
 	}
@@ -66,18 +79,12 @@ module.exports = class MainViewProvider {
 	/** @param {{ command: string, body: any }} message */
 	async #onMessage(message) {
 		switch (message.command) {
-			case 'pull':
-				vsc.executeCommand('mingit.pull');
+			case 'openfolder':
+				vsc.executeCommand('vscode.openFolder');
 				break;
 
-			case 'getstatus':
-				git.status().then(status => this.#postMessage({ command: 'status', body: status }));
-				break;
-
-			case 'fetch':
-				await git.fetch();
-				vsc.showInfoPopup('fetch... done');
-				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
+			case 'clone':
+				vsc.executeCommand('git.clone');
 				break;
 
 			case 'getlog':
@@ -96,12 +103,44 @@ module.exports = class MainViewProvider {
 				if (!left || !right) vsc.executeCommand('vscode.open', left || right, null, title);
 				else vsc.executeCommand('vscode.diff', left, right, title);
 				break;
+
+			case 'getstatus':
+				const status = await git.status();
+				this.#postMessage({ command: 'status', body: status });
+				this.#setBadge(status.files.length);
+				break;
+
+			case 'fetch':
+				await git.fetch();
+				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
+				break;
+
+			case 'pull':
+				vsc.executeCommand('mingit.pull');
+				break;
+
+			case 'commit':
+				await git.commit(message);
+				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
+				break;
 		}
 	}
 
 	/** @param {{ command: string, body: any }} message */
 	#postMessage(message) {
 		this.#view.webview.postMessage(message);
+	}
+
+	async #onRepoChange() {
+		const state = await git.state({ filters: message.body?.value });
+		this.#postMessage({ command: 'state', body: state });
+		this.#setBadge(state.status.files.length);
+	}
+
+	async #showWelcome() {
+		if (!vsc.workspaceFolder()) return true; // no workspace
+		if (!(await git.isInstalled())) return true; // no git!!
+		if (!await git.isRepo()) return true; // not a repo
 	}
 
 	#onVisibilityChange() {
