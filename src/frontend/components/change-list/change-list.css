@@ -15,7 +15,7 @@ mingit-change-list {
 		align-items: baseline;
 		gap: 6px;
 		width: calc(100% - 2px);
-		padding: 2px 12px 3px;
+		padding: 2px 13px 3px;
 		cursor: pointer;
 		user-select: none;
 

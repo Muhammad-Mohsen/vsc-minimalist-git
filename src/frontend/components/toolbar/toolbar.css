@@ -4,7 +4,7 @@ mingit-toolbar {
     align-items: center;
     justify-content: space-between;
 	flex-wrap: wrap;
-    padding: 12px;
+    padding: 8px 12px 12px;
 	background: var(--vscode-sideBarTitle-background);
 	border-block-start: 1px solid var(--vscode-sideBarSectionHeader-border);
     z-index: 1;
@@ -12,7 +12,7 @@ mingit-toolbar {
 	& .commit-row {
 		position: relative;
 		flex-basis: 100%;
-		margin-block-end: 4px;
+		margin-block-start: 8px;
 
 		& input { padding-inline-end: 36px; }
 		& button {

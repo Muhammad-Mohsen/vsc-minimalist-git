@@ -5,7 +5,6 @@ class ChangesList extends HTMLElementBase {
 
 	connectedCallback() {
 		this.#render();
-		this.#toolbar = this.querySelector('mingit-toolbar');
 	}
 
 	onMessage(event) {
@@ -29,14 +28,25 @@ class ChangesList extends HTMLElementBase {
 		// show diff of 'path'
 		this.postMessage({ command: 'diffeditor', body: { name, path, decorator, hashes: hashes.split(',') } });
 	}
-	clearSelection() {
+	clearSelected() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
+	}
+	getSelected() {
+		const selected = Array.from(this.querySelectorAll('file.selected')).map(f => f.title);
+		if (selected.length) return selected;
+		else return Array.from(this.querySelectorAll('file')).map(f => f.title); // if none selected, return all
 	}
 
 	#render() {
-		this.innerHTML = `<mingit-toolbar></mingit-toolbar><change-list onclick="${this.handle}.clearSelection()"></change-list>`;
+		this.innerHTML = /*html*/`
+			<mingit-toolbar style="display: none;">
+			</mingit-toolbar><change-list onclick="${this.handle}.clearSelected()"></change-list>`;
+
+		this.#toolbar = this.querySelector('mingit-toolbar');
 	}
 	#renderChanges(status) {
+		this.#toolbar.style.display = '';
+
 		this.querySelector('change-list').innerHTML =
 			status.files.map(f => /*html*/`<file title="${f.path}" onclick="${this.handle}.onFileClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
 				<span>${f.name}</span><span class="secondary">${f.path}</span>
