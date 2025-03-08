@@ -52,7 +52,7 @@ class CommitList extends HTMLElementBase {
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
-						${this.#renderRefs(c.refs)}
+						${this.#renderRefs(c, state.logs.colors)}
 						<p class="commit-body" title="${c.body}">${c.body}</p>
 					</div>
 					<div class="row secondary">
@@ -123,14 +123,16 @@ class CommitList extends HTMLElementBase {
 			}, '');
 		});
 	}
-	#hasCollisions(c, p) {
-		const commit = c.parentElement;
-		const parentCommit = p.parentElement;
+	#hasCollisions(vc, vp) {
+		const commit = vc.parentElement;
+		const parentCommit = vp.parentElement;
+
+		if (commit.classList.contains('stash')) return false; // don't care about collisions for stashes
 
 		const list = [...commit.parentElement.children];
 		const commitIndex = list.indexOf(commit);
 		const parentCommitIndex = list.indexOf(parentCommit);
-		const branchIndex = [...commit.children].indexOf(c);
+		const branchIndex = [...commit.children].indexOf(vc);
 
 		for (let hitTestCommit of list.slice(commitIndex + 1, parentCommitIndex)) {
 			if (hitTestCommit.querySelector(`vertex:nth-child(${branchIndex + 1})`).classList.contains('filled')) return true;
@@ -139,12 +141,13 @@ class CommitList extends HTMLElementBase {
 		return false;
 	}
 
-	#renderRefs(refs) {
-		const head = refs.head ? `<i class="ic-head" title="${refs.head}"></i>` : '';
-		const origin = refs.origin ? `<i class="ic-origin" title="${refs.origin}"></i>` : '';
-		const branches = refs.branches.length ? `<i class="ic-branch" title="${refs.branches.join('\n')}"></i>` : '';
-		const tags = refs.tags.length ? `<i class="ic-tag" title="${refs.tags.join('\n')}"></i>` : '';
-		const stash = refs.stash ? `<i class="ic-stash-ref" title="Stash"></i>` : '';
+	#renderRefs(commit, colors) {
+		const refs = commit.refs;
+		const head = refs.head ? `<i class="ic-head" style="color: ${colors[commit.branchIndex]};" title="${refs.head}"></i>` : '';
+		const origin = refs.origin ? `<i class="ic-origin" style="color: ${colors[commit.branchIndex]};" title="${refs.origin}"></i>` : '';
+		const branches = refs.branches.length ? `<i class="ic-branch" style="color: ${colors[commit.branchIndex]};" title="${refs.branches.join('\n')}"></i>` : '';
+		const tags = refs.tags.length ? `<i class="ic-tag" style="color: ${colors[commit.branchIndex]};" title="${refs.tags.join('\n')}"></i>` : '';
+		const stash = refs.stash ? `<i class="ic-stash-ref" style="color: ${colors[commit.branchIndex]};" title="Stash"></i>` : '';
 
 		return head + origin + branches + tags + stash;
 	}

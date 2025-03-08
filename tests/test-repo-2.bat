@@ -42,7 +42,7 @@ echo now on feature-2 >> main.txt
 git add .
 git commit -m "Initial feature-2 change"
 
-@REM Create & stash `feature-2s.txt`, write "feature-2", and commit
+@REM Create `feature-2s.txt`, write "feature-2", and stash
 touch feature-2s.txt
 echo feature-2s > feature-2s.txt
 git add .
@@ -58,6 +58,18 @@ touch delete-me.txt
 echo "delete me" > delete-me.txt
 git add delete-me.txt
 git commit -m "Added delete-me.txt"
+
+@REM Create `main-2s.txt`, write "main-2", and stash
+touch main-2s.txt
+echo main-2s > main-2s.txt
+git add .
+git stash save main-2s.txt
+
+@REM Create `main-3s.txt`, write "main-3", and stash
+touch main-3s.txt
+echo main-3s > main-3s.txt
+git add .
+git stash save main-3s.txt
 
 @REM Create `feature-12.txt`, write "feature-12", and commit
 git checkout feature-1
