@@ -63,8 +63,9 @@ module.exports = (() => {
 		return simpleGit.commit(options.message, options.files);
 	}
 
-	function stash(options) {
-		simpleGit.stash();
+	async function stash(options) {
+		await simpleGit.add(options.files);
+		return simpleGit.stash([options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 
 	async function state(options) {

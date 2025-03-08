@@ -13,7 +13,9 @@ module.exports = class MainViewProvider {
 		this.#extensionURI = extensionURI;
 
 		git.setWorkingDirectory(vsc.workspacePath());
-		git.setOnChangeListener(() => this.#onRepoChange());
+
+		// on start, this fires twice, and there's no event object to check for anything...so handler assignment is delayed by a bit and a half
+		setTimeout(() => git.setOnChangeListener(() => this.#onRepoChange()), 5000);
 
 		git.repoPath().then(repoPath => {
 			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
@@ -87,6 +89,12 @@ module.exports = class MainViewProvider {
 				vsc.executeCommand('git.clone');
 				break;
 
+			case 'getstatus':
+				const status = await git.status();
+				this.#postMessage({ command: 'status', body: status });
+				this.#setBadge(status.files.length);
+				break;
+
 			case 'getlog':
 			case 'filter':
 				const state = await git.state({ filters: message.body?.value });
@@ -104,15 +112,9 @@ module.exports = class MainViewProvider {
 				else vsc.executeCommand('vscode.diff', left, right, title);
 				break;
 
-			case 'getstatus':
-				const status = await git.status();
-				this.#postMessage({ command: 'status', body: status });
-				this.#setBadge(status.files.length);
-				break;
-
 			case 'fetch':
 				await git.fetch();
-				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
+				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
 				break;
 
 			case 'pull':
@@ -120,8 +122,13 @@ module.exports = class MainViewProvider {
 				break;
 
 			case 'commit':
-				await git.commit(message);
-				git.state({ filters: message.body?.value }).then(state => this.#postMessage({ command: 'state', body: state }));
+				await git.commit(message.body);
+				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				break;
+
+			case 'stash':
+				await git.stash(message.body);
+				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
 				break;
 		}
 	}

@@ -21,7 +21,11 @@ class Toolbar extends HTMLElementBase {
 
 	stash() {
 		const files = this.#changeList.getSelected();
-		this.postMessage({ command: 'stash', files });
+		const message = this.#commitInput.value.trim();
+
+		this.toggleProgess(true);
+		this.#commitInput.value = '';
+		this.postMessage({ command: 'stash', body: { message, files } });
 	}
 
 	unstage() {
@@ -32,11 +36,11 @@ class Toolbar extends HTMLElementBase {
 	}
 	commit() {
 		const files = this.#changeList.getSelected();
-		const message = this.#commitInput.value;
+		const message = this.#commitInput.value.trim();
 
 		this.toggleProgess(true);
 		this.#commitInput.value = '';
-		this.postMessage({ command: 'commit', message, files });
+		this.postMessage({ command: 'commit', body: { message, files } });
 	}
 
 	toggle(force) {
