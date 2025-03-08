@@ -23,7 +23,7 @@ class ChangesList extends HTMLElementBase {
 	onFileClick(event, name, path, decorator, hashes) {
 		event.stopPropagation();
 		if (!event.ctrlKey) this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
-		event.currentTarget.classList.add('selected');
+		event.currentTarget.classList.toggle('selected');
 
 		// show diff of 'path'
 		this.postMessage({ command: 'diffeditor', body: { name, path, decorator, hashes: hashes.split(',') } });
