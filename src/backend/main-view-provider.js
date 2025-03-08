@@ -132,7 +132,7 @@ module.exports = class MainViewProvider {
 	}
 
 	async #onRepoChange() {
-		const state = await git.state({ filters: message.body?.value });
+		const state = await git.state({ filters: '' });
 		this.#postMessage({ command: 'state', body: state });
 		this.#setBadge(state.status.files.length);
 	}
