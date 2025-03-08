@@ -65,7 +65,7 @@ module.exports = (() => {
 
 	async function stash(options) {
 		await simpleGit.add(options.files);
-		return simpleGit.stash([options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
+		return simpleGit.stash(['save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 
 	async function state(options) {
