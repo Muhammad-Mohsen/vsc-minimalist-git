@@ -21,7 +21,11 @@ class CommitList extends HTMLElementBase {
 		selections = this.querySelectorAll('commit.selected');
 		const hashes = Array.from(selections).map(s => s.getAttribute('hash')).reverse(); // reverse the commits so that the older is first
 
+		// if it's a stash, diff it against its parent becuase otherwise, git won't return correct results!
+		if (event.currentTarget.classList.contains('stash') && hashes.length == 1) hashes.unshift(hashes[0] + '~');
+
 		const command = hashes.length == 1 && hashes[0] == '' ? 'getstatus' : 'getdiff';
+
 		this.postMessage({ command: command, body: { hashes } });
 	}
 
@@ -44,7 +48,7 @@ class CommitList extends HTMLElementBase {
 		this.querySelector('commit-list').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<commit onclick="${this.handle}.onClick(event)" hash="${c.hash}" tabindex="0">
+			return /*html*/`<commit onclick="${this.handle}.onClick(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
@@ -140,8 +144,9 @@ class CommitList extends HTMLElementBase {
 		const origin = refs.origin ? `<i class="ic-origin" title="${refs.origin}"></i>` : '';
 		const branches = refs.branches.length ? `<i class="ic-branch" title="${refs.branches.join('\n')}"></i>` : '';
 		const tags = refs.tags.length ? `<i class="ic-tag" title="${refs.tags.join('\n')}"></i>` : '';
+		const stash = refs.stash ? `<i class="ic-stash-ref" title="Stash"></i>` : '';
 
-		return head + origin + branches + tags;
+		return head + origin + branches + tags + stash;
 	}
 }
 

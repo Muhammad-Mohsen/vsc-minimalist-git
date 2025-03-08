@@ -42,6 +42,12 @@ echo now on feature-2 >> main.txt
 git add .
 git commit -m "Initial feature-2 change"
 
+@REM Create & stash `feature-2s.txt`, write "feature-2", and commit
+touch feature-2s.txt
+echo feature-2s > feature-2s.txt
+git add .
+git stash save feature-2s.txt
+
 @REM Rename feature-2.txt and commit
 git mv feature-2.txt feature-2-rename.txt
 git commit -m "Renamed feature-2.txt to feature-2-rename.txt"

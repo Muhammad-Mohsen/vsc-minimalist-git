@@ -123,5 +123,16 @@ mingit-commit-list {
 			& edge:not(.orphan) { border-inline-end-style: dashed; }
 			& .filled::before { border-radius: 50px; }
 		}
+
+		&.stash {
+			& .filled::before {
+				height: 6px;
+				margin-block: 3px;
+				border-radius: 0;
+				border: none;
+				border-block-start: 2px solid var(--branch-color);
+				border-block-end: 2px solid var(--branch-color);
+			}
+		}
 	}
 }

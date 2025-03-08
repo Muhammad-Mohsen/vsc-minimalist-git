@@ -11,9 +11,10 @@ module.exports = (() => {
 		builtInGit = git;
 
 		builtInGit.onDidOpenRepository(repo => {
-			repo.state.onDidChange(() => { // TODO dispose!
+			repo.state.onDidChange((event) => { // TODO dispose!
 				diffCache = {}; // purge the cache
 				onchange();
+				console.log('onDidChange', event);
 			});
 		});
 	});
@@ -31,11 +32,9 @@ module.exports = (() => {
 			return false;
 		}
 	}
-
 	async function isRepo() {
 		return await simpleGit.checkIsRepo();
 	}
-
 	async function repoPath() {
 		// return builtInGit.repositories[0].rootUri.fsPath;
 		// or
@@ -45,11 +44,14 @@ module.exports = (() => {
 	function setWorkingDirectory(cwd) {
 		simpleGit.cwd(cwd);
 	}
+	function setOnChangeListener(listener) {
+		onchange = listener;
+	}
 
 	function fetch(options) {
 		return simpleGit.fetch(options);
 	}
-	async function pull(options) {
+	function pull(options) {
 		return simpleGit.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
 	}
 	function push(options) {
@@ -61,6 +63,37 @@ module.exports = (() => {
 		return simpleGit.commit(options.message, options.files);
 	}
 
+	function stash(options) {
+		simpleGit.stash();
+	}
+
+	async function state(options) {
+		const state = {
+			logs: await log(options),
+			stashes: await stashList(),
+			status: await status(),
+		}
+
+		if (!state.stashes.length) return state;
+
+		// group stashes by parnet hash
+		const stashMap = state.stashes.reduce((map, s) => {
+			s.branchIndex = state.logs.branchCount; // set the stashes to display at a separate lane
+			if (map[s.parents[0]]) map[s.parents[0]].push(s);
+			else map[s.parents[0]] = [s];
+
+			return map;
+		}, {});
+
+		state.logs.branchCount++; // account for the stashes
+
+		Object.keys(stashMap).forEach(h => {
+			const i = state.logs.commitList.findIndex(c => c.hash == h);
+			state.logs.commitList.splice(i, 0, ...stashMap[h]);
+		});
+
+		return state;
+	}
 	async function log(options) {
 		options ||= {};
 
@@ -126,15 +159,38 @@ module.exports = (() => {
 
 		return [filterBy('grep'), filterBy('by'), filterBy('before'), filterBy('after')];
 	}
+	async function status() {
+		const status = await simpleGit.status(['-u']);
+		status.files = status.files.map(f => {
+			if (f.working_dir == 'M' && f.index == 'A') f.working_dir = 'A_M'; // added + modified
+			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
+			return {
+				name: f.path.split(/\\|\//).pop(),
+				path: f.path,
+				decorator: f.working_dir == ' ' ? f.index : f.working_dir
+			}
+		});
+
+		return status;
+	}
+	async function stashList() {
+		const stashes = await simpleGit.raw(['stash', 'list', `--format=${['%H', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`])
+		const list = stashes.split('\x1E').reduce((response, stash) => {
+			stash = stash.replace(/^\n/, '');
+			if (!stash) return response;
+
+			const [hash, parents, name, email, date, committerDate, body] = stash.split(/\x1F|\x1ESTART\x1E/);
+			response.push({ hash, parents: [parents.split(' ')[0]], refs: { branches: [], tags: [], head: null, origin: null, stash: true }, name, email, date, committerDate, body });
+			return response
+		}, []);
+
+		return list;
+	}
 
 	function setConfig(key, val, append, scope) {
 		return simpleGit.addConfig(key, val, append || false, scope || 'local');
 	}
 	function getConfig(key) {
-	}
-
-	function stash(options) {
-		simpleGit.stash();
 	}
 
 	async function diff(options) {
@@ -170,20 +226,6 @@ module.exports = (() => {
 		};
 
 		return diffCache[options[0]];
-	}
-	async function status() {
-		const status = await simpleGit.status(['-u', '--show-stash']);
-		status.files = status.files.map(f => {
-			if (f.working_dir == 'M' && f.index == 'A') f.working_dir = 'A_M'; // added + modified
-			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
-			return {
-				name: f.path.split(/\\|\//).pop(),
-				path: f.path,
-				decorator: f.working_dir == ' ' ? f.index : f.working_dir
-			}
-		});
-
-		return status;
 	}
 	function resolveDiffURIs(file) {
 		const empty = vsc.absoluteURI('../../res/git-empty.txt');
@@ -247,14 +289,6 @@ module.exports = (() => {
 		return decorator;
 	}
 
-	async function state(options) {
-		return {
-			logs: await log(options),
-			status: await status()
-			// TODO add stashes
-		}
-	}
-
 	function uri(path, ref) {
 		return builtInGit.toGitUri(vsc.absoluteURI(path), ref);
 	}
@@ -263,37 +297,33 @@ module.exports = (() => {
 		return hash.substring(0, 6) + '~';
 	}
 
-	function setOnChangeListener(listener) {
-		onchange = listener;
-	}
-
 	return {
 		isInstalled,
 		setWorkingDirectory,
 		isRepo,
 		repoPath,
+		setOnChangeListener,
 
 		fetch,
 		pull,
 		push,
-
 		commit,
+		stash,
 
 		setConfig,
 		getConfig,
 
-		stash,
-
 		state,
 		log,
 		status,
+		stashList,
+
 		diff,
 		resolveDiffURIs,
 
 		uri,
 		shortHash,
 
-		setOnChangeListener,
 	};
 
 })();

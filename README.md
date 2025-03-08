@@ -65,7 +65,7 @@ A Simple Git Extension for VSCode
 		- DONE - get the `branchIndex` of the head of the current branch (in the `status` response) and use it as the index for the `working tree` entry
 		- DONE - onclick: show status
 
-- changes
+- DONE - changes
 	- DONE - working tree changes
 		- DONE - dispatch load event
 		- NOT NEEDED - parse `git status`
@@ -79,7 +79,12 @@ A Simple Git Extension for VSCode
 - commands (overflow menus)
 	- toolbar
 		- DONE - fetch
+		- DONE - pull
+		- push
 		- DONE - commit
+		- stash
+		- stage
+		- unstage
 		- overflow
 			- toggle `--rebase`
 			- toggle `--autostash`
@@ -91,9 +96,20 @@ A Simple Git Extension for VSCode
 		- cherry pick
 		- merge
 		- ...
+		- unstash (for stashes)
+		- drop stash (for stashes)
 	- files (context menu)
 		- stage/unstage selected
 		- discard selected
+
+- DONE - stashes
+	- DONE - list the stashes
+		- group stashes by parent
+		- splice them into the commits array
+	- DONE - assign them a new lane maxBranchIndex + 1 & sort them by parent
+	- DONE - simply render them!
+
+- render staged files differently
 
 - DONE - repo detections
 	- DONE - 'welcome' screen
