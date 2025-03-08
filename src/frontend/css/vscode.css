@@ -19,11 +19,6 @@ body {
 	overflow: hidden;
 }
 
-/* body > *, form > * {
-	margin-block-start: var(--input-margin-vertical);
-	margin-block-end: var(--input-margin-vertical);
-} */
-
 * { scrollbar-width: thin; }
 
 ::-webkit-resizer {
@@ -82,3 +77,30 @@ textarea {
 }
 
 input::placeholder, textarea::placeholder { color: var(--vscode-input-placeholderForeground); }
+
+.progress {
+	width: 10vw;
+	height: 2px;
+	margin-block-end: 2px;
+	background: var(--vscode-progressBar-background);
+
+	animation: progress 3s linear infinite;
+
+	&.absolute {
+		position: absolute;
+		inset: 0 auto auto 0;
+	}
+}
+@keyframes progress {
+	0% {
+		translate: -50vw 0;
+		scale: .3 1;
+	}
+	50% {
+		scale: .7 1;
+	}
+	100% {
+		translate: 100vw 0;
+		scale: .3 1;
+	}
+}

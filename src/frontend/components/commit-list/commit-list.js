@@ -1,6 +1,7 @@
 import HTMLElementBase from "../../core/html-element-base.js";
 
 class CommitList extends HTMLElementBase {
+	#progress;
 
 	connectedCallback() {
 		this.#render();
@@ -20,7 +21,8 @@ class CommitList extends HTMLElementBase {
 		selections = this.querySelectorAll('commit.selected');
 		const hashes = Array.from(selections).map(s => s.getAttribute('hash')).reverse(); // reverse the commits so that the older is first
 
-		this.postMessage({ command: 'getdiff', body: { hashes } });
+		const command = hashes.length == 1 && hashes[0] == '' ? 'getstatus' : 'getdiff';
+		this.postMessage({ command: command, body: { hashes } });
 	}
 
 	filter(event) {
@@ -29,15 +31,20 @@ class CommitList extends HTMLElementBase {
 
 	#render() {
 		this.innerHTML = /*html*/`
+			<div class="progress"></div>
 			<input placeholder="Search" title="[grep: {search_query}] [by: {author}[,{author}]] [before: {date}] [after: {date}]" onchange="${this.handle}.filter(event);">
 			<commit-list></commit-list>`;
+
+		this.#progress = this.querySelector('.progress');
 	}
 
 	#renderCommits(state) {
+		this.#progress.style.display = 'none'; // hide the loading
+
 		this.querySelector('commit-list').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<commit onclick="${this.handle}.onClick(event, '${c.hash}')" hash="${c.hash}" tabindex="0">
+			return /*html*/`<commit onclick="${this.handle}.onClick(event)" hash="${c.hash}" tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
@@ -62,7 +69,7 @@ class CommitList extends HTMLElementBase {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
 
 		this.querySelector('commit-list').insertAdjacentHTML('afterbegin', /*html*/`
-			<commit class="working-tree" onclick="${this.handle}.onClick(event, '')" hash="" tabindex="0">
+			<commit class="working-tree selected" onclick="${this.handle}.onClick(event)" hash="" tabindex="0">
 				${this.#renderVertex({ hash: '', branchIndex: parent.branchIndex, parents: [parent.hash] }, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<p class="commit-body" title="Working Tree">Working Tree</p>
