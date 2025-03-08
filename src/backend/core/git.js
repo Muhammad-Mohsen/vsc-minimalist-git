@@ -13,7 +13,7 @@ module.exports = (() => {
 		builtInGit.onDidOpenRepository(repo => {
 			repo.state.onDidChange((event) => { // TODO dispose!
 				diffCache = {}; // purge the cache
-				onchange();
+				onchange?.();
 				console.log('onDidChange', event);
 			});
 		});
