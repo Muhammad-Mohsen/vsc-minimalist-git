@@ -60,10 +60,14 @@ module.exports = (() => {
 	}
 
 	function workspaceFolder() {
-		return vscode.workspace.workspaceFolders[0];
+		return vscode.workspace.workspaceFolders?.[0];
 	}
 	function workspacePath() {
-		return workspaceFolder().uri.fsPath;
+		const workspace = workspaceFolder();
+		if (workspace) return workspace.uri.fsPath;
+	}
+	function joinPath(base, ...segments) {
+		return vscode.Uri.joinPath(base, ...segments);
 	}
 	/** @param {string} path */
 	function absoluteURI(path) {
@@ -94,6 +98,7 @@ module.exports = (() => {
 
 		workspaceFolder,
 		workspacePath,
+		joinPath,
 		absoluteURI,
 		isDark,
 
