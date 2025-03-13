@@ -12,6 +12,10 @@
 	"main": "src/backend/extension.js",
 	"activationEvents": [],
 
+	"files": [
+		"res/git-empty.txt"
+	],
+
 	"contributes": {
 
 		"viewsContainers": {
