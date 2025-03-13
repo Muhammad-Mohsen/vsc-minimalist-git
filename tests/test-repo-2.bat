@@ -91,10 +91,30 @@ git commit -m "Deleted delete-me.txt"
 @REM merge feature-1 into master
 git merge feature-1 --no-ff -m "Merge branch 'feature-1' into 'master`"
 
-@REM Append "change on feature-1" and commit
+@REM Append "change on feature-2" and commit
 git checkout feature-2
 echo feature-2 change >> feature-2.txt
 git commit -m "Changed feature-2"
+
+@REM Create `relocate-me.txt`, and commit
+touch relocate-me.txt
+echo yet to be relocated > relocate-me.txt
+git add .
+git commit -m "Added relocate-me.txt"
+
+mkdir "sub-dir"
+mkdir "sub-dir/super-sub-2"
+git mv relocate-me.txt sub-dir/relocate-me.txt
+echo relocated once >> sub-dir/relocate-me.txt
+git commit -m "Relocated relocate-me.txt"
+
+git mv "sub-dir/relocate-me.txt" "sub-dir/super-sub-2/relocate-me.txt"
+echo relocated again >> relocate-me.txt
+git commit -m "Relocated relocate-me.txt again"
+
+git mv "sub-dir/super-sub-2/relocate-me.txt" "sub-dir/relocate-me.txt"
+echo relocated one last time >> relocate-me.txt
+git commit -m "Relocated relocate-me.txt one last time"
 
 echo "Repository test-repo created and populated."
 git log --graph --decorate --oneline --all
