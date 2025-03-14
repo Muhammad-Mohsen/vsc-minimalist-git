@@ -20,9 +20,9 @@ class ChangesList extends HTMLElementBase {
 		}
 	}
 
-	onFileClick(event, name, path, decorator, hashes) {
+	onClick(event, name, path, decorator, hashes) {
 		event.stopPropagation();
-		if (!event.ctrlKey) this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
+		if (!event.ctrlKey) this.querySelectorAll('li.selected').forEach(c => c.classList.remove('selected'));
 		event.currentTarget.classList.toggle('selected');
 
 		// show diff of 'path'
@@ -32,26 +32,26 @@ class ChangesList extends HTMLElementBase {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 	}
 	getSelected() {
-		const selected = Array.from(this.querySelectorAll('file.selected')).map(f => f.title);
+		const selected = Array.from(this.querySelectorAll('li.selected')).map(f => f.title);
 		if (selected.length) return selected;
-		else return Array.from(this.querySelectorAll('file')).map(f => f.title); // if none selected, return all
+		else return Array.from(this.querySelectorAll('li')).map(f => f.title); // if none selected, return all
 	}
 
 	#render() {
 		this.innerHTML = /*html*/`
 			<mingit-toolbar style="display: none;">
-			</mingit-toolbar><change-list onclick="${this.handle}.clearSelected()"></change-list>`;
+			</mingit-toolbar><ul onclick="${this.handle}.clearSelected()"></ul>`;
 
 		this.#toolbar = this.querySelector('mingit-toolbar');
 	}
 	#renderChanges(status) {
 		this.#toolbar.style.display = '';
 
-		this.querySelector('change-list').innerHTML =
-			status.files.map(f => /*html*/`<file title="${f.path}" onclick="${this.handle}.onFileClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
+		this.querySelector('ul').innerHTML =
+			status.files.map(f => /*html*/`<li title="${f.path}" onclick="${this.handle}.onClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
 				<span>${f.name}</span><span class="secondary">${f.path}</span>
 				${this.#renderDecorations(f)}
-			</file>`).join('');
+			</li>`).join('');
 	}
 	#renderDecorations(file) {
 		if (file.decorator) return `<decorations class="${file.decorator.trim() || file.index}">${file.decorator.trim() || file.index}</decorations>`;

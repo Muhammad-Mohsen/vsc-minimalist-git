@@ -4,13 +4,13 @@ mingit-change-list {
 	flex-direction: column;
 	overflow: hidden;
 
-	change-list {
+	ul {
 		flex-grow: 1;
 		width: calc(100% + 2px);
 		overflow: hidden auto;
 	}
 
-	& file {
+	& li {
 		display: flex;
 		align-items: baseline;
 		gap: 6px;

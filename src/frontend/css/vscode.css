@@ -28,6 +28,11 @@ body {
 
 *:focus { outline-color: var(--vscode-focusBorder) !important; }
 
+ul, li {
+	appearance: none;
+	margin: 0;
+	padding: 0;
+}
 a { color: var(--vscode-textLink-foreground); }
 a:hover, a:active { color: var(--vscode-textLink-activeForeground); }
 

@@ -1,5 +1,6 @@
 import HTMLElementBase from "../../core/html-element-base.js";
 
+// 4600 commits -> 60k elements
 class CommitList extends HTMLElementBase {
 	#progress;
 
@@ -14,11 +15,11 @@ class CommitList extends HTMLElementBase {
 	}
 
 	onClick(event) {
-		let selections = this.querySelectorAll('commit.selected');
+		let selections = this.querySelectorAll('li.selected');
 		if (!event.ctrlKey || selections.length >= 2) selections.forEach(c => c.classList.remove('selected'));
 		event.currentTarget.classList.add('selected');
 
-		selections = this.querySelectorAll('commit.selected');
+		selections = this.querySelectorAll('li.selected');
 		const hashes = Array.from(selections).map(s => s.getAttribute('hash')).reverse(); // reverse the commits so that the older is first
 
 		// if it's a stash, diff it against its parent becuase otherwise, git won't return correct results!
@@ -37,7 +38,7 @@ class CommitList extends HTMLElementBase {
 		this.innerHTML = /*html*/`
 			<div class="progress"></div>
 			<input placeholder="Search" title="[grep: {search_query}] [by: {author}[,{author}]] [before: {date}] [after: {date}]" onchange="${this.handle}.filter(event);">
-			<commit-list></commit-list>`;
+			<ul></ul>`;
 
 		this.#progress = this.querySelector('.progress');
 	}
@@ -45,10 +46,10 @@ class CommitList extends HTMLElementBase {
 	#renderCommits(state) {
 		this.#progress.style.display = 'none'; // hide the loading
 
-		this.querySelector('commit-list').innerHTML = state.logs.commitList.map(c => {
+		this.querySelector('ul').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<commit onclick="${this.handle}.onClick(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
+			return /*html*/`<li onclick="${this.handle}.onClick(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
@@ -61,7 +62,7 @@ class CommitList extends HTMLElementBase {
 						<address class="author" title="${c.name} &lt;${c.email}&gt;">${c.name}</address>
 					</div>
 				</div>
-			</commit>`
+			</li>`
 
 		}).join('');
 
@@ -72,14 +73,14 @@ class CommitList extends HTMLElementBase {
 	#renderWorkingTree(state) {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
 
-		this.querySelector('commit-list').insertAdjacentHTML('afterbegin', /*html*/`
-			<commit class="working-tree selected" onclick="${this.handle}.onClick(event)" hash="" tabindex="0">
+		this.querySelector('ul').insertAdjacentHTML('afterbegin', /*html*/`
+			<li class="working-tree selected" onclick="${this.handle}.onClick(event)" hash="" tabindex="0">
 				${this.#renderVertex({ hash: '', branchIndex: parent.branchIndex, parents: [parent.hash] }, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<p class="commit-body" title="Working Tree">Working Tree</p>
 					<p class="row secondary">${state.status.files.length} change(s)</p>
 				</div>
-			</commit>`);
+			</li>`);
 	}
 	#renderVertex(commit, count, colors) {
 		return new Array(count).fill('')
