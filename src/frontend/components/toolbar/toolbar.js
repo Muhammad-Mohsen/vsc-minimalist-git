@@ -25,14 +25,17 @@ class Toolbar extends HTMLElementBase {
 
 		this.toggleProgess(true);
 		this.#commitInput.value = '';
+		onCommitMessageChange();
 		this.postMessage({ command: 'stash', body: { message, files } });
 	}
 
 	unstage() {
 		const files = this.#changeList.getSelected();
+		this.postMessage({ command: 'unstage', body: { message, files } });
 	}
 	stage() {
 		const files = this.#changeList.getSelected();
+		this.postMessage({ command: 'stage', body: { message, files } });
 	}
 	commit() {
 		const files = this.#changeList.getSelected();
@@ -40,6 +43,7 @@ class Toolbar extends HTMLElementBase {
 
 		this.toggleProgess(true);
 		this.#commitInput.value = '';
+		onCommitMessageChange();
 		this.postMessage({ command: 'commit', body: { message, files } });
 	}
 
@@ -51,8 +55,8 @@ class Toolbar extends HTMLElementBase {
 		this.#progress.style.display = force ? '' : 'none';
 	}
 
-	onCommitMessageChange(input) {
-		this.#commitButton.toggleAttribute('disabled', !input.value)
+	onCommitMessageChange() {
+		this.#commitButton.toggleAttribute('disabled', !this.#commitInput.value)
 	}
 
 	onMessage(event) {
@@ -74,7 +78,7 @@ class Toolbar extends HTMLElementBase {
 			<separator></separator>
 			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button>
 			<div class="commit-row">
-				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange(this);">
+				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange();">
 				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit();"></button>
 			</div>
 		`;
