@@ -3,7 +3,9 @@ const vsc = require('./vsc');
 
 // git wrapper
 module.exports = (() => {
-	let diffCache = {};
+
+	const PAGE_COUNT = 500;
+
 	let onchange; // repo change handler
 
 	let builtInGit;
@@ -12,7 +14,6 @@ module.exports = (() => {
 
 		builtInGit.onDidOpenRepository(repo => {
 			repo.state.onDidChange((event) => { // TODO dispose!
-				diffCache = {}; // purge the cache
 				onchange?.();
 				console.log('onDidChange', event);
 			});
@@ -24,23 +25,7 @@ module.exports = (() => {
 		abort: abortController.signal // abortController.abort();
 	});
 
-	async function isInstalled() {
-		try {
-			await simpleGit.version();
-			return true;
-		} catch {
-			return false;
-		}
-	}
-	async function isRepo() {
-		return await simpleGit.checkIsRepo();
-	}
-	async function repoPath() {
-		// return builtInGit.repositories[0].rootUri.fsPath;
-		// or
-		return await simpleGit.revparse(['--show-toplevel']);
-	}
-
+	// initialization
 	function setWorkingDirectory(cwd) {
 		simpleGit.cwd(cwd);
 	}
@@ -48,6 +33,7 @@ module.exports = (() => {
 		onchange = listener;
 	}
 
+	// commands
 	function fetch(options) {
 		return simpleGit.fetch(options);
 	}
@@ -62,12 +48,27 @@ module.exports = (() => {
 		await simpleGit.add(options.files);
 		return simpleGit.commit(options.message, options.files);
 	}
-
+	async function stage(options) {
+		return await simpleGit.add(options.files);
+	}
+	async function unstage(options) {
+		return await simpleGit.reset(['HEAD', '--', ...options.files]);
+	}
+	async function discard(options) {
+		return await simpleGit.checkout(['--', ...options.files]);
+	}
 	async function stash(options) {
 		await simpleGit.add(options.files);
 		return simpleGit.stash(['save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 
+	function setConfig(key, val, append, scope) {
+		return simpleGit.addConfig(key, val, append || false, scope || 'local');
+	}
+	function getConfig(key) {
+	}
+
+	// graph
 	async function state(options) {
 		const state = {
 			logs: await log(options),
@@ -77,7 +78,7 @@ module.exports = (() => {
 
 		if (!state.stashes.length) return state;
 
-		// group stashes by parnet hash
+		// group stashes by parent hash
 		const stashMap = state.stashes.reduce((map, s) => {
 			s.branchIndex = state.logs.branchCount; // set the stashes to display at a separate lane
 			if (map[s.parents[0]]) map[s.parents[0]].push(s);
@@ -95,9 +96,7 @@ module.exports = (() => {
 
 		return state;
 	}
-	async function log(options) {
-		options ||= {};
-
+	async function log(options = {}) {
 		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		const logs = await simpleGit.raw([
 			'log',
@@ -108,7 +107,8 @@ module.exports = (() => {
 			'--tags',
 			'--graph',
 			'--author-date-order',
-			...logFilters(options?.filters),
+			`--max-count=${PAGE_COUNT}`,
+			...logFilters(options.filters),
 			'-i', // case insensitive (for filtering)
 		].filter(p => p));
 
@@ -163,12 +163,16 @@ module.exports = (() => {
 	async function status() {
 		const status = await simpleGit.status(['-u']);
 		status.files = status.files.map(f => {
-			if (f.working_dir == 'M' && f.index == 'A') f.working_dir = 'A_M'; // added + modified
+			f.index = f.index?.trim() || '';
+			f.working_dir = f.working_dir?.trim() || '';
+
+			if (f.index == '?') f.index = ''; // this means that working_dir is '?' as well
+			if (f.index) f.index = `(${f.index})`;
 			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
 			return {
 				name: f.path.split(/\\|\//).pop(),
 				path: f.path,
-				decorator: f.working_dir == ' ' ? f.index : f.working_dir
+				decorator: [f.index, f.working_dir].filter(i => i).join(' ')
 			}
 		});
 
@@ -188,30 +192,22 @@ module.exports = (() => {
 		return list;
 	}
 
-	function setConfig(key, val, append, scope) {
-		return simpleGit.addConfig(key, val, append || false, scope || 'local');
-	}
-	function getConfig(key) {
-	}
-
+	// diff
 	async function diff(options) {
-		// if (diffCache[options.join('')]) return diffCache[options[0]];
-
-		if (options.length == 1 && options[0] == '') return status(); // working tree
+		if (options.length == 1 && options[0] == '') return status();
 
 		let diff = options.length == 1
 			? await simpleGit.show([options[0], '--raw', '--numstat', '--oneline'])
 			: await simpleGit.diff([options.join('..'), '--raw', '--numstat']);
 
-		diff = diff
-			.split('\n') // split output
+		diff = diff.split('\n')
 			.slice(options.length == 1 ? 1 : 0) // remove commit data (coming from `--oneline`) if `git show` was used
-			.filter(l => l); // remove emptis
+			.filter(l => l);
 
-		const raw = diff.filter(d => d.startsWith(':')); // shows state (added/deleted/renamed/etc.)
-		const numstat = diff.filter(d => !d.startsWith(':')); // shows additions/deletions/etc.
+		const raw = diff.filter(d => d.startsWith(':')); // added/deleted/renamed/etc.
+		const numstat = diff.filter(d => !d.startsWith(':')); // additions/deletions
 
-		diffCache[options[0]] = {
+		return {
 			hashes: options, // send the hashes back up so they can be used when showing the actual file diffs
 			files: numstat.map((n, i) => {
 				n = n.split('\t');
@@ -225,11 +221,10 @@ module.exports = (() => {
 				};
 			})
 		};
-
-		return diffCache[options[0]];
 	}
-	function resolveDiffURIs(file) {
-		const empty = vsc.absoluteURI('../../res/git-empty.txt');
+	// getting the diff URIs is a wonderful mess! and that's not even everything
+	async function resolveDiffURIs(file, extensionURI) {
+		const empty = vsc.joinPath(extensionURI, 'res', 'git-empty.txt');
 
 		if (file.hashes[0] == '') {
 			file.hashes[0] = 'HEAD';
@@ -241,42 +236,54 @@ module.exports = (() => {
 		}
 
 		// untracked -> use actual file system URI
-		if (['?', 'U'].includes(file.decorator)) return {
+		if (file.decorator == 'U') return {
 			left: empty,
 			right: vsc.absoluteURI(file.path),
 			title: `${file.name} (${file.decorator})`
 		};
 
 		// added -> use git URI (curr hash)
-		if (['A', 'A_M'].includes(file.decorator)) return {
+		if (file.decorator.includes('A')) return {
 			left: empty,
-			right: uri(file.path, file.hashes[1]),
+			right: await uri(file.path, file.hashes[1]),
 			title: `${file.name} (${file.decorator})`
 		};
 
 		// deleted -> use git URI (prev hash)
 		if (file.decorator == 'D') return {
-			left: uri(file.path, file.hashes[0]),
+			left: await uri(file.path, file.hashes[0]),
 			right: empty,
 			title: `${file.name} (${file.decorator})`
 		};
 
 		// renamed
 		if (file.decorator == 'R') {
-			const basePath = file.path.split('/').slice(0, -1).join('/') + '/';
-			const [ln, rn] = file.name.split(' => ');
+			// if only a path segment changes
+			if (file.path.includes('{')) {
+				const lr = file.path.match(/({.+})/)[0];
+				const [l, r] = lr.slice(1, -1).split(' => ');
 
+				return {
+					// remove possible double slashes (e.g. {folderA => })
+					left: await uri(file.path.replace(lr, l).replace(/\/\//g, '/'), file.hashes[0]),
+					right: await uri(file.path.replace(lr, r).replace(/\/\//g, '/'), file.hashes[1]),
+					title: file.path.replace('=>', '→')
+				}
+
+			}
+
+			const [l, r] = file.path.split(' => ');
 			return {
-				left: uri(basePath + ln, file.hashes[0]),
-				right: uri(basePath + rn, file.hashes[1]),
-				title: `${ln} → ${rn}`
+				left: await uri(l, file.hashes[0]),
+				right: await uri(r, file.hashes[1]),
+				title: file.path.replace('=>', '→')
 			}
 		}
 
 		// else
 		return {
-			left: uri(file.path, file.hashes[0]),
-			right: file.hashes[1] == '' ? vsc.absoluteURI(file.path) : uri(file.path, file.hashes[1]),
+			left: await uri(file.path, file.hashes[0]) || empty,
+			right: file.hashes[1] == '' ? vsc.absoluteURI(file.path) : await uri(file.path, file.hashes[1]) || empty,
 			title: file.name
 		}
 	}
@@ -290,12 +297,33 @@ module.exports = (() => {
 		return decorator;
 	}
 
-	function uri(path, ref) {
-		return builtInGit.toGitUri(vsc.absoluteURI(path), ref);
+	// utils
+	async function isInstalled() {
+		try {
+			await simpleGit.version();
+			return true;
+		} catch {
+			return false;
+		}
 	}
-	function shortHash(hash) {
-		if (['Working Tree', 'HEAD'].includes(hash)) return hash; // special value
-		return hash.substring(0, 6) + '~';
+	async function isRepo() {
+		return await simpleGit.checkIsRepo();
+	}
+	async function repoPath() {
+		// return builtInGit.repositories[0].rootUri.fsPath;
+		// or
+		return await simpleGit.revparse(['--show-toplevel']);
+	}
+
+	async function uri(path, ref) {
+		if (await uriExists(path, ref)) return builtInGit.toGitUri(vsc.absoluteURI(path), ref);
+	}
+	async function uriExists(path, ref) {
+		 try {
+			const err = await simpleGit.catFile(['-e', `${ref}:${path}`]);
+			return true;
+
+		} catch { return false; }
 	}
 
 	return {
@@ -309,6 +337,9 @@ module.exports = (() => {
 		pull,
 		push,
 		commit,
+		stage,
+		unstage,
+		discard,
 		stash,
 
 		setConfig,
@@ -323,7 +354,6 @@ module.exports = (() => {
 		resolveDiffURIs,
 
 		uri,
-		shortHash,
 
 	};
 

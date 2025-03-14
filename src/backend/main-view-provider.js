@@ -11,6 +11,7 @@ module.exports = class MainViewProvider {
 
 	constructor(extensionURI) {
 		this.#extensionURI = extensionURI;
+		if (!vsc.workspacePath()) return;
 
 		git.setWorkingDirectory(vsc.workspacePath());
 
@@ -107,9 +108,9 @@ module.exports = class MainViewProvider {
 				break;
 
 			case 'diffeditor':
-				const { left, right, title } = git.resolveDiffURIs(message.body);
-				if (!left || !right) vsc.executeCommand('vscode.open', left || right, null, title);
-				else vsc.executeCommand('vscode.diff', left, right, title);
+				const { left, right, title } = await git.resolveDiffURIs(message.body, this.#extensionURI);
+				vsc.executeCommand('vscode.diff', left, right, title);
+
 				break;
 
 			case 'fetch':
@@ -123,6 +124,16 @@ module.exports = class MainViewProvider {
 
 			case 'commit':
 				await git.commit(message.body);
+				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				break;
+
+			case 'stage':
+				await git.stage(message.body);
+				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				break;
+
+			case 'unstage':
+				await git.unstage(message.body);
 				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
 				break;
 

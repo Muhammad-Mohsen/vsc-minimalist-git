@@ -76,20 +76,33 @@ A Simple Git Extension for VSCode
 	- DONE - onclick show diff
 	- DONE - commit message input + inline commit button
 
-- commands (overflow menus)
+- DONE - stashes
+	- DONE - list the stashes
+		- group stashes by parent
+		- splice them into the commits array
+	- DONE - assign them a new lane maxBranchIndex + 1 & sort them by parent
+	- DONE - simply render them!
+
+- commands
 	- toolbar
 		- DONE - fetch
 		- DONE - pull
 		- push
 		- DONE - commit
-		- stash
-		- stage
-		- unstage
+		- DONE - stash
+		- DONE - stage
+		- DONE - unstage
+		- discard -> show confirmation message
 		- overflow
 			- toggle `--rebase`
 			- toggle `--autostash`
 			- change author
 			- force push
+			- rename branch
+			- reset -> show a quick select --soft, --hard, HEAD, origin -> show confirmation
+	- toolbar (context menu)
+		- push/push --force
+		- commit/commit --amend
 	- commits (context menu)
 		- add tag
 		- checkout
@@ -98,18 +111,14 @@ A Simple Git Extension for VSCode
 		- ...
 		- unstash (for stashes)
 		- drop stash (for stashes)
-	- files (context menu)
-		- stage/unstage selected
-		- discard selected
-
-- DONE - stashes
-	- DONE - list the stashes
-		- group stashes by parent
-		- splice them into the commits array
-	- DONE - assign them a new lane maxBranchIndex + 1 & sort them by parent
-	- DONE - simply render them!
 
 - render staged files differently
+- conflicts
+	- command: 'git.openMergeEditor'
+	- title: l10n.t('Open Merge'),
+	- arguments: [resource.rightUri]
+
+- DONE - resolve renamed files -> relocate the file (move it under a secondary folder, then move it back)
 
 - DONE - repo detections
 	- DONE - 'welcome' screen
