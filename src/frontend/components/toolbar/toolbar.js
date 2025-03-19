@@ -47,6 +47,12 @@ class Toolbar extends HTMLElementBase {
 		this.postMessage({ command: 'commit', body: { message, files } });
 	}
 
+	overflow(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.target.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: event.clientX, clientY: event.clientY }));
+	}
+
 	toggle(force) {
 		this.querySelectorAll('.toggleable').forEach(t => t.toggleAttribute('disabled', force != true));
 		if (force) this.#commitInput.dispatchEvent(new Event('input'));
@@ -76,7 +82,7 @@ class Toolbar extends HTMLElementBase {
 			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage();" title="Unstage"></button>
 			<button class="tertiary ic-stage toggleable" onclick="${this.handle}.stage();" title="Stage"></button>
 			<separator></separator>
-			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow();"></button>
+			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);" data-vscode-context='{ "preventDefaultContextMenuItems": true, "isOverflow": true }'></button>
 			<div class="commit-row">
 				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange();">
 				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit();"></button>

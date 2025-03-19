@@ -34,59 +34,316 @@
 					"type": "webview",
 					"name": "",
 					"contextualTitle": "Minimalist Git",
-					"visibility": "visible"
+					"visibility": "visible",
+					"icon": "res/img/activitybar-icon.svg"
+				}
+			]
+		},
+
+		"menus": {
+			"webview/context": [
+				{
+					"command": "mingit.checkoutCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "1_commits"
+				},
+				{
+					"command": "mingit.cherrypickCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "1_commits"
+				},
+				{
+					"command": "mingit.revertCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "1_commits"
+				},
+				{
+					"command": "mingit.dropCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "1_commits"
+				},
+
+				{
+					"command": "mingit.mergeCommitIntoCurrent",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "2_commits2"
+				},
+				{
+					"command": "mingit.rebaseCurrentOntoCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "2_commits2"
+				},
+				{
+					"command": "mingit.resetCurrentToCommit",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "2_commits2"
+				},
+
+				{
+					"command": "mingit.copyHash",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "3_commitCopy"
+				},
+				{
+					"command": "mingit.copyMessage",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "3_commitCopy"
+				},
+
+				{
+					"command": "mingit.addTag",
+					"when": "isCommit && webviewId == 'mingit-main-view'",
+					"group": "4_commitTags"
+				},
+				{
+					"command": "mingit.deleteTag",
+					"when": "isCommit && tags && webviewId == 'mingit-main-view'",
+					"group": "4_commitTags"
+				},
+
+				{
+					"command": "mingit.unstash",
+					"when": "isStash && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+				{
+					"command": "mingit.dropStash",
+					"when": "isStash && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+
+				{
+					"command": "mingit.changeAuthor",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+				{
+					"command": "mingit.renameBranch",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+				{
+					"command": "mingit.resetSoft",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+				{
+					"command": "mingit.resetHard",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+
+				{
+					"command": "mingit.commit",
+					"when": "isCommitButton && webviewId == 'mingit-main-view'"
+				},
+				{
+					"command": "mingit.commitAmend",
+					"when": "isCommitButton && webviewId == 'mingit-main-view'"
+				},
+
+				{
+					"command": "mingit.push",
+					"when": "isPushButton && webviewId == 'mingit-main-view'"
+				},
+				{
+					"command": "mingit.pushForce",
+					"when": "isPushButton && webviewId == 'mingit-main-view'"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "mingit.checkoutCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.cherrypickCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.revertCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.dropCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.mergeCommitIntoCurrent",
+					"when": "false"
+				},
+				{
+					"command": "mingit.rebaseCurrentOntoCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.resetCurrentToCommit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.copyHash",
+					"when": "false"
+				},
+				{
+					"command": "mingit.copyMessage",
+					"when": "false"
+				},
+				{
+					"command": "mingit.addTag",
+					"when": "false"
+				},
+				{
+					"command": "mingit.deleteTag",
+					"when": "false"
+				},
+				{
+					"command": "mingit.unstash",
+					"when": "false"
+				},
+				{
+					"command": "mingit.dropStash",
+					"when": "false"
+				},
+				{
+					"command": "mingit.changeAuthor",
+					"when": "false"
+				},
+				{
+					"command": "mingit.renameBranch",
+					"when": "false"
+				},
+				{
+					"command": "mingit.resetSoft",
+					"when": "false"
+				},
+				{
+					"command": "mingit.resetHard",
+					"when": "false"
+				},
+				{
+					"command": "mingit.commit",
+					"when": "false"
+				},
+				{
+					"command": "mingit.commitAmend",
+					"when": "false"
+				},
+				{
+					"command": "mingit.push",
+					"when": "false"
+				},
+				{
+					"command": "mingit.pushForce",
+					"when": "false"
 				}
 			]
 		},
 
 		"commands": [
 			{
-				"category": "Minimalist Git",
+				"command": "mingit.checkoutCommit",
+				"title": "Checkout commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.cherrypickCommit",
+				"title": "Cherrypick commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.revertCommit",
+				"title": "Revert commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.dropCommit",
+				"title": "Drop commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.mergeCommitIntoCurrent",
+				"title": "Merge commit into current branch",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.rebaseCurrentOntoCommit",
+				"title": "Rebase current branch onto commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.resetCurrentToCommit",
+				"title": "Reset current branch to commit",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.copyHash",
+				"title": "Copy commit hash",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.copyMessage",
+				"title": "Copy commit message",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.addTag",
+				"title": "Add tag",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.deleteTag",
+				"title": "Delete tag",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.unstash",
+				"title": "Apply stash",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.dropStash",
+				"title": "Drop stash",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.changeAuthor",
+				"title": "Change author",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.renameBranch",
+				"title": "Rename current branch",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.resetSoft",
+				"title": "Reset",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.resetHard",
+				"title": "Hard reset",
+				"category": "Minimalist Git"
+			},
+			{
 				"command": "mingit.commit",
 				"title": "Commit",
-				"icon": "res/img/commit.svg"
-			},
-
-			{
-				"category": "Minimalist Git",
-				"command": "mingit.stage",
-				"title": "Stage",
-				"icon": "res/img/stage.svg"
+				"category": "Minimalist Git"
 			},
 			{
-				"category": "Minimalist Git",
-				"command": "mingit.unstage",
-				"title": "Unstage",
-				"icon": "res/img/unstage.svg"
+				"command": "mingit.commitAmend",
+				"title": "Amend commit",
+				"category": "Minimalist Git"
 			},
 			{
-				"category": "Minimalist Git",
-				"command": "mingit.stash",
-				"title": "Stash",
-				"icon": "res/img/stash.svg"
-			},
-			{
-				"category": "Minimalist Git",
 				"command": "mingit.push",
 				"title": "Push",
-				"icon": "res/img/push.svg"
+				"category": "Minimalist Git"
 			},
 			{
-				"category": "Minimalist Git",
-				"command": "mingit.pull",
-				"title": "Pull",
-				"icon": "res/img/pull.svg"
-			},
-			{
-				"category": "Minimalist Git",
-				"command": "mingit.fetch",
-				"title": "Fetch",
-				"icon": "res/img/fetch.svg"
-			},
-			{
-				"category": "Minimalist Git",
-				"command": "mingit.config.author",
-				"title": "Author"
+				"command": "mingit.pushForce",
+				"title": "Force push",
+				"category": "Minimalist Git"
 			}
 		]
 	},

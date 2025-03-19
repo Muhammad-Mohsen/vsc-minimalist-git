@@ -53,10 +53,13 @@ module.exports = (() => {
 		return vscode.window.showErrorMessage(message, ...items);
 	}
 
-
 	/** @param {vscode.InputBoxOptions} options */
 	function showInputBox(options) {
 		return vscode.window.showInputBox(options);
+	}
+
+	function showQuickPick(items, options) {
+		return vscode.window.showQuickPick(items, options);
 	}
 
 	function workspaceFolder() {
@@ -95,6 +98,7 @@ module.exports = (() => {
 		showWarningPopup,
 		showErrorPopup,
 		showInputBox,
+		showQuickPick,
 
 		workspaceFolder,
 		workspacePath,

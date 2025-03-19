@@ -20,7 +20,7 @@ mingit-commit-list {
 		display: flex;
 		align-items: center;
 		width: calc(100% - 2px);
-		padding: 6px 12px;
+		padding: 6px 12px 6px 16px;
 		overflow: clip visible;
 		cursor: pointer;
 		user-select: none;

@@ -70,7 +70,7 @@ module.exports = class MainViewProvider {
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
 
 			</head>
-	  		<body>
+	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
 				${ showWelcome
 					? '<mingit-welcome></mingit-welcome>'
 					: '<mingit-commit-list></mingit-commit-list><mingit-change-list></mingit-change-list>'
@@ -115,7 +115,7 @@ module.exports = class MainViewProvider {
 
 			case 'fetch':
 				await git.fetch();
-				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				this.#refresh();
 				break;
 
 			case 'pull':
@@ -124,22 +124,57 @@ module.exports = class MainViewProvider {
 
 			case 'commit':
 				await git.commit(message.body);
-				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				this.#refresh();
 				break;
 
 			case 'stage':
 				await git.stage(message.body);
-				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				this.#refresh();
 				break;
 
 			case 'unstage':
 				await git.unstage(message.body);
-				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				this.#refresh();
 				break;
 
 			case 'stash':
 				await git.stash(message.body);
-				git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+				this.#refresh();
+				break;
+		}
+	}
+
+	/** @param {{ command: string, body: any }} message */
+	async onContext(message) {
+		switch (message.command) {
+			case 'addtag':
+				const nameToAdd = await vsc.showInputBox({ placeHolder: 'Enter tag name' });
+				if (!nameToAdd?.trim()) return;
+
+				try {
+					await git.addTag([nameToAdd, message.body.hash]);
+					this.#refresh();
+				} catch (err) {
+					vsc.showErrorPopup(err.message);
+				}
+				break;
+
+			case 'deletetag':
+				const nameToDelete = await vsc.showQuickPick(message.body.tags.split('\n'), { placeHolder: 'Select tag to delete', canPickMany: false });
+				if (!nameToDelete) break;;
+
+				const confirmed = await vsc.showWarningPopup(`Are you sure you want to delete "${nameToDelete}"`, 'Yes', 'No');
+				if (confirmed != 'Yes') break;
+
+				try {
+					await git.deleteTag(nameToDelete);
+					this.#refresh();
+				} catch (err) {
+					vsc.showErrorPopup(err.message);
+				}
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -168,5 +203,9 @@ module.exports = class MainViewProvider {
 
 	#setBadge(value) {
 		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : undefined;
+	}
+
+	#refresh() {
+		git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
 	}
 }

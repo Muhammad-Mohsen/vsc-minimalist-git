@@ -25,7 +25,7 @@ module.exports = (() => {
 		abort: abortController.signal // abortController.abort();
 	});
 
-	// initialization
+	// INITIALIZATION
 	function setWorkingDirectory(cwd) {
 		simpleGit.cwd(cwd);
 	}
@@ -33,7 +33,7 @@ module.exports = (() => {
 		onchange = listener;
 	}
 
-	// commands
+	// COMMANDS
 	function fetch(options) {
 		return simpleGit.fetch(options);
 	}
@@ -62,17 +62,26 @@ module.exports = (() => {
 		return simpleGit.stash(['save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 
+	async function addTag(options) {
+		await simpleGit.tag(options);
+		await simpleGit.push(['origin', '--tags']);
+	}
+	async function deleteTag(name) {
+		await simpleGit.tag(['-d', name]);
+		await simpleGit.push(['origin', '--delete', name]);
+	}
+
 	function setConfig(key, val, append, scope) {
 		return simpleGit.addConfig(key, val, append || false, scope || 'local');
 	}
 	function getConfig(key) {
 	}
 
-	// graph
+	// GRAPH
 	async function state(options) {
 		const state = {
 			logs: await log(options),
-			stashes: await stashList(),
+			stashes: await stashList(options),
 			status: await status(),
 		}
 
@@ -150,15 +159,15 @@ module.exports = (() => {
 		if (!filterString) return [''];
 
 		function filterBy(by) {
-			const others = ['grep', 'by', 'before', 'after'].filter(f => f != by);
+			const others = ['grep', 'author', 'before', 'after'].filter(f => f != by);
 			const val = filterString.replace(new RegExp(`.*${by}:`, 'i'), '').replace(new RegExp(`(${others.join('|')}):.*`, 'i'), '');
 
 			if (!val) return '';
-			else if (by == 'by') return val.split(',').filter(a => a.trim()).map(a => `--author=${a.trim()}`).join(' ');
+			else if (by == 'author') return val.split(',').filter(a => a.trim()).map(a => `--author=${a.trim()}`).join(' ');
 			else return `--${by}=${val.trim()}`;
 		}
 
-		return [filterBy('grep'), filterBy('by'), filterBy('before'), filterBy('after')];
+		return [filterBy('grep'), filterBy('author'), filterBy('before'), filterBy('after')];
 	}
 	async function status() {
 		const status = await simpleGit.status(['-u']);
@@ -178,8 +187,15 @@ module.exports = (() => {
 
 		return status;
 	}
-	async function stashList() {
-		const stashes = await simpleGit.raw(['stash', 'list', `--format=${['%H', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`])
+	async function stashList(options = {}) {
+		const stashes = await simpleGit.raw([
+			'stash',
+			'list',
+			`--format=${['%H', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
+			...logFilters(options.filters),
+			'-i',
+		].filter(p => p));
+
 		const list = stashes.split('\x1E').reduce((response, stash) => {
 			stash = stash.replace(/^\n/, '');
 			if (!stash) return response;
@@ -192,7 +208,7 @@ module.exports = (() => {
 		return list;
 	}
 
-	// diff
+	// DIFF
 	async function diff(options) {
 		if (options.length == 1 && options[0] == '') return status();
 
@@ -297,7 +313,7 @@ module.exports = (() => {
 		return decorator;
 	}
 
-	// utils
+	// UTILS
 	async function isInstalled() {
 		try {
 			await simpleGit.version();
@@ -341,6 +357,9 @@ module.exports = (() => {
 		unstage,
 		discard,
 		stash,
+
+		addTag,
+		deleteTag,
 
 		setConfig,
 		getConfig,

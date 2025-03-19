@@ -1,20 +1,26 @@
 # Visual Studio Code Git
-A Simple Git Extension for VSCode
+A Simple Git Extension for VSCode built with good ol' vanilla JS
 
 ## Features
-- 1st level commands
-	- pull with `--rebase` as default
-		- unclean repo is automatically cleaned by stashing, and applying the stash
+- Commit log with graph for all branches (includes working tree + stashes)
+- Filter log by:
+	- author
+	- message (--grep)
+	- date (--before, --after)
+- Diff any two commits
+- Add/Delete tags
+- Add/Drop/View stashes
+- Commands
+	- fetch
+	- pull --rebase/pull --rebase --autostash
+	- push/push --force
+	- commit/commit --amend
+	- stage/unstage
+	- stash
+	- revert
 	- push
 	- push + `--force`
 	- commit + `--amend`
-- add/remove tags
-- log + graph
-- file log with `--follow`
-- diff two commits
-- edit commits
-	- author
-	- message
 
 ### TODO
 - DONE - create extension icon
@@ -34,7 +40,7 @@ A Simple Git Extension for VSCode
 - DONE - log
 	- DONE - parse command output
 	- DONE - render message, date, author
-	- DONE - clean message from graph edges stuck to it
+	- DONE - clean raw message from graph edges
 	- DONE - decorators
 		- DONE - branch
 		- DONE - tag
@@ -100,19 +106,30 @@ A Simple Git Extension for VSCode
 			- force push
 			- rename branch
 			- reset -> show a quick select --soft, --hard, HEAD, origin -> show confirmation
-	- toolbar (context menu)
-		- push/push --force
-		- commit/commit --amend
+	- toolbar
+		- push/push --force (context menu)
+		- commit/commit --amend (context menu)
+		- revert
 	- commits (context menu)
-		- add tag
+		- DONE - add tag
+		- DONE - delete tag
+
 		- checkout
-		- cherry pick
-		- merge
-		- ...
+		- cherrypick
+		- revert
+		- drop
+
+		- merge into current branch
+		- rebase current branch on this commit
+		- reset current branch to this commit
+
+		- copy hash
+		- copy message
+
 		- unstash (for stashes)
 		- drop stash (for stashes)
 
-- render staged files differently
+- DONE - render staged files differently
 - conflicts
 	- command: 'git.openMergeEditor'
 	- title: l10n.t('Open Merge'),
@@ -132,6 +149,22 @@ A Simple Git Extension for VSCode
 - DONE - loading bar
 	- show on postMessage
 	- hide on onMessage
+
+### Optimizations
+- draw graph in an `async` function?
+- cache vertex/edge bounds
+- datasource entries
+	- commit data
+	- vertex/edge bounds (invalidated on repo change)
+- paging
+	- chunk the drawing
+	- use an `orphanage` map to keep track of commits whose parents are unreachable
+		- key: hash (or parent hash?)
+		- value: data source entry
+	- on new page
+		- add to the datasource
+		- redraw
+		- check the `orphanage` and see if anything is now reachable & re-render
 
 ### GIT cheat sheet
 	- git configuration
@@ -191,9 +224,6 @@ A Simple Git Extension for VSCode
 		git clean -df
 		```
 
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
 ## Extension Settings
 
@@ -207,21 +237,9 @@ This extension contributes the following settings:
 * `myExtension.thing`: Set to `blah` to do something.
 
 ## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- Currently, the graph displays the most recent 500 commits
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Initial release

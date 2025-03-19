@@ -9,11 +9,13 @@ class CommitList extends HTMLElementBase {
 		this.postMessage({ command: 'getlog' });
 	}
 
+	// MESSAGE HANDLER
 	onMessage(event) {
 		const message = event.data;
 		if (message.command == 'state') this.#renderCommits(message.body);
 	}
 
+	// EVENT HANDLERS
 	onClick(event) {
 		let selections = this.querySelectorAll('li.selected');
 		if (!event.ctrlKey || selections.length >= 2) selections.forEach(c => c.classList.remove('selected'));
@@ -29,11 +31,18 @@ class CommitList extends HTMLElementBase {
 
 		this.postMessage({ command: command, body: { hashes } });
 	}
+	onContextMenu(event) {
+		const hash = event.currentTarget.getAttribute('hash');
+		const tags = event.currentTarget.querySelector('.ic-tag')?.getAttribute('title')?.replace(/\n/g, '\\n'); // encode the newline so that it doesn't blow up the json
+		const isStash = event.currentTarget.classList.contains('stash');
 
+		event.currentTarget.setAttribute('data-vscode-context', `{ "preventDefaultContextMenuItems": true, "isCommit": ${!isStash}, "hash": "${hash}", "tags": "${tags}", "isStash": ${isStash} }`);
+	}
 	filter(event) {
 		this.postMessage({ command: 'filter', body: { value: event.target.value } });
 	}
 
+	// RENDERING
 	#render() {
 		this.innerHTML = /*html*/`
 			<div class="progress"></div>
@@ -49,7 +58,7 @@ class CommitList extends HTMLElementBase {
 		this.querySelector('ul').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<li onclick="${this.handle}.onClick(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
+			return /*html*/`<li onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">

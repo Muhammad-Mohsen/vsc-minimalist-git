@@ -6,8 +6,9 @@ const git = require('./core/git');
 
 /** @param {vscode.ExtensionContext} context */
 async function activate(context) {
+	const provider = new MainViewProvider(context.extensionUri);
 	vsc.registerWebViewProvider(context, 'mingit-main-view',
-		new MainViewProvider(context.extensionUri),
+		provider,
 		{ webviewOptions: { retainContextWhenHidden: true }
 	});
 
@@ -36,6 +37,13 @@ async function activate(context) {
 	});
 	vsc.registerCommand(context, 'mingit.fetch', () => {
 
+	});
+
+	vsc.registerCommand(context, 'mingit.addTag', (context) => {
+		provider.onContext({ command: 'addtag', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.deleteTag', (context) => {
+		provider.onContext({ command: 'deletetag', body: context });
 	});
 
 	vsc.registerCommand(context, 'mingit.config.author', async () => {
