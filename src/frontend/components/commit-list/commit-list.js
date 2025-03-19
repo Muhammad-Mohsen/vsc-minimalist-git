@@ -32,11 +32,15 @@ class CommitList extends HTMLElementBase {
 		this.postMessage({ command: command, body: { hashes } });
 	}
 	onContextMenu(event) {
+		// encode the newline so that it doesn't blow up the json
+		const titleAttr = (selector) => event.currentTarget.querySelector(selector)?.getAttribute('title')?.replace(/\n/g, '\\n');
+
 		const hash = event.currentTarget.getAttribute('hash');
-		const tags = event.currentTarget.querySelector('.ic-tag')?.getAttribute('title')?.replace(/\n/g, '\\n'); // encode the newline so that it doesn't blow up the json
+		const message = titleAttr('.commit-body');
+		const tags = titleAttr('.ic-tag');
 		const isStash = event.currentTarget.classList.contains('stash');
 
-		event.currentTarget.setAttribute('data-vscode-context', `{ "preventDefaultContextMenuItems": true, "isCommit": ${!isStash}, "hash": "${hash}", "tags": "${tags}", "isStash": ${isStash} }`);
+		event.currentTarget.setAttribute('data-vscode-context', `{ "preventDefaultContextMenuItems": true, "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`);
 	}
 	filter(event) {
 		this.postMessage({ command: 'filter', body: { value: event.target.value } });

@@ -123,8 +123,8 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 		- rebase current branch on this commit
 		- reset current branch to this commit
 
-		- copy hash
-		- copy message
+		- DONE - copy hash
+		- DONE - copy message
 
 		- unstash (for stashes)
 		- drop stash (for stashes)

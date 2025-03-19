@@ -174,7 +174,12 @@ module.exports = class MainViewProvider {
 				}
 				break;
 
-			default:
+			case 'copyhash':
+				vsc.copyToClipboard(message.body.hash);
+				break;
+
+			case 'copymessage':
+				vsc.copyToClipboard(message.body.message);
 				break;
 		}
 	}

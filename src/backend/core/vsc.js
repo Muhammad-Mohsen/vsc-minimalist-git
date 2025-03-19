@@ -88,6 +88,10 @@ module.exports = (() => {
 		return api.getAPI(1);
 	}
 
+	function copyToClipboard(value) {
+		return vscode.env.clipboard.writeText(value);
+	}
+
 	return {
 		registerCommand,
 		executeCommand,
@@ -105,6 +109,7 @@ module.exports = (() => {
 		joinPath,
 		absoluteURI,
 		isDark,
+		copyToClipboard,
 
 		gitExtension,
 	}

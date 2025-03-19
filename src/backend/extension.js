@@ -46,6 +46,13 @@ async function activate(context) {
 		provider.onContext({ command: 'deletetag', body: context });
 	});
 
+	vsc.registerCommand(context, 'mingit.copyHash', (context) => {
+		provider.onContext({ command: 'copyhash', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.copyMessage', (context) => {
+		provider.onContext({ command: 'copymessage', body: context });
+	});
+
 	vsc.registerCommand(context, 'mingit.config.author', async () => {
 		const tokenizeInput = value => {
 			let [user, email] = value.split('<');
