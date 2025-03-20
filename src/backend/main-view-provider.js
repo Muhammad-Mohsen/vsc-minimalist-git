@@ -127,6 +127,14 @@ module.exports = class MainViewProvider {
 				this.#refresh();
 				break;
 
+			case 'discard':
+				const confirm = await vsc.showWarningPopup(`This will discard: "${message.body.files.join('" & "')}". Note: VSCode doesn't allow new lines...so we're stuck with how this looks.`, 'Confirm', 'Cancel');
+				if (confirm != 'Confirm') break;
+
+				await git.discard(message.body);
+				this.#refresh();
+				break;
+
 			case 'stage':
 				await git.stage(message.body);
 				this.#refresh();
@@ -138,7 +146,7 @@ module.exports = class MainViewProvider {
 				break;
 
 			case 'stash':
-				await git.stash(message.body);
+				await git.saveStash(message.body);
 				this.#refresh();
 				break;
 		}
@@ -163,8 +171,8 @@ module.exports = class MainViewProvider {
 				const nameToDelete = await vsc.showQuickPick(message.body.tags.split('\n'), { placeHolder: 'Select tag to delete', canPickMany: false });
 				if (!nameToDelete) break;;
 
-				const confirmed = await vsc.showWarningPopup(`Are you sure you want to delete "${nameToDelete}"`, 'Yes', 'No');
-				if (confirmed != 'Yes') break;
+				const confirmed = await vsc.showWarningPopup(`This will delete "${nameToDelete}"`, 'Confirm', 'Cancel');
+				if (confirmed != 'Confirm') break;
 
 				try {
 					await git.deleteTag(nameToDelete);
@@ -180,6 +188,20 @@ module.exports = class MainViewProvider {
 
 			case 'copymessage':
 				vsc.copyToClipboard(message.body.message);
+				break;
+
+			case 'applystash':
+				try { await git.applyStash(message.body); }
+				catch (err) { vsc.showErrorPopup(err.message); }
+				this.#refresh();
+				break;
+
+			case 'dropstash':
+				const dropStashConfirm = await vsc.showWarningPopup(`This will drop "${message.body.message}"`, 'Confirm', 'Cancel');
+				if (dropStashConfirm != 'Confirm') break;
+
+				await git.dropStash(message.body);
+				this.#refresh();
 				break;
 		}
 	}

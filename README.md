@@ -98,12 +98,11 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 		- DONE - stash
 		- DONE - stage
 		- DONE - unstage
-		- discard -> show confirmation message
+		- DONE - discard -> show confirmation message
 		- overflow
 			- toggle `--rebase`
 			- toggle `--autostash`
 			- change author
-			- force push
 			- rename branch
 			- reset -> show a quick select --soft, --hard, HEAD, origin -> show confirmation
 	- toolbar
@@ -116,8 +115,8 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 
 		- checkout
 		- cherrypick
-		- revert
-		- drop
+		- revert -> show confirmation message
+		- drop -> show confirmation message
 
 		- merge into current branch
 		- rebase current branch on this commit
@@ -126,8 +125,8 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 		- DONE - copy hash
 		- DONE - copy message
 
-		- unstash (for stashes)
-		- drop stash (for stashes)
+		- DONE - apply stash (for stashes)
+		- DONE - drop stash (for stashes) -> show confirmation message
 
 - DONE - render staged files differently
 - conflicts

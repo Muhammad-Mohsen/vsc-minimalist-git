@@ -53,6 +53,13 @@ async function activate(context) {
 		provider.onContext({ command: 'copymessage', body: context });
 	});
 
+	vsc.registerCommand(context, 'mingit.applyStash', (context) => {
+		provider.onContext({ command: 'applystash', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.dropStash', (context) => {
+		provider.onContext({ command: 'dropstash', body: context });
+	});
+
 	vsc.registerCommand(context, 'mingit.config.author', async () => {
 		const tokenizeInput = value => {
 			let [user, email] = value.split('<');

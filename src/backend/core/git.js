@@ -48,18 +48,27 @@ module.exports = (() => {
 		await simpleGit.add(options.files);
 		return simpleGit.commit(options.message, options.files);
 	}
+	function revert(options) {
+		return simpleGit.revert(options); // TODO
+	}
 	async function stage(options) {
 		return await simpleGit.add(options.files);
 	}
 	async function unstage(options) {
 		return await simpleGit.reset(['HEAD', '--', ...options.files]);
 	}
-	async function discard(options) {
-		return await simpleGit.checkout(['--', ...options.files]);
+	function discard(options) {
+		return simpleGit.checkout(['--', ...options.files]);
 	}
-	async function stash(options) {
+	async function saveStash(options) {
 		await simpleGit.add(options.files);
 		return simpleGit.stash(['save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
+	}
+	async function applyStash(options) {
+		return simpleGit.stash(['apply', options.hash]);
+	}
+	async function dropStash(options) {
+		return simpleGit.stash(['drop', options.hash]);
 	}
 
 	async function addTag(options) {
@@ -81,7 +90,7 @@ module.exports = (() => {
 	async function state(options) {
 		const state = {
 			logs: await log(options),
-			stashes: await stashList(options),
+			stashes: await listStash(options),
 			status: await status(),
 		}
 
@@ -187,11 +196,11 @@ module.exports = (() => {
 
 		return status;
 	}
-	async function stashList(options = {}) {
+	async function listStash(options = {}) {
 		const stashes = await simpleGit.raw([
 			'stash',
 			'list',
-			`--format=${['%H', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
+			`--format=${['%gD', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
 			...logFilters(options.filters),
 			'-i',
 		].filter(p => p));
@@ -353,10 +362,15 @@ module.exports = (() => {
 		pull,
 		push,
 		commit,
+		revert,
 		stage,
 		unstage,
 		discard,
-		stash,
+
+		applyStash,
+		saveStash,
+		dropStash,
+		listStash,
 
 		addTag,
 		deleteTag,
@@ -367,7 +381,6 @@ module.exports = (() => {
 		state,
 		log,
 		status,
-		stashList,
 
 		diff,
 		resolveDiffURIs,

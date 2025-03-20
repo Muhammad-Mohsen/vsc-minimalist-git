@@ -31,11 +31,11 @@ class Toolbar extends HTMLElementBase {
 
 	unstage() {
 		const files = this.#changeList.getSelected();
-		this.postMessage({ command: 'unstage', body: { message, files } });
+		this.postMessage({ command: 'unstage', body: { files } });
 	}
 	stage() {
 		const files = this.#changeList.getSelected();
-		this.postMessage({ command: 'stage', body: { message, files } });
+		this.postMessage({ command: 'stage', body: { files } });
 	}
 	commit() {
 		const files = this.#changeList.getSelected();
@@ -45,6 +45,10 @@ class Toolbar extends HTMLElementBase {
 		this.#commitInput.value = '';
 		onCommitMessageChange();
 		this.postMessage({ command: 'commit', body: { message, files } });
+	}
+	discard() {
+		const files = this.#changeList.getSelected();
+		this.postMessage({ command: 'discard', body: { files } });
 	}
 
 	overflow(event) {
@@ -71,12 +75,13 @@ class Toolbar extends HTMLElementBase {
 	}
 
 	#render() {
-		this.innerHTML = /*html*/`
+		this.innerHTML = `
 			<div class="progress absolute" style="display: none;"></div>
-			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch;" title="Fetch"></button>
+			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch();" title="Fetch"></button>
 			<button class="tertiary ic-pull" onclick="${this.handle}.postMessage({ command: 'pull' })" title="Pull"></button>
 			<button class="tertiary ic-push" onclick="${this.handle}.push();" title="Push"></button>
 			<separator></separator>
+			<button class="tertiary ic-discard toggleable" onclick="${this.handle}.discard();" title="Discard"></button>
 			<button class="tertiary ic-stash toggleable" onclick="${this.handle}.stash();" title="Stash"></button>
 			<separator></separator>
 			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage();" title="Unstage"></button>

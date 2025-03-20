@@ -102,7 +102,7 @@
 				},
 
 				{
-					"command": "mingit.unstash",
+					"command": "mingit.applyStash",
 					"when": "isStash && webviewId == 'mingit-main-view'",
 					"group": "5_stashes"
 				},
@@ -197,7 +197,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.unstash",
+					"command": "mingit.applyStash",
 					"when": "false"
 				},
 				{
@@ -296,7 +296,7 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.unstash",
+				"command": "mingit.applyStash",
 				"title": "Apply stash",
 				"category": "Minimalist Git"
 			},

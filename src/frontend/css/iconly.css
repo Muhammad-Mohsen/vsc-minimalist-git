@@ -34,3 +34,4 @@
 .ic-branch:before { content: "\e001"; }
 .ic-head:before { content: "\e002"; }
 .ic-stash-ref:before { content: "\e004"; }
+.ic-discard:before { content: "\e005"; }
