@@ -28,8 +28,8 @@ mingit-commit-list {
 		&:hover {
 			background: var(--vscode-toolbar-hoverBackground);
 
-			vertex::before { border-color: var(--vscode-foreground) !important; }
-			edge {
+			& vertex::before { border-color: var(--vscode-foreground) !important; }
+			& edge, & edge::after {
 				border-color: var(--vscode-foreground) !important;
 				/* outline: 1px solid var(--vscode-sideBarTitle-background); */
 				z-index: 1;
@@ -110,6 +110,23 @@ mingit-commit-list {
 			&.flip {
 				scale: -1 1;
 				translate: 5px -1px;
+			}
+			&.fastlane {
+				border-block-start: 2px solid;
+				border-start-end-radius: 8px;
+				translate: 5px -2px;
+				scale: -1 1; /* because edges use the inline-end border */
+
+				&::after {
+					content: '';
+					position: inherit;
+					inset: auto -2px -8px auto;
+					width: var(--after-width);
+					height: 8px;
+					border-inline-end: 2px solid;
+					border-block-end: 2px solid;
+					border-end-end-radius: 8px;
+				}
 			}
 			&.orphan {
 				height: 19px !important;

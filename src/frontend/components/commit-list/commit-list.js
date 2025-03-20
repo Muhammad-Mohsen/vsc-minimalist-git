@@ -62,7 +62,7 @@ class CommitList extends HTMLElementBase {
 		this.querySelector('ul').innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<li onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} tabindex="0">
+			return /*html*/`<li onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} branch-index="${c.branchIndex}" tabindex="0">
 				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<div class="row">
@@ -81,7 +81,7 @@ class CommitList extends HTMLElementBase {
 
 		this.#renderWorkingTree(state);
 
-		this.#renderEdges();
+		this.#renderEdges(state);
 	}
 	#renderWorkingTree(state) {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
@@ -103,56 +103,69 @@ class CommitList extends HTMLElementBase {
 			})
 			.join('');
 	}
-	#renderEdges() {
-		const vertexMap = {};
-		this.querySelectorAll('vertex[hash]').forEach(v => vertexMap[v.getAttribute('hash')] = v);
+	#renderEdges(state) {
+		const verts = {};
+		this.querySelectorAll('vertex[hash]').forEach((v, i) => {
+			verts[v.getAttribute('hash')] = {
+				elem: v,
+				bounds: v.getBoundingClientRect(),
+				commit: state.logs.commitList[i - 1], // because the working tree!!
+				index: i,
+			}
+		});
 
-		Object.values(vertexMap).forEach(v => { // for each commit
-			const parents = v.getAttribute('parents')?.split(',').filter(p => p); // remove empty parents
-			v.innerHTML = parents?.reduce((html, hash) => {
-				const p = vertexMap[hash] || v; // if parent is unreachable (due to filtering/paging) set the parent to itself
+		Object.values(verts).forEach(v => { // for each commit
+			const parents = v.elem.getAttribute('parents')?.split(',').filter(p => p); // remove empty parents
+			v.elem.innerHTML = parents?.reduce((html, hash) => {
+				const p = verts[hash] || v; // if parent is unreachable (due to filtering/paging) set the parent to itself
 
-				const bounds = v.getBoundingClientRect();
-				const parentBounds = p.getBoundingClientRect();
-
-				let qualifier = (bounds.x - parentBounds.x < 0) ? 'right'
-					: (bounds.x - parentBounds.x > 0) ? 'left'
+				let type = (v.bounds.x < p.bounds.x) ? 'right'
+					: (v.bounds.x > p.bounds.x) ? 'left'
 					: '';
 
-				if (qualifier == 'left' && this.#hasCollisions(v, p)) qualifier = 'right flip';
-				if (qualifier == '' && this.#hasCollisions(v, p)) qualifier = 'orphan';
-				if (v == p) qualifier = 'orphan'; // parent is unreachable
+				const collision = this.#hasCollisions(v, p);
+				if (type == 'left' && collision.child) type = 'right flip'; // child-col collision
+				if (type.includes('right') && collision.parent) type = 'fastlane'; // parent-col collision
+				if (type == '' && collision.child) type = 'fastlane'; // same-col collision
+				if (v == p) type = 'orphan'; // parent is unreachable
 
-				let color = qualifier.includes('right') ? p : v;
-				color = color.getAttribute('style');
+				let color = type.match(/right|fastlane/) ? p : v;
+				color = color.elem.getAttribute('style');
 
-				html += `<edge style="top: ${bounds.height / 2}px;
-					left: ${Math.min(0, parentBounds.x - bounds.x)}px;
-					width: ${Math.abs(bounds.x - parentBounds.x) - 2}px;
-					height: ${Math.abs(bounds.y - parentBounds.y)}px;
-					${color}"
-					class="${qualifier}"></edge>`.replace(/\t|\n/g, '');
+				if (type == 'fastlane') {
+					html += `<edge style="
+						--after-width: ${p.bounds.x}px;
+						top: ${v.bounds.height / 2}px;
+						left: ${-v.bounds.x}px;
+						width: ${v.bounds.x}px;
+						height: ${Math.abs(v.bounds.y - p.bounds.y) - 5}px;
+						${color}"
+						class="${type}"></edge>`.replace(/\t|\n/g, '');
+
+				} else {
+					html += `<edge style="top: ${v.bounds.height / 2}px;
+						left: ${Math.min(0, p.bounds.x - v.bounds.x)}px;
+						width: ${Math.abs(v.bounds.x - p.bounds.x) - 2}px;
+						height: ${Math.abs(v.bounds.y - p.bounds.y)}px;
+						${color}"
+						class="${type}"></edge>`.replace(/\t|\n/g, '');
+				}
 
 				return html;
 			}, '');
 		});
 	}
 	#hasCollisions(vc, vp) {
-		const commit = vc.parentElement;
-		const parentCommit = vp.parentElement;
+		const commit = vc.elem.parentElement;
+		if (commit.classList.contains('stash')) return ''; // don't care about collisions for stashes
 
-		if (commit.classList.contains('stash')) return false; // don't care about collisions for stashes
-
-		const list = [...commit.parentElement.children];
-		const commitIndex = list.indexOf(commit);
-		const parentCommitIndex = list.indexOf(parentCommit);
-		const branchIndex = [...commit.children].indexOf(vc);
-
-		for (let hitTestCommit of list.slice(commitIndex + 1, parentCommitIndex)) {
-			if (hitTestCommit.querySelector(`vertex:nth-child(${branchIndex + 1})`).classList.contains('filled')) return true;
+		const collision = {};
+		const commitList = [...commit.parentElement.children];
+		for (let hitTestCommit of commitList.slice(vc.index + 1, vp.index)) {
+			if (hitTestCommit.getAttribute('branch-index') == vc.commit.branchIndex) collision.child = 1;
+			if (hitTestCommit.getAttribute('branch-index') == vp.commit.branchIndex) collision.parent = 1;
 		}
-
-		return false;
+		return collision;
 	}
 
 	#renderRefs(commit, colors) {
