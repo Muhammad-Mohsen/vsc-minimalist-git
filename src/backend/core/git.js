@@ -187,6 +187,13 @@ module.exports = (() => {
 			if (f.index == '?') f.index = ''; // this means that working_dir is '?' as well
 			if (f.index) f.index = `(${f.index})`;
 			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
+
+			// conflicted
+			if ((f.working_dir + f.index).match(/A\(A\)|D\(D\)|U/)) {
+				f.working_dir = '(!)';
+				f.index = '';
+			}
+
 			return {
 				name: f.path.split(/\\|\//).pop(),
 				path: f.path,

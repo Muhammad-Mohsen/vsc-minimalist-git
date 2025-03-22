@@ -47,9 +47,9 @@ mingit-change-list {
 			margin-inline-start: auto;
 			font-family: var(--vscode-editor-font-family);
 
-			&.M, &.A_M { color: var(--vscode-gitDecoration-modifiedResourceForeground); }
-			& .insertions, &.A { color: var(--vscode-gitDecoration-addedResourceForeground); }
-			& .deletions, &.D { color: var(--vscode-gitDecoration-deletedResourceForeground); }
+			&.M, &[class="(A) M"] { color: var(--vscode-gitDecoration-modifiedResourceForeground); }
+			& .insertions, &.A, &[class="(A)"] { color: var(--vscode-gitDecoration-addedResourceForeground); }
+			& .deletions, &.D, &[class="(!)"] { color: var(--vscode-gitDecoration-deletedResourceForeground); }
 		}
 	}
 }

@@ -108,6 +108,10 @@ module.exports = class MainViewProvider {
 				break;
 
 			case 'diffeditor':
+				if (message.body.decorator == '(!)') {
+					vsc.executeCommand('git.openMergeEditor', vsc.absoluteURI(message.body.path));
+					break;
+				}
 				const { left, right, title } = await git.resolveDiffURIs(message.body, this.#extensionURI);
 				vsc.executeCommand('vscode.diff', left, right, title);
 

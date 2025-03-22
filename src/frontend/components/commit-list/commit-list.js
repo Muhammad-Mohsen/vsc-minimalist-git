@@ -50,7 +50,7 @@ class CommitList extends HTMLElementBase {
 	#render() {
 		this.innerHTML = /*html*/`
 			<div class="progress"></div>
-			<input placeholder="Search" title="[grep: {search_query}] [by: {author}[,{author}]] [before: {date}] [after: {date}]" onchange="${this.handle}.filter(event);">
+			<input placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>]" onchange="${this.handle}.filter(event);">
 			<ul></ul>`;
 
 		this.#progress = this.querySelector('.progress');
@@ -158,6 +158,7 @@ class CommitList extends HTMLElementBase {
 	#hasCollisions(vc, vp) {
 		const commit = vc.elem.parentElement;
 		if (commit.classList.contains('stash')) return ''; // don't care about collisions for stashes
+		if (commit.classList.contains('working-tree')) return ''; // working tree won't collide with anything
 
 		const collision = {};
 		const commitList = [...commit.parentElement.children];
