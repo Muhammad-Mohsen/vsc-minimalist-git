@@ -1,13 +1,17 @@
 {
 	"name": "mingit",
 	"displayName": "Minimalist Git",
-	"icon": "resources/logo.png",
-	"description": "TODO",
+	"icon": "res/icon.png",
+	"description": "View a Git Graph of your repository, and easily perform Git actions from the graph.",
 	"categories": ["SCM Providers"],
 	"keywords": ["git", "log", "diff", "history", "graph", "branch", "commit", "scm", "flow", "tag"],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Muhammad-Mohsen/vsc-minimalist-git"
+	},
 	"license": "MIT",
 
-	"version": "0.0.1",
+	"version": "0.9.0",
 	"engines": { "vscode": "^1.95.0" },
 	"main": "src/backend/extension.js",
 	"activationEvents": [],
