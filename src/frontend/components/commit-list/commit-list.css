@@ -136,8 +136,11 @@ mingit-commit-list {
 		&.working-tree {
 			font-style: italic;
 
-			& edge:not(.orphan) { border-inline-end-style: dashed; }
 			& .filled::before { border-radius: 50px; }
+
+			& edge:not(.orphan) { border-inline-end-style: dashed; }
+			& edge.fastlane { border-block-start-style: dashed; }
+			& edge.fastlane::after { border-inline-end-style: dashed; border-block-end-style: dashed; }
 		}
 
 		&.stash {

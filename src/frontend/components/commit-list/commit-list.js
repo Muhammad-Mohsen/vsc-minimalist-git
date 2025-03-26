@@ -104,12 +104,13 @@ class CommitList extends HTMLElementBase {
 			.join('');
 	}
 	#renderEdges(state) {
+		const workingTreeParent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
 		const verts = {};
 		this.querySelectorAll('vertex[hash]').forEach((v, i) => {
 			verts[v.getAttribute('hash')] = {
 				elem: v,
 				bounds: v.getBoundingClientRect(),
-				commit: state.logs.commitList[i - 1], // because the working tree!!
+				commit: i == 0 ? workingTreeParent : state.logs.commitList[i - 1], // because the working tree!!
 				index: i,
 			}
 		});
@@ -158,7 +159,7 @@ class CommitList extends HTMLElementBase {
 	#hasCollisions(vc, vp) {
 		const commit = vc.elem.parentElement;
 		if (commit.classList.contains('stash')) return ''; // don't care about collisions for stashes
-		if (commit.classList.contains('working-tree')) return ''; // working tree won't collide with anything
+		// if (commit.classList.contains('working-tree')) return ''; // working tree won't collide with anything...actually it can in case of detached heads
 
 		const collision = {};
 		const commitList = [...commit.parentElement.children];
