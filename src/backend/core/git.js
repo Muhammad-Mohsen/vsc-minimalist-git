@@ -85,6 +85,10 @@ module.exports = (() => {
 		return simpleGit.stash(['drop', options.hash]);
 	}
 
+	async function checkout(options) {
+		return await simpleGit.checkout([options.hash]);
+	}
+
 	async function addTag(options) {
 		await simpleGit.tag(options);
 		await simpleGit.push(['origin', '--tags']);
@@ -397,6 +401,8 @@ module.exports = (() => {
 		stage,
 		unstage,
 		discard,
+
+		checkout,
 
 		applyStash,
 		saveStash,

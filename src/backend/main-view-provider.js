@@ -228,6 +228,10 @@ module.exports = class MainViewProvider {
 				case 'amendcommit':
 					await git.commit(['--amend']);
 					break;
+
+				case 'checkoutcommit':
+					await git.checkout(message.body);
+					break;
 			}
 
 		} catch (err) {

@@ -39,6 +39,10 @@ async function activate(context) {
 
 	});
 
+	vsc.registerCommand(context, 'mingit.checkoutCommit', (context) => {
+		provider.onContext({ command: 'checkoutcommit', body: context });
+	});
+
 	vsc.registerCommand(context, 'mingit.addTag', (context) => {
 		provider.onContext({ command: 'addtag', body: context });
 	});
