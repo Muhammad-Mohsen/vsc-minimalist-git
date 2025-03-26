@@ -5,6 +5,7 @@ const vsc = require('./vsc');
 module.exports = (() => {
 
 	const PAGE_COUNT = 500;
+	const PATH_SEPARATOR = /\\|\//;
 
 	let onchange; // repo change handler
 
@@ -37,11 +38,11 @@ module.exports = (() => {
 	function fetch(options) {
 		return simpleGit.fetch(options);
 	}
-	function pull(options) {
-		return simpleGit.pull(['--autostash']); // lol!! auto-stash dirty working tree!!
+	function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
+		return simpleGit.pull(options);
 	}
-	function push(options) {
-
+	async function push(options) {
+		return await simpleGit.push(options);
 	}
 
 	async function commit(options) {
@@ -57,8 +58,17 @@ module.exports = (() => {
 	async function unstage(options) {
 		return await simpleGit.reset(['HEAD', '--', ...options.files]);
 	}
-	function discard(options) {
-		return simpleGit.checkout(['--', ...options.files]);
+	async function discard(options) {
+		try {
+			// git files
+			await simpleGit.reset(['--', ...options.files]); // unstage the file first
+			return await simpleGit.checkout(['--', ...options.files]);
+
+		} catch {
+			// untracked files
+			return await simpleGit.clean(simpleGitModule.CleanOptions.FORCE, options.files);
+		}
+
 	}
 	async function saveStash(options) {
 		await simpleGit.add(options.files);
@@ -184,18 +194,18 @@ module.exports = (() => {
 			f.index = f.index?.trim() || '';
 			f.working_dir = f.working_dir?.trim() || '';
 
-			if (f.index == '?') f.index = ''; // this means that working_dir is '?' as well
-			if (f.index) f.index = `(${f.index})`;
-			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
-
 			// conflicted
-			if ((f.working_dir + f.index).match(/A\(A\)|D\(D\)|U/)) {
+			if ((f.working_dir + f.index).match(/AA|DD|U/)) {
 				f.working_dir = '(!)';
 				f.index = '';
 			}
 
+			if (f.index == '?') f.index = ''; // untracked
+			if (f.index) f.index = `(${f.index})`;
+			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
+
 			return {
-				name: f.path.split(/\\|\//).pop(),
+				name: f.path.split(PATH_SEPARATOR).pop(),
 				path: f.path,
 				decorator: [f.index, f.working_dir].filter(i => i).join(' ')
 			}
@@ -244,10 +254,15 @@ module.exports = (() => {
 			files: numstat.map((n, i) => {
 				n = n.split('\t');
 
+				let decorator = raw[i] ? raw[i].split('\t')[0].slice(-1) : ''; // for merge commits, 'raw' is empty, apparently
+				if (n[2].includes('=>')) decorator = 'R';
+				else if ([' ', 'M'].includes(decorator)) decorator = '';
+				else if (decorator == '?') decorator = 'U';
+
 				return {
-					name: n[2].split(/\\|\//).pop(),
+					name: n[2].split(PATH_SEPARATOR).pop(),
 					path: n[2],
-					decorator: resolveDecorator(n, raw[i]),
+					decorator: decorator,
 					insertions: parseInt(n[0]),
 					deletions: parseInt(n[1]),
 				};
@@ -271,21 +286,35 @@ module.exports = (() => {
 		if (file.decorator == 'U') return {
 			left: empty,
 			right: vsc.absoluteURI(file.path),
-			title: `${file.name} (${file.decorator})`
+			title: `${file.name}` // vscode adds its own decorator
 		};
 
 		// added -> use git URI (curr hash)
-		if (file.decorator.includes('A')) return {
-			left: empty,
-			right: await uri(file.path, file.hashes[1]),
-			title: `${file.name} (${file.decorator})`
-		};
+		if (file.decorator.includes('A')) {
+			if (file.decorator.includes('M')) return { // added, then modified -> use file path
+				left: empty,
+				right: vsc.absoluteURI(file.path),
+				title: `${file.name}` // vscode adds its own decorator
+			};
+
+			if (file.decorator.includes('D')) return { // added, then deleted -> use the index
+				right: await uri(file.path, file.hashes[1]),
+				left: empty,
+				title: `${file.name} ${file.decorator}`
+			}
+
+			return {
+				left: empty,
+				right: await uri(file.path, file.hashes[1]),
+				title: `${file.name} ${file.decorator}`
+			};
+		}
 
 		// deleted -> use git URI (prev hash)
 		if (file.decorator == 'D') return {
 			left: await uri(file.path, file.hashes[0]),
 			right: empty,
-			title: `${file.name} (${file.decorator})`
+			title: `${file.name} ${file.decorator}`
 		};
 
 		// renamed
@@ -316,17 +345,8 @@ module.exports = (() => {
 		return {
 			left: await uri(file.path, file.hashes[0]) || empty,
 			right: file.hashes[1] == '' ? vsc.absoluteURI(file.path) : await uri(file.path, file.hashes[1]) || empty,
-			title: file.name
+			title: file.hashes[1] == '' ? file.name : `${file.name} ${file.decorator}`
 		}
-	}
-	function resolveDecorator(numstat, raw) {
-		let decorator = raw ? raw.split('\t')[0].slice(-1) : ''; // for merge commits, 'raw' is empty, apparently
-		if (numstat[2].includes('=>')) decorator = 'R';
-		else if ([' ', 'M'].includes(decorator)) decorator = '';
-		else if (decorator == '?') decorator = 'U';
-		// TODO handle conflicted status
-
-		return decorator;
 	}
 
 	// UTILS
