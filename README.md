@@ -1,5 +1,6 @@
 # Visual Studio Code Git
-A Simple Git Extension for VSCode built with good ol' vanilla JS
+View a Git Graph of your repository, and easily perform Git actions from the graph.
+(screenshot)
 
 ## Features
 - Commit log with graph for all branches (includes working tree + stashes)
@@ -7,20 +8,24 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 	- author
 	- message (--grep)
 	- date (--before, --after)
-- Diff any two commits
+- Diff two commits
 - Add/Delete tags
-- Add/Drop/View stashes
-- Commands
+- Save/Drop/View stashes
+- Git Commands
 	- fetch
 	- pull --rebase/pull --rebase --autostash
 	- push/push --force
 	- commit/commit --amend
+	- commit & push
 	- stage/unstage
 	- stash
 	- revert
 	- push
 	- push + `--force`
 	- commit + `--amend`
+
+Visual Studio Marketplace
+This extension is available on the Visual Studio Marketplace for Visual Studio Code.
 
 ### TODO
 - DONE - create extension icon
@@ -93,8 +98,8 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 	- toolbar
 		- DONE - fetch
 		- DONE - pull
-		- push
-		- DONE - commit
+		- push/push --force (context)
+		- DONE - commit/commit --amend (context)/commit & push (context)
 		- DONE - stash
 		- DONE - stage
 		- DONE - unstage
@@ -105,10 +110,6 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 			- change author
 			- rename branch
 			- reset -> show a quick select --soft, --hard, HEAD, origin -> show confirmation
-	- toolbar
-		- push/push --force (context menu)
-		- commit/commit --amend (context menu)
-		- revert
 	- commits (context menu)
 		- DONE - add tag
 		- DONE - delete tag
@@ -129,12 +130,12 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 		- DONE - drop stash (for stashes) -> show confirmation message
 
 - DONE - render staged files differently
-- conflicts
-	- command: 'git.openMergeEditor'
-	- title: l10n.t('Open Merge'),
-	- arguments: [resource.rightUri]
+- DONE - conflicts
+	- DONE - render conflicted decoration
+	- DONE - open merge editor
 
 - DONE - resolve renamed files -> relocate the file (move it under a secondary folder, then move it back)
+- DONE - fastlane
 
 - DONE - repo detections
 	- DONE - 'welcome' screen
@@ -151,7 +152,7 @@ A Simple Git Extension for VSCode built with good ol' vanilla JS
 
 ### Optimizations
 - draw graph in an `async` function?
-- cache vertex/edge bounds
+- DONE - cache vertex/edge bounds
 - datasource entries
 	- commit data
 	- vertex/edge bounds (invalidated on repo change)
@@ -242,3 +243,8 @@ This extension contributes the following settings:
 
 ### 1.0.0
 Initial release
+
+## Publishing / Updating
+- run `vsce login muhammadmohsen` and enter the access token.
+- run `vsce package`
+- run `vsce publish major/minor/patch/`
