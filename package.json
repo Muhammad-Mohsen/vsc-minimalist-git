@@ -218,10 +218,6 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.commit",
-					"when": "false"
-				},
-				{
 					"command": "mingit.commitAmend",
 					"when": "false"
 				},
@@ -320,11 +316,6 @@
 			{
 				"command": "mingit.resetHard",
 				"title": "Hard reset",
-				"category": "Minimalist Git"
-			},
-			{
-				"command": "mingit.commit",
-				"title": "Commit",
 				"category": "Minimalist Git"
 			},
 			{

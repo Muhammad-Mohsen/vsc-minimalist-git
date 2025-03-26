@@ -13,8 +13,8 @@ async function activate(context) {
 	});
 
 	// COMMANDS
-	vsc.registerCommand(context, 'mingit.commit', () => {
-
+	vsc.registerCommand(context, 'mingit.commitAmend', (context) => {
+		provider.onContext({ command: 'amendcommit', body: context });
 	});
 
 	vsc.registerCommand(context, 'mingit.stage', () => {

@@ -46,8 +46,12 @@ module.exports = (() => {
 	}
 
 	async function commit(options) {
-		await simpleGit.add(options.files);
-		return simpleGit.commit(options.message, options.files);
+		if (options.files) {
+			await simpleGit.add(options.files);
+			return simpleGit.commit(options.message, options.files);
+		}
+
+		return await simpleGit.commit(options);
 	}
 	function revert(options) {
 		return simpleGit.revert(options); // TODO
