@@ -95,7 +95,6 @@ mingit-commit-list {
 			border-inline-end: 2px solid;
 			color: var(--branch-color);
 			translate: 5px 2px;
-			z-index: -1;
 
 			&.right {
 				border-block-start: 2px solid;

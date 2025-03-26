@@ -15,9 +15,6 @@ class Toolbar extends HTMLElementBase {
 		this.toggleProgess(true);
 		this.postMessage({ command: 'fetch' });
 	}
-	push() {
-
-	}
 
 	stash() {
 		const files = this.#changeList.getSelected();
@@ -54,7 +51,7 @@ class Toolbar extends HTMLElementBase {
 	overflow(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		event.target.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: event.clientX, clientY: event.clientY }));
+		event.currentTarget.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: event.clientX, clientY: event.clientY }));
 	}
 
 	toggle(force) {
@@ -79,7 +76,7 @@ class Toolbar extends HTMLElementBase {
 			<div class="progress absolute" style="display: none;"></div>
 			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch();" title="Fetch"></button>
 			<button class="tertiary ic-pull" onclick="${this.handle}.postMessage({ command: 'pull' })" title="Pull"></button>
-			<button class="tertiary ic-push" onclick="${this.handle}.push();" title="Push"></button>
+			<button class="tertiary ic-push" onclick="${this.handle}.postMessage({ command: 'push' })" title="Push"></button>
 			<separator></separator>
 			<button class="tertiary ic-discard toggleable" onclick="${this.handle}.discard();" title="Discard"></button>
 			<button class="tertiary ic-stash toggleable" onclick="${this.handle}.stash();" title="Stash"></button>
@@ -87,7 +84,7 @@ class Toolbar extends HTMLElementBase {
 			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage();" title="Unstage"></button>
 			<button class="tertiary ic-stage toggleable" onclick="${this.handle}.stage();" title="Stage"></button>
 			<separator></separator>
-			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);" data-vscode-context='{ "preventDefaultContextMenuItems": true, "isOverflow": true }'></button>
+			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);" data-vscode-context='{ "isOverflow": true }'></button>
 			<div class="commit-row">
 				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange();">
 				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit();"></button>
