@@ -81,132 +81,156 @@ module.exports = class MainViewProvider {
 
 	/** @param {{ command: string, body: any }} message */
 	async #onMessage(message) {
-		switch (message.command) {
-			case 'openfolder':
-				vsc.executeCommand('vscode.openFolder');
-				break;
-
-			case 'clone':
-				vsc.executeCommand('git.clone');
-				break;
-
-			case 'getstatus':
-				const status = await git.status();
-				this.#postMessage({ command: 'status', body: status });
-				this.#setBadge(status.files.length);
-				break;
-
-			case 'getlog':
-			case 'filter':
-				const state = await git.state({ filters: message.body?.value });
-				this.#postMessage({ command: 'state', body: state });
-				this.#setBadge(state.status.files.length);
-				break;
-
-			case 'getdiff':
-				git.diff(message.body.hashes).then(diff => this.#postMessage({ command: 'diff', body: diff }));
-				break;
-
-			case 'diffeditor':
-				if (message.body.decorator == '(!)') {
-					vsc.executeCommand('git.openMergeEditor', vsc.absoluteURI(message.body.path));
+		try {
+			switch (message.command) {
+				case 'openfolder':
+					vsc.executeCommand('vscode.openFolder');
 					break;
-				}
-				const { left, right, title } = await git.resolveDiffURIs(message.body, this.#extensionURI);
-				vsc.executeCommand('vscode.diff', left, right, title);
 
-				break;
+				case 'clone':
+					vsc.executeCommand('git.clone');
+					break;
 
-			case 'fetch':
-				await git.fetch();
-				this.#refresh();
-				break;
+				case 'getstatus':
+					const status = await git.status();
+					this.#postMessage({ command: 'status', body: status });
+					this.#setBadge(status.files.length);
+					break;
 
-			case 'pull':
-				vsc.executeCommand('mingit.pull');
-				break;
+				case 'getlog':
+				case 'filter':
+					const state = await git.state({ filters: message.body?.value });
+					this.#postMessage({ command: 'state', body: state });
+					this.#setBadge(state.status.files.length);
+					break;
 
-			case 'commit':
-				await git.commit(message.body);
-				this.#refresh();
-				break;
+				case 'getdiff':
+					git.diff(message.body.hashes).then(diff => this.#postMessage({ command: 'diff', body: diff }));
+					break;
 
-			case 'discard':
-				const confirm = await vsc.showWarningPopup(`This will discard: "${message.body.files.join('" & "')}". Note: VSCode doesn't allow new lines...so we're stuck with how this looks.`, 'Confirm', 'Cancel');
-				if (confirm != 'Confirm') break;
+				case 'diffeditor':
+					if (message.body.decorator == '(!)') {
+						vsc.executeCommand('git.openMergeEditor', vsc.absoluteURI(message.body.path));
+						break;
+					}
+					const { left, right, title } = await git.resolveDiffURIs(message.body, this.#extensionURI);
+					vsc.executeCommand('vscode.diff', left, right, title);
 
-				await git.discard(message.body);
-				this.#refresh();
-				break;
+					break;
 
-			case 'stage':
-				await git.stage(message.body);
-				this.#refresh();
-				break;
+				case 'fetch':
+					await git.fetch();
+					this.#refresh();
+					break;
 
-			case 'unstage':
-				await git.unstage(message.body);
-				this.#refresh();
-				break;
+				case 'push':
+					await git.push();
+					this.#refresh();
+					break;
 
-			case 'stash':
-				await git.saveStash(message.body);
-				this.#refresh();
-				break;
+				case 'pull':
+					git.pull();
+					vsc.executeCommand('mingit.pull');
+					break;
+
+				case 'commit':
+					await git.commit(message.body);
+					this.#refresh();
+					break;
+
+				case 'discard':
+					const confirm = await vsc.showWarningPopup(`This will discard: "${message.body.files.join('" & "')}".`, 'Confirm', 'Cancel');
+					if (confirm != 'Confirm') break;
+
+					await git.discard(message.body);
+					this.#refresh();
+					break;
+
+				case 'stage':
+					await git.stage(message.body);
+					this.#refresh();
+					break;
+
+				case 'unstage':
+					await git.unstage(message.body);
+					this.#refresh();
+					break;
+
+				case 'stash':
+					await git.saveStash(message.body);
+					this.#refresh();
+					break;
+			}
+
+		} catch (err) {
+			vsc.showErrorPopup(err.message);
 		}
 	}
 
 	/** @param {{ command: string, body: any }} message */
 	async onContext(message) {
-		switch (message.command) {
-			case 'addtag':
-				const nameToAdd = await vsc.showInputBox({ placeHolder: 'Enter tag name' });
-				if (!nameToAdd?.trim()) return;
+		try {
+			switch (message.command) {
+				case 'addtag':
+					const nameToAdd = await vsc.showInputBox({ placeHolder: 'Enter tag name' });
+					if (!nameToAdd?.trim()) return;
 
-				try {
-					await git.addTag([nameToAdd, message.body.hash]);
+					try {
+						await git.addTag([nameToAdd, message.body.hash]);
+						this.#refresh();
+					} catch (err) {
+						vsc.showErrorPopup(err.message);
+					}
+					break;
+
+				case 'deletetag':
+					const nameToDelete = await vsc.showQuickPick(message.body.tags.split('\n'), { placeHolder: 'Select tag to delete', canPickMany: false });
+					if (!nameToDelete) break;;
+
+					const confirmed = await vsc.showWarningPopup(`This will delete "${nameToDelete}"`, 'Confirm', 'Cancel');
+					if (confirmed != 'Confirm') break;
+
+					try {
+						await git.deleteTag(nameToDelete);
+						this.#refresh();
+					} catch (err) {
+						vsc.showErrorPopup(err.message);
+					}
+					break;
+
+				case 'copyhash':
+					vsc.copyToClipboard(message.body.hash);
+					break;
+
+				case 'copymessage':
+					vsc.copyToClipboard(message.body.message);
+					break;
+
+				case 'applystash':
+					try { await git.applyStash(message.body); }
+					catch (err) { vsc.showErrorPopup(err.message); }
 					this.#refresh();
-				} catch (err) {
-					vsc.showErrorPopup(err.message);
-				}
-				break;
+					break;
 
-			case 'deletetag':
-				const nameToDelete = await vsc.showQuickPick(message.body.tags.split('\n'), { placeHolder: 'Select tag to delete', canPickMany: false });
-				if (!nameToDelete) break;;
+				case 'dropstash':
+					const dropStashConfirm = await vsc.showWarningPopup(`This will drop "${message.body.message}"`, 'Confirm', 'Cancel');
+					if (dropStashConfirm != 'Confirm') break;
 
-				const confirmed = await vsc.showWarningPopup(`This will delete "${nameToDelete}"`, 'Confirm', 'Cancel');
-				if (confirmed != 'Confirm') break;
-
-				try {
-					await git.deleteTag(nameToDelete);
+					await git.dropStash(message.body);
 					this.#refresh();
-				} catch (err) {
-					vsc.showErrorPopup(err.message);
-				}
-				break;
+					break;
 
-			case 'copyhash':
-				vsc.copyToClipboard(message.body.hash);
-				break;
+				case 'forcepush':
+					await git.push(['--force']);
+					this.#refresh();
+					break;
 
-			case 'copymessage':
-				vsc.copyToClipboard(message.body.message);
-				break;
+				case 'amendcommit':
+					break;
+			}
 
-			case 'applystash':
-				try { await git.applyStash(message.body); }
-				catch (err) { vsc.showErrorPopup(err.message); }
-				this.#refresh();
-				break;
-
-			case 'dropstash':
-				const dropStashConfirm = await vsc.showWarningPopup(`This will drop "${message.body.message}"`, 'Confirm', 'Cancel');
-				if (dropStashConfirm != 'Confirm') break;
-
-				await git.dropStash(message.body);
-				this.#refresh();
-				break;
+		} catch (err) {
+			vsc.showErrorPopup(err.message);
 		}
 	}
 
@@ -237,6 +261,9 @@ module.exports = class MainViewProvider {
 	}
 
 	#refresh() {
-		git.state({ filters: '' }).then(state => this.#postMessage({ command: 'state', body: state }));
+		git.state({ filters: '' }).then(state => {
+			this.#postMessage({ command: 'state', body: state })
+			this.#setBadge(state.status.files.length);
+		});
 	}
 }
