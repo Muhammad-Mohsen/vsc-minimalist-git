@@ -64,6 +64,9 @@ async function activate(context) {
 		provider.onContext({ command: 'dropstash', body: context });
 	});
 
+	vsc.registerCommand(context, 'mingit.renameBranch', async (context) => {
+		provider.onContext({ command: 'renamebranch', body: context });
+	});
 	vsc.registerCommand(context, 'mingit.config.author', async () => {
 		const tokenizeInput = value => {
 			let [user, email] = value.split('<');

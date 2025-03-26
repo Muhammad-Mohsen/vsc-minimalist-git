@@ -127,17 +127,6 @@
 					"group": "5_stashes"
 				},
 				{
-					"command": "mingit.resetSoft",
-					"when": "isOverflow && webviewId == 'mingit-main-view'",
-					"group": "4_reset"
-				},
-				{
-					"command": "mingit.resetHard",
-					"when": "isOverflow && webviewId == 'mingit-main-view'",
-					"group": "4_reset"
-				},
-
-				{
 					"command": "mingit.commitAmend",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
@@ -207,14 +196,6 @@
 				},
 				{
 					"command": "mingit.renameBranch",
-					"when": "false"
-				},
-				{
-					"command": "mingit.resetSoft",
-					"when": "false"
-				},
-				{
-					"command": "mingit.resetHard",
 					"when": "false"
 				},
 				{
@@ -306,16 +287,6 @@
 			{
 				"command": "mingit.renameBranch",
 				"title": "Rename current branch",
-				"category": "Minimalist Git"
-			},
-			{
-				"command": "mingit.resetSoft",
-				"title": "Reset",
-				"category": "Minimalist Git"
-			},
-			{
-				"command": "mingit.resetHard",
-				"title": "Hard reset",
 				"category": "Minimalist Git"
 			},
 			{

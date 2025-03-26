@@ -98,8 +98,8 @@ This extension is available on the Visual Studio Marketplace for Visual Studio C
 	- toolbar
 		- DONE - fetch
 		- DONE - pull
-		- push/push --force (context)
-		- DONE - commit/commit --amend (context)/commit & push (context)
+		- DONE - push/--force (context)
+		- DONE - commit/ --amend (context) (context)
 		- DONE - stash
 		- DONE - stage
 		- DONE - unstage
@@ -114,7 +114,7 @@ This extension is available on the Visual Studio Marketplace for Visual Studio C
 		- DONE - add tag
 		- DONE - delete tag
 
-		- checkout
+		- DONE - checkout
 		- cherrypick
 		- revert -> show confirmation message
 		- drop -> show confirmation message

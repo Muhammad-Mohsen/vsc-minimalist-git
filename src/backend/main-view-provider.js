@@ -232,6 +232,11 @@ module.exports = class MainViewProvider {
 				case 'checkoutcommit':
 					await git.checkout(message.body);
 					break;
+
+				case 'renamebranch':
+					const name = await vsc.showInputBox({ placeHolder: 'Enter new branch name' });
+					git.branch(['-M', name]);
+					break;
 			}
 
 		} catch (err) {

@@ -98,6 +98,9 @@ module.exports = (() => {
 		await simpleGit.push(['origin', '--delete', name]);
 	}
 
+	async function branch(options) {
+		return await simpleGit.branch(options);
+	}
 	function setConfig(key, val, append, scope) {
 		return simpleGit.addConfig(key, val, append || false, scope || 'local');
 	}
@@ -412,6 +415,7 @@ module.exports = (() => {
 		addTag,
 		deleteTag,
 
+		branch,
 		setConfig,
 		getConfig,
 
