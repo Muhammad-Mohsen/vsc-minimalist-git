@@ -51,7 +51,7 @@ module.exports = (() => {
 			return simpleGit.commit(options.message, options.files);
 		}
 
-		return await simpleGit.commit(options);
+		return await simpleGit.raw(['commit', ...options]);
 	}
 	function revert(options) {
 		return simpleGit.revert(options); // TODO
