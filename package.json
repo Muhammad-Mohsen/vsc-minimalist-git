@@ -129,30 +129,23 @@
 				{
 					"command": "mingit.resetSoft",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
-					"group": "5_stashes"
+					"group": "4_reset"
 				},
 				{
 					"command": "mingit.resetHard",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
-					"group": "5_stashes"
+					"group": "4_reset"
 				},
 
-				{
-					"command": "mingit.commit",
-					"when": "isCommitButton && webviewId == 'mingit-main-view'"
-				},
 				{
 					"command": "mingit.commitAmend",
-					"when": "isCommitButton && webviewId == 'mingit-main-view'"
-				},
-
-				{
-					"command": "mingit.push",
-					"when": "isPushButton && webviewId == 'mingit-main-view'"
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "1_commitActions"
 				},
 				{
 					"command": "mingit.pushForce",
-					"when": "isPushButton && webviewId == 'mingit-main-view'"
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "1_commitActions"
 				}
 			],
 			"commandPalette": [
@@ -336,7 +329,7 @@
 			},
 			{
 				"command": "mingit.commitAmend",
-				"title": "Amend commit",
+				"title": "Amend last commit",
 				"category": "Minimalist Git"
 			},
 			{
