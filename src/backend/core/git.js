@@ -53,9 +53,6 @@ module.exports = (() => {
 
 		return await simpleGit.raw(['commit', ...options]);
 	}
-	function revert(options) {
-		return simpleGit.revert(options); // TODO
-	}
 	async function stage(options) {
 		return await simpleGit.add(options.files);
 	}
@@ -88,9 +85,11 @@ module.exports = (() => {
 	async function checkoutCommit(options) {
 		return await simpleGit.checkout([options.hash]);
 	}
-
 	async function cherryPickCommit(options) {
 		return await simpleGit.raw(['cherry-pick', '-n', options.hash]);
+	}
+	async function revertCommit(options) {
+		return await simpleGit.raw(['revert', '-n', options.hash]);
 	}
 
 	async function addTag(options) {
@@ -404,13 +403,13 @@ module.exports = (() => {
 		pull,
 		push,
 		commit,
-		revert,
 		stage,
 		unstage,
 		discard,
 
 		checkoutCommit,
 		cherryPickCommit,
+		revertCommit,
 
 		applyStash,
 		saveStash,

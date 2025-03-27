@@ -73,6 +73,25 @@
 	- DONE - assign them a new lane maxBranchIndex + 1 & sort them by parent
 	- DONE - simply render them!
 
+- DONE - repo detections
+	- DONE - 'welcome' screen
+		- DONE - html
+		- DONE - no git!!
+		- DONE - no workspace/repository
+	- DONE - repository in parent...automatically opened!
+		- DONE - show a notification message
+	- DONE - changes
+- DONE - visibility change
+- DONE - loading bar
+	- show on postMessage
+	- hide on onMessage
+
+- repo state detection
+	- DONE - changes
+	- rebasing
+	- detached
+	- cherry picking
+
 - commands
 	- toolbar
 		- DONE - fetch
@@ -93,8 +112,8 @@
 		- DONE - delete tag
 
 		- DONE - checkout
-		- cherrypick
-		- revert -> show confirmation message
+		- DONE - cherry-pick
+		- revert
 		- drop -> show confirmation message
 
 		- merge into current branch
@@ -114,19 +133,7 @@
 
 - DONE - resolve renamed files -> relocate the file (move it under a secondary folder, then move it back)
 - DONE - fastlane
-
-- DONE - repo detections
-	- DONE - 'welcome' screen
-		- DONE - html
-		- DONE - no git!!
-		- DONE - no workspace/repository
-	- DONE - repository in parent...automatically opened!
-		- DONE - show a notification message
-	- DONE - changes
-- DONE - visibility change
-- DONE - loading bar
-	- show on postMessage
-	- hide on onMessage
+- DONE - shift-selections
 
 ### Optimizations
 - draw graph in an `async` function?

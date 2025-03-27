@@ -45,6 +45,9 @@ async function activate(context) {
 	vsc.registerCommand(context, 'mingit.cherryPickCommit', (context) => {
 		provider.onContext({ command: 'cherrypickcommit', body: context });
 	});
+	vsc.registerCommand(context, 'mingit.revertCommit', (context) => {
+		provider.onContext({ command: 'revertcommit', body: context });
+	});
 
 	vsc.registerCommand(context, 'mingit.addTag', (context) => {
 		provider.onContext({ command: 'addtag', body: context });

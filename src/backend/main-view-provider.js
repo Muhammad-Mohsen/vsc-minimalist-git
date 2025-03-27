@@ -237,6 +237,10 @@ module.exports = class MainViewProvider {
 					await git.cherryPickCommit(message.body);
 					break;
 
+				case 'revertcommit':
+					await git.revertCommit(message.body);
+					break;
+
 				case 'renamebranch':
 					const name = await vsc.showInputBox({ placeHolder: 'Enter new branch name' });
 					git.branch(['-M', name]);

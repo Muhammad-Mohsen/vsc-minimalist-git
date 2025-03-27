@@ -19,12 +19,13 @@ View a Git Graph of your repository, and easily perform Git actions from the gra
 	- stage + unstage
 	- discard
 - Commit commands
-	- revert/drop/checkout commit
+	- revert/checkout/cherry-pick commit
 	- merge to current branch
-	- reset to commit
+	- reset to commit `--hard`
 
+![Screenshot #1](res/screenshots/mingit-screenshot-1.PNG)
 
-![Screenshot #1](res/screenshots/mingit-screenshot-2.PNG)
+![Screenshot #2](res/screenshots/mingit-screenshot-2.PNG)
 <sub>theme: [VSCode Minimalist Theme (Oak)](https://marketplace.visualstudio.com/items?itemName=MuhammadMohsen.vsc-minimalist-theme)</sub>
 
 ## Visual Studio Marketplace
