@@ -22,7 +22,7 @@ class Toolbar extends HTMLElementBase {
 
 		this.toggleProgess(true);
 		this.#commitInput.value = '';
-		onCommitMessageChange();
+		this.onCommitMessageChange();
 		this.postMessage({ command: 'stash', body: { message, files } });
 	}
 
@@ -40,7 +40,7 @@ class Toolbar extends HTMLElementBase {
 
 		this.toggleProgess(true);
 		this.#commitInput.value = '';
-		onCommitMessageChange();
+		this.onCommitMessageChange();
 		this.postMessage({ command: 'commit', body: { message, files } });
 	}
 	discard() {
