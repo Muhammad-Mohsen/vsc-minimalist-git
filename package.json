@@ -52,7 +52,7 @@
 					"group": "1_commits"
 				},
 				{
-					"command": "mingit.cherrypickCommit",
+					"command": "mingit.cherryPickCommit",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "1_commits"
 				},
@@ -143,7 +143,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.cherrypickCommit",
+					"command": "mingit.cherryPickCommit",
 					"when": "false"
 				},
 				{
@@ -220,7 +220,7 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.cherrypickCommit",
+				"command": "mingit.cherryPickCommit",
 				"title": "Cherrypick commit",
 				"category": "Minimalist Git"
 			},
