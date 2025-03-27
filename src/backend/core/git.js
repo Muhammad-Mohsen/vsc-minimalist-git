@@ -85,8 +85,12 @@ module.exports = (() => {
 		return simpleGit.stash(['drop', options.hash]);
 	}
 
-	async function checkout(options) {
+	async function checkoutCommit(options) {
 		return await simpleGit.checkout([options.hash]);
+	}
+
+	async function cherryPickCommit(options) {
+		return await simpleGit.raw(['cherry-pick', '-n', options.hash]);
 	}
 
 	async function addTag(options) {
@@ -405,7 +409,8 @@ module.exports = (() => {
 		unstage,
 		discard,
 
-		checkout,
+		checkoutCommit,
+		cherryPickCommit,
 
 		applyStash,
 		saveStash,

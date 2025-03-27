@@ -11,14 +11,18 @@ View a Git Graph of your repository, and easily perform Git actions from the gra
 - Diff two commits
 - Add/Delete tags
 - Save/Drop/View stashes
-- Git Commands
+- Cookie-cutter git commands:
 	- fetch
-	- pull `--rebase --autostash` by default
+	- pull `--rebase --autostash`
 	- push + push `--force`
 	- commit + commit `--amend`
 	- stage + unstage
-	- stashes: list + apply + drop
 	- discard
+- Commit commands
+	- revert/drop/checkout commit
+	- merge to current branch
+	- reset to commit
+
 
 ![Screenshot #1](res/screenshots/mingit-screenshot-2.PNG)
 <sub>theme: [VSCode Minimalist Theme (Oak)](https://marketplace.visualstudio.com/items?itemName=MuhammadMohsen.vsc-minimalist-theme)</sub>

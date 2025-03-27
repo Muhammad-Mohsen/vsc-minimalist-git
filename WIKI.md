@@ -6,6 +6,7 @@
 - run `vsce publish major/minor/patch/`
 
 ## TODO
+- add commands to abort cherry-pick, abort merge, abort/continue rebase?
 - DONE - create extension icon
 - DONE - set up package json
 - DONE - test run the extension

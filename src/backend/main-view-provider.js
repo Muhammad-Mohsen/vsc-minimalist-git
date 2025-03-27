@@ -230,7 +230,11 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'checkoutcommit':
-					await git.checkout(message.body);
+					await git.checkoutCommit(message.body);
+					break;
+
+				case 'cherrypickcommit':
+					await git.cherryPickCommit(message.body);
 					break;
 
 				case 'renamebranch':
