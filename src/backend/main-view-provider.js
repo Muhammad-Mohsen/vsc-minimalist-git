@@ -271,7 +271,10 @@ module.exports = class MainViewProvider {
 
 	#onVisibilityChange() {
 		// update the webview on visible...when it's invisible, it won't respond to any events
-		if (this.#view.visible) git.status().then(status => this.#postMessage({ command: 'status', body: status }));
+		if (this.#view.visible) git.status().then(status => {
+			this.#postMessage({ command: 'status', body: status });
+			this.#setBadge(status.files.length);
+		});
 	}
 
 	#setBadge(value) {
