@@ -85,13 +85,15 @@ class CommitList extends HTMLElementBase {
 	}
 	#renderWorkingTree(state) {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
+		const changes = state.status.files.length == 1 ? '1 change' : `${state.status.files.length} changes`;
+		const repoState = state.status.repoState ? ` (${state.status.repoState})` : '';
 
-		this.querySelector('ul').insertAdjacentHTML('afterbegin', /*html*/`
+		this.querySelector('ul').insertAdjacentHTML('afterbegin',`
 			<li class="working-tree selected" onclick="${this.handle}.onClick(event)" hash="" tabindex="0">
 				${this.#renderVertex({ hash: '', branchIndex: parent.branchIndex, parents: [parent.hash] }, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<p class="commit-body" title="Working Tree">Working Tree</p>
-					<p class="row secondary">${state.status.files.length} change(s)</p>
+					<p class="row secondary">${changes} ${repoState}</p>
 				</div>
 			</li>`);
 	}

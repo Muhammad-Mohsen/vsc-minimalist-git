@@ -204,6 +204,15 @@ module.exports = (() => {
 	}
 	async function status() {
 		const status = await simpleGit.status(['-u']);
+
+		// repo state
+		const repoState = (await simpleGit.raw(['status'])).split('\n')[1]; // we're interested in the second line of the output
+		if (repoState.includes('rebase in progress')) status.repoState = 'rebasing';
+		if (repoState.includes('cherry-picking')) status.repoState = 'cherry-picking';
+		if (repoState.includes("merge in progress")) status.repoState = "merging";
+		if (repoState.includes("revert in progress")) status.repoState = "reverting";
+
+		// work out the decorators
 		status.files = status.files.map(f => {
 			f.index = f.index?.trim() || '';
 			f.working_dir = f.working_dir?.trim() || '';
