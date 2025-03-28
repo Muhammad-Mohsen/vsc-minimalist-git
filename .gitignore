@@ -4,4 +4,4 @@ out/*
 .local/*
 
 tests/*
-!tests/*.bat
+!tests/*.sh
