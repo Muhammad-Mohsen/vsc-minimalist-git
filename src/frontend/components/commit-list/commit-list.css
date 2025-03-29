@@ -10,6 +10,7 @@ mingit-commit-list {
 		position: relative;
 		display: block;
 		max-height: calc(100vh - 250px);
+		min-height: 50vh;
 		width: calc(100% + 2px);
 		padding: 12px 0;
 		resize: vertical;
@@ -70,6 +71,8 @@ mingit-commit-list {
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
+
+		& .repo-state { color: var(--vscode-gitDecoration-deletedResourceForeground); }
 
 		/* graph */
 		& vertex {

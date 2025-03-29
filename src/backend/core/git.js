@@ -139,12 +139,12 @@ module.exports = (() => {
 		return state;
 	}
 	async function log(options = {}) {
-		// git log --branches --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
+		// git log --all --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		const logs = await simpleGit.raw([
 			'log',
 			// hash, ref, parents, author name, author email, author date, committer date, raw body
 			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
-			'--branches',
+			'--all',
 			'--remotes',
 			'--tags',
 			'--graph',
@@ -206,11 +206,8 @@ module.exports = (() => {
 		const status = await simpleGit.status(['-u']);
 
 		// repo state
-		const repoState = (await simpleGit.raw(['status'])).split('\n')[1]; // we're interested in the second line of the output
-		if (repoState.includes('rebase in progress')) status.repoState = 'rebasing';
-		if (repoState.includes('cherry-picking')) status.repoState = 'cherry-picking';
-		if (repoState.includes("merge in progress")) status.repoState = "merging";
-		if (repoState.includes("revert in progress")) status.repoState = "reverting";
+		const repoState = (await simpleGit.raw(['status'])); // we're interested in the second line of the output
+		status.repoState = repoState.match(/(rebase in progress)|(merge in progress)|(revert in progress)|(cherry-picking commit \w{7})/)[0];
 
 		// work out the decorators
 		status.files = status.files.map(f => {
