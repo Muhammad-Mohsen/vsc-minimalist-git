@@ -40,7 +40,7 @@ class CommitList extends HTMLElementBase {
 		const tags = titleAttr('.ic-tag');
 		const isStash = event.currentTarget.classList.contains('stash');
 
-		event.currentTarget.setAttribute('data-vscode-context', `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`);
+		event.currentTarget.dataset.vscodeContext = `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`;
 	}
 	filter(event) {
 		this.postMessage({ command: 'filter', body: { value: event.target.value } });
