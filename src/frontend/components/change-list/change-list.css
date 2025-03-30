@@ -49,7 +49,7 @@ mingit-change-list {
 
 			&.M, &[class="(A) M"] { color: var(--vscode-gitDecoration-modifiedResourceForeground); }
 			& .insertions, &.A, &[class="(A)"] { color: var(--vscode-gitDecoration-addedResourceForeground); }
-			& .deletions, &.D, &[class="(!)"] { color: var(--vscode-gitDecoration-deletedResourceForeground); }
+			& .deletions, &.D, &[class="(!)"], &[class="(D)"] { color: var(--vscode-gitDecoration-deletedResourceForeground); }
 		}
 	}
 }
