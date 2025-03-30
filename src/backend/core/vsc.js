@@ -77,6 +77,12 @@ module.exports = (() => {
 		return vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, path);
 	}
 
+	function fileSystemWatcher(context) {
+		const watcher = vscode.workspace.createFileSystemWatcher('*/**');
+		context.subscriptions.push(watcher);
+		return watcher;
+	}
+
 	function isDark() {
 		return [vscode.ColorThemeKind.Dark, vscode.ColorThemeKind.HighContrast].includes(vscode.window.activeColorTheme.kind);
 	}
@@ -108,6 +114,7 @@ module.exports = (() => {
 		workspacePath,
 		joinPath,
 		absoluteURI,
+		fileSystemWatcher,
 		isDark,
 		copyToClipboard,
 

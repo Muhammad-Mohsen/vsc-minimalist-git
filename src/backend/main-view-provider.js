@@ -9,14 +9,16 @@ module.exports = class MainViewProvider {
 	#view;
 	#extensionURI;
 
-	constructor(extensionURI) {
-		this.#extensionURI = extensionURI;
+	constructor(context) {
+		this.#extensionURI = context.extensionUri;
 		if (!vsc.workspacePath()) return;
 
 		git.setWorkingDirectory(vsc.workspacePath());
 
-		// on start, this fires twice, and there's no event object to check for anything...so handler assignment is delayed by a bit and a half
-		setTimeout(() => git.setOnChangeListener(() => this.#onRepoChange()), 5000);
+		const watcher = vsc.fileSystemWatcher(context);
+		watcher.onDidChange(() => this.#onRepoChange());
+		watcher.onDidCreate(() => this.#onRepoChange());
+		watcher.onDidDelete(() => this.#onRepoChange());
 
 		git.repoPath().then(repoPath => {
 			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
@@ -127,8 +129,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'pull':
-					git.pull();
-					vsc.executeCommand('mingit.pull');
+					await git.pull();
 					break;
 
 				case 'commit':
@@ -154,6 +155,7 @@ module.exports = class MainViewProvider {
 					await git.saveStash(message.body);
 					break;
 			}
+			this.#postMessage({ command: 'hideprogress' });
 
 		} catch (err) {
 			vsc.showErrorPopup(err.message);
@@ -303,6 +305,7 @@ module.exports = class MainViewProvider {
 
 					break;
 			}
+			this.#postMessage({ command: 'hideprogress' });
 
 		} catch (err) {
 			vsc.showErrorPopup(err.message);
@@ -336,9 +339,8 @@ module.exports = class MainViewProvider {
 	}
 
 	#refresh() {
-		console.log('MainViewProvider #refresh called'); // to monitor how many times this is called
 		git.state({ filters: '' }).then(state => {
-			this.#postMessage({ command: 'state', body: state })
+			this.#postMessage({ command: 'state', body: state });
 			this.#setBadge(state.status.files.length);
 		});
 	}

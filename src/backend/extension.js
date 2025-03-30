@@ -6,7 +6,7 @@ const git = require('./core/git');
 
 /** @param {vscode.ExtensionContext} context */
 async function activate(context) {
-	const provider = new MainViewProvider(context.extensionUri);
+	const provider = new MainViewProvider(context);
 	vsc.registerWebViewProvider(context, 'mingit-main-view',
 		provider,
 		{ webviewOptions: { retainContextWhenHidden: true }

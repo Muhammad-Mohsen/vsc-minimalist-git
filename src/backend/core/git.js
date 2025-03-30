@@ -7,18 +7,9 @@ module.exports = (() => {
 	const PAGE_COUNT = 500;
 	const PATH_SEPARATOR = /\\|\//;
 
-	let onchange; // repo change handler
-
 	let builtInGit;
 	vsc.gitExtension().then(git => {
 		builtInGit = git;
-
-		builtInGit.onDidOpenRepository(repo => {
-			repo.state.onDidChange((event) => { // TODO dispose!
-				onchange?.();
-				console.log('onDidChange', event);
-			});
-		});
 	});
 
 	const abortController = new AbortController();
@@ -35,11 +26,11 @@ module.exports = (() => {
 	}
 
 	// COMMANDS
-	function fetch(options) {
-		return simpleGit.fetch(options);
+	async function fetch(options) {
+		return await simpleGit.fetch(options);
 	}
-	function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
-		return simpleGit.pull(options);
+	async function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
+		return await simpleGit.pull(options);
 	}
 	async function push(options) {
 		return await simpleGit.push(options);
