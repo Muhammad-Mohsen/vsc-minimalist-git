@@ -49,6 +49,34 @@ async function activate(context) {
 		provider.onContext({ command: 'revertcommit', body: context });
 	});
 
+	vsc.registerCommand(context, 'mingit.continueRebase', (context) => {
+		provider.onContext({ command: 'continuerebase', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.abortRebase', (context) => {
+		provider.onContext({ command: 'abortrebase', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.continueMerge', (context) => {
+		provider.onContext({ command: 'continuemerge', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.abortMerge', (context) => {
+		provider.onContext({ command: 'abortmerge', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.continueCherryPick', (context) => {
+		provider.onContext({ command: 'continuecherrypick', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.abortCherryPick', (context) => {
+		provider.onContext({ command: 'abortcherrypick', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.interactiveRebase', (context) => {
+		provider.onContext({ command: 'interactiverebase', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.mergeCommitIntoCurrent', (context) => {
+		provider.onContext({ command: 'mergecommitintocurrent', body: context });
+	});
+	vsc.registerCommand(context, 'mingit.resetBranchToCommit', (context) => {
+		provider.onContext({ command: 'resetbranchtocommit', body: context });
+	});
+
 	vsc.registerCommand(context, 'mingit.addTag', (context) => {
 		provider.onContext({ command: 'addtag', body: context });
 	});
@@ -73,34 +101,8 @@ async function activate(context) {
 	vsc.registerCommand(context, 'mingit.renameBranch', async (context) => {
 		provider.onContext({ command: 'renamebranch', body: context });
 	});
-	vsc.registerCommand(context, 'mingit.config.author', async () => {
-		const tokenizeInput = value => {
-			let [user, email] = value.split('<');
-			user = user.replace(/\s{2,}/g, ' ').trim();
-			email = email.replace(/<|>/g, '').replace(/\s{2,}/g, ' ').trim();
-
-			return { user, email };
-		}
-		const validateInput = value => {
-			const { user, email } = tokenizeInput(value);
-
-			if (!user) return 'Please enter a username';
-			if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/)) return 'Please enter a valid email';
-			return '';
-		}
-
-		try {
-			const author = await vsc.showInputBox({
-				placeHolder: 'user <email>',
-				validateInput: validateInput
-			});
-
-			const { user, email } = tokenizeInput(author);
-
-			git.setConfig('user.name', user)
-			git.setConfig('user.email', email);
-
-		} catch {}
+	vsc.registerCommand(context, 'mingit.changeAuthor', async () => {
+		provider.onContext({ command: 'changeauthor', body: context });
 	});
 }
 

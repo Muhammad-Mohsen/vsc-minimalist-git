@@ -1,12 +1,39 @@
 # Minimalist Git
 
 ## Publishing / Updating
+- install `vsce` package `--global` if not installed already.
 - run `vsce login muhammadmohsen` and enter the access token.
 - run `vsce package`
 - run `vsce publish major/minor/patch/`
 
+## Code
+The code is split in two main layers:
+- backend: accesses vscode APIs and git (using `simple-git`). The only "UI" in this page is the `main-view-provider` which is the sidebar provider
+- frontend: the webview basically
+
+### Backend
+TODO
+### Frontend
+TODO
+
+## Testing
+The `tests` folder contains a few bash scripts which create local repositories in different states to test the behavior of the extension.
+
+I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
+
 ## TODO
 - add commands to abort cherry-pick, abort merge, abort/continue rebase?
+	- DONE - create 2 * 3 commands to continue, abort sequence op
+	- DONE - show commands based on current state
+	- DONE - refactor the state code to use regex
+	- DONE - fix repo-2 merge conflict status
+- plus
+	- DONE - revert commit
+	- DONE - interactive rebase
+	- DONE - merge into current branch
+	- DONE - reset branch to this commit
+	- DONE - change author
+
 - DONE - create extension icon
 - DONE - set up package json
 - DONE - test run the extension
@@ -151,7 +178,7 @@
 		- redraw
 		- check the `orphanage` and see if anything is now reachable & re-render
 
-### GIT cheat sheet
+## GIT cheat sheet
 	- git configuration
 		```bash
 		# list all

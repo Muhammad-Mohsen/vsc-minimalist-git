@@ -61,11 +61,6 @@
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "1_commits"
 				},
-				{
-					"command": "mingit.dropCommit",
-					"when": "isCommit && webviewId == 'mingit-main-view'",
-					"group": "1_commits"
-				},
 
 				{
 					"command": "mingit.mergeCommitIntoCurrent",
@@ -73,12 +68,12 @@
 					"group": "2_commits2"
 				},
 				{
-					"command": "mingit.rebaseCurrentOntoCommit",
+					"command": "mingit.resetBranchToCommit",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "2_commits2"
 				},
 				{
-					"command": "mingit.resetCurrentToCommit",
+					"command": "mingit.interactiveRebase",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "2_commits2"
 				},
@@ -135,6 +130,37 @@
 					"command": "mingit.pushForce",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
+				},
+
+				{
+					"command": "mingit.continueRebase",
+					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortRebase",
+					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.continueMerge",
+					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortMerge",
+					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.continueCherryPick",
+					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortCherryPick",
+					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
 				}
 			],
 			"commandPalette": [
@@ -151,7 +177,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.dropCommit",
+					"command": "mingit.interactiveRebase",
 					"when": "false"
 				},
 				{
@@ -159,11 +185,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.rebaseCurrentOntoCommit",
-					"when": "false"
-				},
-				{
-					"command": "mingit.resetCurrentToCommit",
+					"command": "mingit.resetBranchToCommit",
 					"when": "false"
 				},
 				{
@@ -209,6 +231,31 @@
 				{
 					"command": "mingit.pushForce",
 					"when": "false"
+				},
+
+				{
+					"command": "mingit.continueRebase",
+					"when": "false"
+				},
+				{
+					"command": "mingit.abortRebase",
+					"when": "false"
+				},
+				{
+					"command": "mingit.continueMerge",
+					"when": "false"
+				},
+				{
+					"command": "mingit.abortMerge",
+					"when": "false"
+				},
+				{
+					"command": "mingit.continueCherryPick",
+					"when": "false"
+				},
+				{
+					"command": "mingit.abortCherryPick",
+					"when": "false"
 				}
 			]
 		},
@@ -230,8 +277,8 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.dropCommit",
-				"title": "Drop commit",
+				"command": "mingit.interactiveRebase",
+				"title": "Start interactive rebase from commit",
 				"category": "Minimalist Git"
 			},
 			{
@@ -240,13 +287,8 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.rebaseCurrentOntoCommit",
-				"title": "Rebase current branch onto commit",
-				"category": "Minimalist Git"
-			},
-			{
-				"command": "mingit.resetCurrentToCommit",
-				"title": "Reset current branch to commit",
+				"command": "mingit.resetBranchToCommit",
+				"title": "Reset branch to this commit (hard)",
 				"category": "Minimalist Git"
 			},
 			{
@@ -302,6 +344,37 @@
 			{
 				"command": "mingit.pushForce",
 				"title": "Force push",
+				"category": "Minimalist Git"
+			},
+
+			{
+				"command": "mingit.continueRebase",
+				"title": "Continue rebase",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.abortRebase",
+				"title": "Abort rebase",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.continueMerge",
+				"title": "Continue merge",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.abortMerge",
+				"title": "Abort merge",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.continueCherryPick",
+				"title": "Continue Cherry-Pick",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.abortCherryPick",
+				"title": "Abort Cherry-Pick",
 				"category": "Minimalist Git"
 			}
 		]

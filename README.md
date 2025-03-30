@@ -11,7 +11,8 @@ View a Git Graph of your repository, and easily perform Git actions from the gra
 - Diff two commits
 - Add/Delete tags
 - Save/Drop/View stashes
-- Cookie-cutter git commands:
+- continue/skip/abort rebase/cherry-pick/merge
+- Cookie-cutter commands:
 	- fetch
 	- pull `--rebase --autostash`
 	- push + push `--force`
@@ -22,6 +23,7 @@ View a Git Graph of your repository, and easily perform Git actions from the gra
 	- revert/checkout/cherry-pick commit
 	- merge to current branch
 	- reset to commit `--hard`
+- Change repository author
 
 ![Screenshot #1](res/screenshots/mingit-screenshot-1.PNG)
 

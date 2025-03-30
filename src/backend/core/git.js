@@ -69,7 +69,6 @@ module.exports = (() => {
 			// untracked files
 			return await simpleGit.clean(simpleGitModule.CleanOptions.FORCE, options.files);
 		}
-
 	}
 	async function saveStash(options) {
 		await simpleGit.add(options.files);
@@ -91,6 +90,15 @@ module.exports = (() => {
 	async function revertCommit(options) {
 		return await simpleGit.raw(['revert', '-n', options.hash]);
 	}
+	async function rebase(options) {
+		return await simpleGit.rebase(options);
+	}
+	async function merge(options) {
+		return await simpleGit.merge(options);
+	}
+	async function reset(options) {
+		return await simpleGit.raw(['reset', ...options]);
+	}
 
 	async function addTag(options) {
 		await simpleGit.tag(options);
@@ -104,10 +112,18 @@ module.exports = (() => {
 	async function branch(options) {
 		return await simpleGit.branch(options);
 	}
-	function setConfig(key, val, append, scope) {
-		return simpleGit.addConfig(key, val, append || false, scope || 'local');
+	function setConfig(key, val, append = false, scope = 'local') {
+		return simpleGit.addConfig(key, val, append, scope);
 	}
 	function getConfig(key) {
+	}
+
+	// sequencer
+	async function abortSequencer(command) {
+		return await simpleGit.raw([command, '--abort']);
+	}
+	async function continueSequencer(command) {
+		return await simpleGit.raw([command, '--continue']);
 	}
 
 	// GRAPH
@@ -139,12 +155,13 @@ module.exports = (() => {
 		return state;
 	}
 	async function log(options = {}) {
-		// git log --all --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
+		// git log HEAD --branches --remotes --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		const logs = await simpleGit.raw([
 			'log',
 			// hash, ref, parents, author name, author email, author date, committer date, raw body
 			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
-			'--all',
+			'HEAD',
+			'--branches',
 			'--remotes',
 			'--tags',
 			'--graph',
@@ -207,7 +224,8 @@ module.exports = (() => {
 
 		// repo state
 		const repoState = (await simpleGit.raw(['status'])); // we're interested in the second line of the output
-		status.repoState = repoState.match(/(rebase in progress)|(merge in progress)|(revert in progress)|(cherry-picking commit \w{7})/)[0];
+		status.repoState = repoState.match(/(rebase in progress)|(merge in progress)|(revert in progress)|(cherry-picking commit \w{7})/)?.[0];
+		if (repoState.includes('abort the merge')) status.repoState = 'merge in progress';
 
 		// work out the decorators
 		status.files = status.files.map(f => {
@@ -382,8 +400,6 @@ module.exports = (() => {
 		return await simpleGit.checkIsRepo();
 	}
 	async function repoPath() {
-		// return builtInGit.repositories[0].rootUri.fsPath;
-		// or
 		return await simpleGit.revparse(['--show-toplevel']);
 	}
 
@@ -416,6 +432,12 @@ module.exports = (() => {
 		checkoutCommit,
 		cherryPickCommit,
 		revertCommit,
+		rebase,
+		merge,
+		reset,
+
+		continueSequencer,
+		abortSequencer,
 
 		applyStash,
 		saveStash,

@@ -120,12 +120,10 @@ module.exports = class MainViewProvider {
 
 				case 'fetch':
 					await git.fetch();
-					this.#refresh();
 					break;
 
 				case 'push':
 					await git.push();
-					this.#refresh();
 					break;
 
 				case 'pull':
@@ -135,7 +133,6 @@ module.exports = class MainViewProvider {
 
 				case 'commit':
 					await git.commit(message.body);
-					this.#refresh();
 					break;
 
 				case 'discard':
@@ -143,22 +140,18 @@ module.exports = class MainViewProvider {
 					if (confirm != 'Confirm') break;
 
 					await git.discard(message.body);
-					this.#refresh();
 					break;
 
 				case 'stage':
 					await git.stage(message.body);
-					this.#refresh();
 					break;
 
 				case 'unstage':
 					await git.unstage(message.body);
-					this.#refresh();
 					break;
 
 				case 'stash':
 					await git.saveStash(message.body);
-					this.#refresh();
 					break;
 			}
 
@@ -175,12 +168,8 @@ module.exports = class MainViewProvider {
 					const nameToAdd = await vsc.showInputBox({ placeHolder: 'Enter tag name' });
 					if (!nameToAdd?.trim()) return;
 
-					try {
-						await git.addTag([nameToAdd, message.body.hash]);
-						this.#refresh();
-					} catch (err) {
-						vsc.showErrorPopup(err.message);
-					}
+					await git.addTag([nameToAdd, message.body.hash]); // adding tags doesn't dispatch the repo change event
+					this.#refresh();
 					break;
 
 				case 'deletetag':
@@ -190,12 +179,8 @@ module.exports = class MainViewProvider {
 					const confirmed = await vsc.showWarningPopup(`This will delete "${nameToDelete}"`, 'Confirm', 'Cancel');
 					if (confirmed != 'Confirm') break;
 
-					try {
-						await git.deleteTag(nameToDelete);
-						this.#refresh();
-					} catch (err) {
-						vsc.showErrorPopup(err.message);
-					}
+					await git.deleteTag(nameToDelete);
+					this.#refresh();
 					break;
 
 				case 'copyhash':
@@ -207,9 +192,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'applystash':
-					try { await git.applyStash(message.body); }
-					catch (err) { vsc.showErrorPopup(err.message); }
-					this.#refresh();
+					await git.applyStash(message.body);
 					break;
 
 				case 'dropstash':
@@ -222,7 +205,6 @@ module.exports = class MainViewProvider {
 
 				case 'forcepush':
 					await git.push(['--force']);
-					this.#refresh();
 					break;
 
 				case 'amendcommit':
@@ -235,15 +217,90 @@ module.exports = class MainViewProvider {
 
 				case 'cherrypickcommit':
 					await git.cherryPickCommit(message.body);
+					this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
 					break;
 
 				case 'revertcommit':
 					await git.revertCommit(message.body);
+					this.#postMessage({ command: 'commitmessage', body: { message: `This reverts ${message.body.hash}.` } });
+					break;
+
+				case 'interactiverebase':
+					await git.rebase(['-i', message.body.hash + '~1']);
+					break;
+
+				case 'mergecommitintocurrent':
+					await git.merge([message.body.hash]);
+					break;
+
+				case 'resetbranchtocommit':
+					const resetConfirmed = await vsc.showWarningPopup(`This will hard-reset the branch to commit "${message.body.hash}"`, 'Confirm', 'Cancel');
+					if (resetConfirmed != 'Confirm') break;
+
+					await git.reset(['--hard', message.body.hash]);
+					break;
+
+				case 'continuerebase':
+					const crr = await git.continueSequencer('rebase');
+					if (crr) vsc.showErrorPopup(crr);
+					break;
+
+				case 'abortrebase':
+					const arr = await git.abortSequencer('rebase');
+					if (arr) vsc.showErrorPopup(arr);
+					break;
+
+				case 'continuemerge':
+					const cmr = await git.continueSequencer('merge');
+					if (cmr) vsc.showErrorPopup(cmr);
+					break;
+
+				case 'abortmerge':
+					const amr = await git.abortSequencer('merge');
+					if (amr) vsc.showErrorPopup(amr);
+					break;
+
+				case 'continuecherrypick':
+					const ccpr = await git.continueSequencer('cherry-pick');
+					if (ccpr) vsc.showErrorPopup(ccpr);
+					break;
+
+				case 'abortcherrypick':
+					const accpr = await git.abortSequencer('cherry-pick');
+					if (accpr) vsc.showErrorPopup(accpr);
 					break;
 
 				case 'renamebranch':
 					const name = await vsc.showInputBox({ placeHolder: 'Enter new branch name' });
 					git.branch(['-M', name]);
+					break;
+
+				case 'changeauthor':
+					const tokenizeInput = value => {
+						let [user, email] = value.split('<');
+						user = user.replace(/\s{2,}/g, ' ').trim();
+						email = email.replace(/<|>/g, '').replace(/\s{2,}/g, ' ').trim();
+
+						return { user, email };
+					}
+					const validateInput = value => {
+						const { user, email } = tokenizeInput(value);
+
+						if (!user) return 'Please enter a username';
+						if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/)) return 'Please enter a valid email';
+						return '';
+					}
+
+					const author = await vsc.showInputBox({
+						placeHolder: 'user <email>',
+						validateInput: validateInput
+					});
+
+					const { user, email } = tokenizeInput(author);
+
+					git.setConfig('user.name', user)
+					git.setConfig('user.email', email);
+
 					break;
 			}
 
@@ -257,18 +314,15 @@ module.exports = class MainViewProvider {
 		this.#view.webview.postMessage(message);
 	}
 
-	async #onRepoChange() {
-		const state = await git.state({ filters: '' });
-		this.#postMessage({ command: 'state', body: state });
-		this.#setBadge(state.status.files.length);
-	}
-
 	async #showWelcome() {
 		if (!vsc.workspaceFolder()) return true; // no workspace
 		if (!(await git.isInstalled())) return true; // no git!!
 		if (!await git.isRepo()) return true; // not a repo
 	}
 
+	async #onRepoChange() {
+		this.#refresh();
+	}
 	#onVisibilityChange() {
 		// update the webview on visible...when it's invisible, it won't respond to any events
 		if (this.#view.visible) git.status().then(status => {
@@ -278,10 +332,11 @@ module.exports = class MainViewProvider {
 	}
 
 	#setBadge(value) {
-		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : undefined;
+		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : { value: undefined };
 	}
 
 	#refresh() {
+		console.log('MainViewProvider #refresh called'); // to monitor how many times this is called
 		git.state({ filters: '' }).then(state => {
 			this.#postMessage({ command: 'state', body: state })
 			this.#setBadge(state.status.files.length);
