@@ -10,7 +10,7 @@
 		"url": "https://github.com/Muhammad-Mohsen/vsc-minimalist-git"
 	},
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "muhammadmohsen",
 	"author": "Muhammad Mohsen <muhammadaeh@gmail.com>",
 
@@ -388,7 +388,6 @@
 		"test": "vscode-test"
 	},
 	"dependencies": {
-		"@vscode/codicons": "^0.0.36",
 		"simple-git": "^3.27.0"
 	},
 	"devDependencies": {
@@ -397,7 +396,6 @@
 		"@types/mocha": "^10.0.1",
 		"@types/node": "16.x",
 		"eslint": "^8.39.0",
-		"glob": "^8.1.0",
 		"mocha": "^10.2.0",
 		"@vscode/test-electron": "^2.3.0"
 	}
