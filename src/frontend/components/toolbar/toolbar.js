@@ -5,6 +5,7 @@ class Toolbar extends HTMLElementBase {
 
 	#commitInput;
 	#commitButton;
+	#overflowButton;
 	#changeList;
 
 	connectedCallback() {
@@ -68,7 +69,18 @@ class Toolbar extends HTMLElementBase {
 
 	onMessage(event) {
 		const message = event.data;
-		if (['state', 'status'].includes(message.command)) this.toggleProgess();
+		if (message.command == 'commitmessage') return this.#commitInput.value = message.body.message;
+		if (!['state', 'status'].includes(message.command)) return;
+
+		this.toggleProgess();
+
+		let repoState = (message.body.status || message.body).repoState || '';
+		if (repoState.includes('cherry-picking')) repoState = `, "isCherryPicking": true`;
+		else if (repoState.includes('rebase')) repoState = `, "isRebasing": true`;
+		else if (repoState.includes('merge')) repoState = `, "isMerging": true`;
+		else if (repoState.includes('revert')) repoState = `, "isReverting": true`;
+
+		this.#overflowButton.dataset.vscodeContext = `{ "isOverflow": true ${repoState} }`;
 	}
 
 	#render() {
@@ -84,7 +96,7 @@ class Toolbar extends HTMLElementBase {
 			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage();" title="Unstage"></button>
 			<button class="tertiary ic-stage toggleable" onclick="${this.handle}.stage();" title="Stage"></button>
 			<separator></separator>
-			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);" data-vscode-context='{ "isOverflow": true }'></button>
+			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);"></button>
 			<div class="commit-row">
 				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange();">
 				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit();"></button>
@@ -95,6 +107,7 @@ class Toolbar extends HTMLElementBase {
 
 		this.#commitInput = this.querySelector('.commit-row input');
 		this.#commitButton = this.querySelector('.commit-row button');
+		this.#overflowButton = this.querySelector('.ic-overflow');
 		this.#changeList = document.querySelector('mingit-change-list');
 	}
 }
