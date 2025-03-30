@@ -31,7 +31,7 @@ View a Git Graph of your repository, and easily perform Git actions from the gra
 <sub>theme: [VSCode Minimalist Theme (Oak)](https://marketplace.visualstudio.com/items?itemName=MuhammadMohsen.vsc-minimalist-theme)</sub>
 
 ## Visual Studio Marketplace
-This extension is available on the Visual Studio Marketplace for Visual Studio Code.
+This extension is available on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=MuhammadMohsen.mingit&ssr=false#overview) for Visual Studio Code.
 
 ## Known Issues
 - The graph only displays the most recent 500 commits.
