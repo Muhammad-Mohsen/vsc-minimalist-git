@@ -32,6 +32,7 @@ class Toolbar extends HTMLElementBase {
 		this.postMessage({ command: 'unstage', body: { files } });
 	}
 	stage() {
+		this.toggleProgess(true);
 		const files = this.#changeList.getSelected();
 		this.postMessage({ command: 'stage', body: { files } });
 	}
@@ -69,10 +70,10 @@ class Toolbar extends HTMLElementBase {
 
 	onMessage(event) {
 		const message = event.data;
+		this.toggleProgess();
+
 		if (message.command == 'commitmessage') return this.#commitInput.value = message.body.message;
 		if (!['state', 'status'].includes(message.command)) return;
-
-		this.toggleProgess();
 
 		let repoState = (message.body.status || message.body).repoState || '';
 		if (repoState.includes('cherry-picking')) repoState = `, "isCherryPicking": true`;
@@ -85,25 +86,24 @@ class Toolbar extends HTMLElementBase {
 
 	#render() {
 		this.innerHTML = `
-			<div class="progress absolute" style="display: none;"></div>
-			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch();" title="Fetch"></button>
-			<button class="tertiary ic-pull" onclick="${this.handle}.postMessage({ command: 'pull' })" title="Pull"></button>
-			<button class="tertiary ic-push" onclick="${this.handle}.postMessage({ command: 'push' })" title="Push"></button>
+			<button class="tertiary ic-fetch" onclick="${this.handle}.fetch()" title="Fetch"></button>
+			<button class="tertiary ic-pull" onclick="${this.handle}.toggleProgress(true);${this.handle}.postMessage({ command: 'pull' })" title="Pull"></button>
+			<button class="tertiary ic-push" onclick="${this.handle}.toggleProgress(true);${this.handle}.postMessage({ command: 'push' })" title="Push"></button>
 			<separator></separator>
-			<button class="tertiary ic-discard toggleable" onclick="${this.handle}.discard();" title="Discard"></button>
-			<button class="tertiary ic-stash toggleable" onclick="${this.handle}.stash();" title="Stash"></button>
+			<button class="tertiary ic-discard toggleable" onclick="${this.handle}.discard()" title="Discard"></button>
+			<button class="tertiary ic-stash toggleable" onclick="${this.handle}.stash()" title="Stash"></button>
 			<separator></separator>
-			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage();" title="Unstage"></button>
-			<button class="tertiary ic-stage toggleable" onclick="${this.handle}.stage();" title="Stage"></button>
+			<button class="tertiary ic-unstage toggleable" onclick="${this.handle}.unstage()" title="Unstage"></button>
+			<button class="tertiary ic-stage toggleable" onclick="${this.handle}.stage()" title="Stage"></button>
 			<separator></separator>
-			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event);"></button>
+			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event)"></button>
 			<div class="commit-row">
-				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange();">
-				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit();"></button>
+				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange()">
+				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit()"></button>
 			</div>
 		`;
 
-		this.#progress = this.querySelector('.progress');
+		this.#progress = document.querySelector('.progress');
 
 		this.#commitInput = this.querySelector('.commit-row input');
 		this.#commitButton = this.querySelector('.commit-row button');

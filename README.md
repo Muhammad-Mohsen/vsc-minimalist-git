@@ -41,3 +41,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ### 1.0.0
 Initial release
+
+### 1.0.1
+- Fixed a bug where the UI didn't update when the repo updated.
+- Fixed a bug where the progress bar wasn't removed when an operation completes.

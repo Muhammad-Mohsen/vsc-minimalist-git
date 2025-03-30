@@ -51,7 +51,7 @@ class ChangesList extends HTMLElementBase {
 	}
 
 	#render() {
-		this.innerHTML = /*html*/`
+		this.innerHTML = `
 			<mingit-toolbar style="display: none;">
 			</mingit-toolbar><ul onclick="${this.handle}.clearSelected()"></ul>`;
 

@@ -22,6 +22,11 @@ The `tests` folder contains a few bash scripts which create local repositories i
 I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
 
 ## TODO
+- FIXED - it doesn't work :D :D
+	- stop relying on the built-in git, and use file watchers instead
+- fix discarding a mix of tracked and untracked files (this is gonna be a bitch!!)
+- DONE - fix commands that may not actully change the folder (for example fetch that fetches nothing)...stop the progressbar
+
 - add commands to abort cherry-pick, abort merge, abort/continue rebase?
 	- DONE - create 2 * 3 commands to continue, abort sequence op
 	- DONE - show commands based on current state
