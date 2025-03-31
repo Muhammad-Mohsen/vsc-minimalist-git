@@ -73,9 +73,9 @@ module.exports = class MainViewProvider {
 
 			</head>
 	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
-				${ showWelcome
+				${showWelcome
 					? '<mingit-welcome></mingit-welcome>'
-					: '<mingit-commit-list></mingit-commit-list><mingit-change-list></mingit-change-list>'
+					: '<mingit-commit-list></mingit-commit-list><mingit-change-list style="display: none;"></mingit-change-list>'
 				}
 			</body>
 			</html>`;

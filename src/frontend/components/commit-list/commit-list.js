@@ -46,6 +46,10 @@ class CommitList extends HTMLElementBase {
 		this.postMessage({ command: 'filter', body: { value: event.target.value } });
 	}
 
+	getSelected() {
+		return Array.from(this.querySelectorAll('li.selected')).map(s => s.getAttribute('hash'));
+	}
+
 	// RENDERING
 	#render() {
 		this.innerHTML = /*html*/`

@@ -1,7 +1,6 @@
 import HTMLElementBase from "../../core/html-element-base.js";
 
 class ChangesList extends HTMLElementBase {
-	#toolbar;
 	#changeList;
 	#shiftSelected;
 
@@ -18,7 +17,6 @@ class ChangesList extends HTMLElementBase {
 		else this.#renderChanges(message.body);
 
 		this.#shiftSelected = null; // clear the selection on update
-		this.#toolbar.toggle(message.command == 'status' || message.command == 'state'); // enable the toolbar for status/state messages
 	}
 
 	onClick(event, name, path, decorator, hashes) {
@@ -54,14 +52,13 @@ class ChangesList extends HTMLElementBase {
 
 	#render() {
 		this.innerHTML = `
-			<mingit-toolbar style="display: none;">
+			<mingit-toolbar>
 			</mingit-toolbar><ul onclick="${this.handle}.clearSelected()"></ul>`;
 
-		this.#toolbar = this.querySelector('mingit-toolbar');
 		this.#changeList = this.querySelector('ul');
 	}
 	#renderChanges(status) {
-		this.#toolbar.style.display = '';
+		this.style.display = '';
 
 		this.#changeList.innerHTML =
 			status.files.map(f => /*html*/`<li title="${f.path}" onclick="${this.handle}.onClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">

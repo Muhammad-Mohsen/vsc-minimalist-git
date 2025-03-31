@@ -7,6 +7,9 @@ class Toolbar extends HTMLElementBase {
 	#commitButton;
 	#overflowButton;
 	#changeList;
+	#commitList;
+
+	#repoState;
 
 	connectedCallback() {
 		this.#render();
@@ -53,10 +56,12 @@ class Toolbar extends HTMLElementBase {
 	overflow(event) {
 		event.preventDefault();
 		event.stopPropagation();
+		const files = this.#changeList.getSelected().join(';');
+		this.#overflowButton.dataset.vscodeContext = `{ "isOverflow": true ${this.#repoState}, "files":"${files}" }`;
 		event.currentTarget.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: event.clientX, clientY: event.clientY }));
 	}
 
-	toggle(force) {
+	#toggle(force) {
 		this.querySelectorAll('.toggleable').forEach(t => t.toggleAttribute('disabled', force != true));
 		if (force) this.#commitInput.dispatchEvent(new Event('input'));
 	}
@@ -70,18 +75,19 @@ class Toolbar extends HTMLElementBase {
 
 	onMessage(event) {
 		const message = event.data;
-		this.toggleProgress();
 
+		this.toggleProgress();
+		const isWorkingTree = this.#commitList.getSelected();
+		this.#toggle(isWorkingTree.length == 1 && isWorkingTree[0] == ''); // enable the toolbar if on working tree
 		if (message.command == 'commitmessage') return this.#commitInput.value = message.body.message;
+
 		if (!['state', 'status'].includes(message.command)) return;
 
-		let repoState = (message.body.status || message.body).repoState || '';
-		if (repoState.includes('cherry-picking')) repoState = `, "isCherryPicking": true`;
-		else if (repoState.includes('rebase')) repoState = `, "isRebasing": true`;
-		else if (repoState.includes('merge')) repoState = `, "isMerging": true`;
-		else if (repoState.includes('revert')) repoState = `, "isReverting": true`;
-
-		this.#overflowButton.dataset.vscodeContext = `{ "isOverflow": true ${repoState} }`;
+		this.#repoState = (message.body.status || message.body).repoState || '';
+		if (this.#repoState.includes('cherry-picking')) this.#repoState = `, "isCherryPicking": true`;
+		else if (this.#repoState.includes('rebase')) this.#repoState = `, "isRebasing": true`;
+		else if (this.#repoState.includes('merge')) this.#repoState = `, "isMerging": true`;
+		else if (this.#repoState.includes('revert')) this.#repoState = `, "isReverting": true`;
 	}
 
 	#render() {
@@ -109,6 +115,7 @@ class Toolbar extends HTMLElementBase {
 		this.#commitButton = this.querySelector('.commit-row button');
 		this.#overflowButton = this.querySelector('.ic-overflow');
 		this.#changeList = document.querySelector('mingit-change-list');
+		this.#commitList = document.querySelector('mingit-commit-list');
 	}
 }
 

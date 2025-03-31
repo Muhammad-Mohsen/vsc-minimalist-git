@@ -33,16 +33,13 @@ module.exports = (() => {
 		return await simpleGit.pull(options);
 	}
 	async function push(options) {
-		return await simpleGit.push(options);
+		return await simpleGit.raw(['push', ...options]);
 	}
 
 	async function commit(options) {
-		if (options.files) {
-			await simpleGit.add(options.files);
-			return simpleGit.commit(options.message, options.files);
-		}
-
-		return await simpleGit.raw(['commit', ...options]);
+		await simpleGit.add(options.files);
+		if (!options.amend) return await simpleGit.commit(options.message);
+		else return await simpleGit.raw(['commit', '--amend']);
 	}
 	async function stage(options) {
 		return await simpleGit.add(options.files);
