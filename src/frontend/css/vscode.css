@@ -84,9 +84,9 @@ textarea {
 input::placeholder, textarea::placeholder { color: var(--vscode-input-placeholderForeground); }
 
 .progress {
+	position: absolute;
 	width: 10vw;
 	height: 2px;
-	margin-block-end: 2px;
 	background: var(--vscode-progressBar-background);
 
 	animation: progress 3s linear infinite;

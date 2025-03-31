@@ -3,7 +3,7 @@ mingit-commit-list {
 
 	& input:not([type='checkbox']) {
 		width: calc(100% - 24px);
-		margin-inline: 12px;
+		margin: 4px 12px 0;
 	}
 
 	& ul {

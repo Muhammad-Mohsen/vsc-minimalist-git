@@ -13,7 +13,7 @@ class Toolbar extends HTMLElementBase {
 	}
 
 	fetch() {
-		this.toggleProgess(true);
+		this.toggleProgress(true);
 		this.postMessage({ command: 'fetch' });
 	}
 
@@ -21,7 +21,7 @@ class Toolbar extends HTMLElementBase {
 		const files = this.#changeList.getSelected();
 		const message = this.#commitInput.value.trim();
 
-		this.toggleProgess(true);
+		this.toggleProgress(true);
 		this.#commitInput.value = '';
 		this.onCommitMessageChange();
 		this.postMessage({ command: 'stash', body: { message, files } });
@@ -32,7 +32,7 @@ class Toolbar extends HTMLElementBase {
 		this.postMessage({ command: 'unstage', body: { files } });
 	}
 	stage() {
-		this.toggleProgess(true);
+		this.toggleProgress(true);
 		const files = this.#changeList.getSelected();
 		this.postMessage({ command: 'stage', body: { files } });
 	}
@@ -40,7 +40,7 @@ class Toolbar extends HTMLElementBase {
 		const files = this.#changeList.getSelected();
 		const message = this.#commitInput.value.trim();
 
-		this.toggleProgess(true);
+		this.toggleProgress(true);
 		this.#commitInput.value = '';
 		this.onCommitMessageChange();
 		this.postMessage({ command: 'commit', body: { message, files } });
@@ -60,7 +60,7 @@ class Toolbar extends HTMLElementBase {
 		this.querySelectorAll('.toggleable').forEach(t => t.toggleAttribute('disabled', force != true));
 		if (force) this.#commitInput.dispatchEvent(new Event('input'));
 	}
-	toggleProgess(force) {
+	toggleProgress(force) {
 		this.#progress.style.display = force ? '' : 'none';
 	}
 
@@ -70,7 +70,7 @@ class Toolbar extends HTMLElementBase {
 
 	onMessage(event) {
 		const message = event.data;
-		this.toggleProgess();
+		this.toggleProgress();
 
 		if (message.command == 'commitmessage') return this.#commitInput.value = message.body.message;
 		if (!['state', 'status'].includes(message.command)) return;

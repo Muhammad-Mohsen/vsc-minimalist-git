@@ -13,7 +13,7 @@ class ChangesList extends HTMLElementBase {
 		const message = event.data;
 
 		if (message.command == 'state') this.#renderChanges(message.body.status);
-		else this.#renderChanges(message.body);
+		else if (message.command == 'status') this.#renderChanges(message.body);
 
 		this.#shiftSelected = null; // clear the selection on update
 		this.#toolbar.toggle(message.command == 'status' || message.command == 'state'); // enable the toolbar for status/state messages
