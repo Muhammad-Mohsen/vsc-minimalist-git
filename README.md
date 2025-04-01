@@ -1,5 +1,7 @@
 # Minimalist Git
 Interactive log graph, working tree & commit diffs, and integrated git commands.
+<br>
+Follow up to the goated `Git Graph` extension.
 
 ## Features
 - Commit log with graph for all branches (includes working tree + stashes)
@@ -41,3 +43,8 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ### 0.9.4
 - Initial beta release
+
+### 0.9.6
+- Fixed `push --force` command.
+- Tweaked extension icon.
+- Excluded `screenshots` and `tests` folders from package.
