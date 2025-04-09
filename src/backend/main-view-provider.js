@@ -21,6 +21,7 @@ module.exports = class MainViewProvider {
 		watcher.onDidDelete(() => this.#onRepoChange());
 
 		git.repoPath().then(repoPath => {
+			git.setRepoPath(repoPath);
 			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
 				vsc.showInfoPopup('Opened repository in parent directory.');
 			}
@@ -111,7 +112,7 @@ module.exports = class MainViewProvider {
 
 				case 'diffeditor':
 					if (message.body.decorator == '(!)') {
-						vsc.executeCommand('git.openMergeEditor', vsc.absoluteURI(message.body.path));
+						vsc.executeCommand('git.openMergeEditor', git.absoluteURI(message.body.path));
 						break;
 					}
 					const { left, right, title } = await git.resolveDiffURIs(message.body, this.#extensionURI);

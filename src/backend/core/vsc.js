@@ -70,6 +70,7 @@ module.exports = (() => {
 		if (workspace) return workspace.uri.fsPath;
 	}
 	function joinPath(base, ...segments) {
+		if (typeof base == 'string') base = vscode.Uri.file(base);
 		return vscode.Uri.joinPath(base, ...segments);
 	}
 	/** @param {string} path */

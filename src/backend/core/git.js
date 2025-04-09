@@ -8,9 +8,7 @@ module.exports = (() => {
 	const PATH_SEPARATOR = /\\|\//;
 
 	let builtInGit;
-	vsc.gitExtension().then(git => {
-		builtInGit = git;
-	});
+	vsc.gitExtension().then(git => builtInGit = git);
 
 	const abortController = new AbortController();
 	const simpleGit = simpleGitModule.simpleGit({
@@ -20,6 +18,9 @@ module.exports = (() => {
 	// INITIALIZATION
 	function setWorkingDirectory(cwd) {
 		simpleGit.cwd(cwd);
+	}
+	function setRepoPath(path) {
+		simpleGit.repoPath = path; // hack to make the absoluteURI function sync
 	}
 	function setOnChangeListener(listener) {
 		onchange = listener;
@@ -32,7 +33,7 @@ module.exports = (() => {
 	async function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
 		return await simpleGit.pull(options);
 	}
-	async function push(options) {
+	async function push(options = []) {
 		return await simpleGit.raw(['push', ...options]);
 	}
 
@@ -311,7 +312,7 @@ module.exports = (() => {
 		// untracked -> use actual file system URI
 		if (file.decorator == 'U') return {
 			left: empty,
-			right: vsc.absoluteURI(file.path),
+			right: absoluteURI(file.path),
 			title: `${file.name}` // vscode adds its own decorator
 		};
 
@@ -319,7 +320,7 @@ module.exports = (() => {
 		if (file.decorator.includes('A')) {
 			if (file.decorator.includes('M')) return { // added, then modified -> use file path
 				left: empty,
-				right: vsc.absoluteURI(file.path),
+				right: absoluteURI(file.path),
 				title: `${file.name}` // vscode adds its own decorator
 			};
 
@@ -370,7 +371,7 @@ module.exports = (() => {
 		// else
 		return {
 			left: await uri(file.path, file.hashes[0]) || empty,
-			right: file.hashes[1] == '' ? vsc.absoluteURI(file.path) : await uri(file.path, file.hashes[1]) || empty,
+			right: file.hashes[1] == '' ? absoluteURI(file.path) : await uri(file.path, file.hashes[1]) || empty,
 			title: file.hashes[1] == '' ? file.name : `${file.name} ${file.decorator}`
 		}
 	}
@@ -392,11 +393,14 @@ module.exports = (() => {
 	}
 
 	async function uri(path, ref) {
-		if (await uriExists(path, ref)) return builtInGit.toGitUri(vsc.absoluteURI(path), ref);
+		if (await uriExists(path, ref)) return builtInGit.toGitUri(absoluteURI(path), ref);
+	}
+	function absoluteURI(path) {
+		return vsc.joinPath(simpleGit.repoPath, path); // simpleGit.repoPath is non-standard
 	}
 	async function uriExists(path, ref) {
 		 try {
-			const err = await simpleGit.catFile(['-e', `${ref}:${path}`]);
+			await simpleGit.catFile(['-e', `${ref}:${path}`]);
 			return true;
 
 		} catch { return false; }
@@ -405,6 +409,7 @@ module.exports = (() => {
 	return {
 		isInstalled,
 		setWorkingDirectory,
+		setRepoPath,
 		isRepo,
 		repoPath,
 		setOnChangeListener,
@@ -447,7 +452,7 @@ module.exports = (() => {
 		resolveDiffURIs,
 
 		uri,
-
+		absoluteURI,
 	};
 
 })();

@@ -48,3 +48,8 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Fixed `push --force` command.
 - Tweaked extension icon.
 - Excluded `screenshots` and `tests` folders from package.
+
+### 0.9.7
+- Fixed `push` command!
+- Fixed incorrect diff URIs when the working directory is a subdirectory of the repo directory.
+- Added manual `Refresh` command to the overflow menu
