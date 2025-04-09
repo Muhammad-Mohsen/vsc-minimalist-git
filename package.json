@@ -49,6 +49,37 @@
 		"menus": {
 			"webview/context": [
 				{
+					"command": "mingit.continueRebase",
+					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortRebase",
+					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.continueMerge",
+					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortMerge",
+					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.continueCherryPick",
+					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+				{
+					"command": "mingit.abortCherryPick",
+					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
+					"group": "0_sequencerActions"
+				},
+
+				{
 					"command": "mingit.checkoutCommit",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "1_commits"
@@ -135,37 +166,16 @@
 				},
 
 				{
-					"command": "mingit.continueRebase",
-					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
-				},
-				{
-					"command": "mingit.abortRebase",
-					"when": "isOverflow && isRebasing && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
-				},
-				{
-					"command": "mingit.continueMerge",
-					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
-				},
-				{
-					"command": "mingit.abortMerge",
-					"when": "isOverflow && isMerging && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
-				},
-				{
-					"command": "mingit.continueCherryPick",
-					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
-				},
-				{
-					"command": "mingit.abortCherryPick",
-					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
-					"group": "0_sequencerActions"
+					"command": "mingit.refresh",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "6_general"
 				}
 			],
 			"commandPalette": [
+				{
+					"command": "mingit.refresh",
+					"when": "false"
+				},
 				{
 					"command": "mingit.checkoutCommit",
 					"when": "false"
@@ -263,6 +273,11 @@
 		},
 
 		"commands": [
+			{
+				"command": "mingit.refresh",
+				"title": "Refresh",
+				"category": "Minimalist Git"
+			},
 			{
 				"command": "mingit.checkoutCommit",
 				"title": "Checkout commit",

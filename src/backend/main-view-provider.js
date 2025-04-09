@@ -33,7 +33,6 @@ module.exports = class MainViewProvider {
 		webviewView.webview.options = this.#options();
 		webviewView.webview.html = await this.#render(webviewView.webview);
 		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
-		webviewView.onDidChangeVisibility(() => this.#onVisibilityChange());
 	}
 
 	#options() {
@@ -166,6 +165,10 @@ module.exports = class MainViewProvider {
 	async onContext(message) {
 		try {
 			switch (message.command) {
+				case 'refresh':
+					this.#refresh();
+					break;
+
 				case 'addtag':
 					const nameToAdd = await vsc.showInputBox({ placeHolder: 'Enter tag name' });
 					if (!nameToAdd?.trim()) return;
@@ -325,13 +328,6 @@ module.exports = class MainViewProvider {
 
 	async #onRepoChange() {
 		this.#refresh();
-	}
-	#onVisibilityChange() {
-		// update the webview on visible...when it's invisible, it won't respond to any events
-		if (this.#view.visible) git.status().then(status => {
-			this.#postMessage({ command: 'status', body: status });
-			this.#setBadge(status.files.length);
-		});
 	}
 
 	#setBadge(value) {
