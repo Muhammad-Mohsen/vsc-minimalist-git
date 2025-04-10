@@ -52,4 +52,9 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 ### 0.9.7
 - Fixed `push` command!
 - Fixed incorrect diff URIs when the working directory is a subdirectory of the repo directory.
-- Added manual `Refresh` command to the overflow menu
+- Added manual `refresh` command to the overflow menu
+
+### 0.9.8
+- Actually fixed `push` & `push --force` commands :D
+- Fixed the manual `refresh` command!
+- Fixed repo change detection when the working directory is a subdirectory of the repo directory.

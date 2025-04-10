@@ -78,8 +78,8 @@ module.exports = (() => {
 		return vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, path);
 	}
 
-	function fileSystemWatcher(context) {
-		const watcher = vscode.workspace.createFileSystemWatcher('*/**');
+	function fileSystemWatcher(context, path) {
+		const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.Uri.file(path), '**/*'));
 		context.subscriptions.push(watcher);
 		return watcher;
 	}

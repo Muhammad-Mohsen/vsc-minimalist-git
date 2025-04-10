@@ -5,6 +5,10 @@ const git = require('./core/git');
 const util = require('./core/utils');
 
 module.exports = class MainViewProvider {
+
+	#WATCHER_DEBOUNCE = 5000;
+	#lastWatcherEventTimestamp = Date.now();
+
 	/** @type {vscode.WebviewView} */
 	#view;
 	#extensionURI;
@@ -15,16 +19,17 @@ module.exports = class MainViewProvider {
 
 		git.setWorkingDirectory(vsc.workspacePath());
 
-		const watcher = vsc.fileSystemWatcher(context);
-		watcher.onDidChange(() => this.#onRepoChange());
-		watcher.onDidCreate(() => this.#onRepoChange());
-		watcher.onDidDelete(() => this.#onRepoChange());
-
 		git.repoPath().then(repoPath => {
 			git.setRepoPath(repoPath);
 			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
+				git.setWorkingDirectory(repoPath);
 				vsc.showInfoPopup('Opened repository in parent directory.');
 			}
+
+			const watcher = vsc.fileSystemWatcher(context, repoPath);
+			watcher.onDidChange((event) => this.#onRepoChange(event));
+			watcher.onDidCreate((event) => this.#onRepoChange(event));
+			watcher.onDidDelete((event) => this.#onRepoChange(event));
 		});
 	}
 
@@ -125,7 +130,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'push':
-					await git.push();
+					const response = await git.push();
 					break;
 
 				case 'pull':
@@ -159,6 +164,7 @@ module.exports = class MainViewProvider {
 
 		} catch (err) {
 			vsc.showErrorPopup(err.message);
+			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
 
@@ -214,7 +220,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'amendcommit':
-					await git.commit(['--amend']);
+					await git.commit({ files: message.body.files, amend: true });
 					break;
 
 				case 'checkoutcommit':
@@ -313,6 +319,7 @@ module.exports = class MainViewProvider {
 
 		} catch (err) {
 			vsc.showErrorPopup(err.message);
+			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
 
@@ -327,8 +334,14 @@ module.exports = class MainViewProvider {
 		if (!await git.isRepo()) return true; // not a repo
 	}
 
-	async #onRepoChange() {
+	async #onRepoChange(event) {
+		// `.git/index.lock` file gets created/changed/deleted with every call to #refresh, firing the watcher events
+		// so, we debounce those guys
+		if (Date.now() - this.#lastWatcherEventTimestamp < this.#WATCHER_DEBOUNCE) return;
+
+		this.#lastWatcherEventTimestamp = Date.now();
 		this.#refresh();
+		console.log(event);
 	}
 
 	#setBadge(value) {

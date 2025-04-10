@@ -13,7 +13,7 @@ async function activate(context) {
 	});
 
 	// COMMANDS
-	vsc.registerCommand(context, 'mingit.commitAmend', (context) => {
+	vsc.registerCommand(context, 'mingit.amendCommit', (context) => {
 		provider.onContext({ command: 'amendcommit', body: context });
 	});
 
@@ -39,6 +39,9 @@ async function activate(context) {
 
 	});
 
+	vsc.registerCommand(context, 'mingit.forcePush', (context) => {
+		provider.onContext({ command: 'forcepush', body: context });
+	});
 	vsc.registerCommand(context, 'mingit.checkoutCommit', (context) => {
 		provider.onContext({ command: 'checkoutcommit', body: context });
 	});
@@ -103,6 +106,10 @@ async function activate(context) {
 	});
 	vsc.registerCommand(context, 'mingit.changeAuthor', async () => {
 		provider.onContext({ command: 'changeauthor', body: context });
+	});
+
+	vsc.registerCommand(context, 'mingit.refresh', (context) => {
+		provider.onContext({ command: 'refresh', body: context });
 	});
 }
 

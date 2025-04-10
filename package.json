@@ -10,7 +10,7 @@
 		"url": "https://github.com/Muhammad-Mohsen/vsc-minimalist-git"
 	},
 	"license": "MIT",
-	"version": "0.9.7",
+	"version": "0.9.8",
 	"publisher": "muhammadmohsen",
 	"author": "Muhammad Mohsen <muhammadaeh@gmail.com>",
 
@@ -155,12 +155,12 @@
 					"group": "5_stashes"
 				},
 				{
-					"command": "mingit.commitAmend",
+					"command": "mingit.amendCommit",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
 				},
 				{
-					"command": "mingit.pushForce",
+					"command": "mingit.forcePush",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
 				},
@@ -233,7 +233,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.commitAmend",
+					"command": "mingit.amendCommit",
 					"when": "false"
 				},
 				{
@@ -241,7 +241,7 @@
 					"when": "false"
 				},
 				{
-					"command": "mingit.pushForce",
+					"command": "mingit.forcePush",
 					"when": "false"
 				},
 
@@ -349,7 +349,7 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.commitAmend",
+				"command": "mingit.amendCommit",
 				"title": "Amend last commit",
 				"category": "Minimalist Git"
 			},
@@ -359,7 +359,7 @@
 				"category": "Minimalist Git"
 			},
 			{
-				"command": "mingit.pushForce",
+				"command": "mingit.forcePush",
 				"title": "Force push",
 				"category": "Minimalist Git"
 			},

@@ -9,5 +9,6 @@ vsc-extension-quickstart.md
 **/*.ts
 
 .local/**
+.git/**
 res/screenshots/**
 tests/**
