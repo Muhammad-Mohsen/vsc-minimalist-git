@@ -44,10 +44,21 @@ class ChangesList extends HTMLElementBase {
 	clearSelected() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 	}
-	getSelected() {
-		const selected = Array.from(this.querySelectorAll('li.selected')).map(f => f.title);
-		if (selected.length) return selected;
-		else return Array.from(this.querySelectorAll('li')).map(f => f.title); // if none selected, return all
+	getSelected(forDiscard) {
+		let selected = this.querySelectorAll('li.selected');
+		if (!selected.length) selected = this.querySelectorAll('li');
+		selected = Array.from(selected);
+
+		// for the discard command, we need to pass on if the file is untracked (because untracked files use a different command)
+		if (forDiscard) {
+			const untracked = selected.filter(s => s.querySelector('decorations').innerHTML.includes('U'));
+			return {
+				trackedFiles: selected.filter(s => !untracked.includes(s)).map(f => f.title),
+				untrackedFiles: untracked.map(f => f.title)
+			}
+		}
+
+		return selected.map(f => f.title);
 	}
 
 	#render() {
@@ -62,6 +73,7 @@ class ChangesList extends HTMLElementBase {
 
 		this.#changeList.innerHTML =
 			status.files.map(f => /*html*/`<li title="${f.path}" onclick="${this.handle}.onClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
+				<i class="file-icon ${f.path.split('.').pop()}"></i>
 				<span>${f.name}</span><span class="secondary">${f.path}</span>
 				${this.#renderDecorations(f)}
 			</li>`).join('');

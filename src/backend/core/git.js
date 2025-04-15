@@ -49,14 +49,15 @@ module.exports = (() => {
 		return await simpleGit.reset(['HEAD', '--', ...options.files]);
 	}
 	async function discard(options) {
-		try {
-			// git files
-			await simpleGit.reset(['--', ...options.files]); // unstage the file first
-			return await simpleGit.checkout(['--', ...options.files]);
+		// tracked
+		if (options.trackedFiles?.length) {
+			await simpleGit.reset(['--', ...options.trackedFiles]); // unstage the file first
+			await simpleGit.checkout(['--', ...options.trackedFiles]);
+		}
 
-		} catch {
-			// untracked files
-			return await simpleGit.clean(simpleGitModule.CleanOptions.FORCE, options.files);
+		// untracked
+		if (options.untrackedFiles?.length) {
+			await simpleGit.clean(simpleGitModule.CleanOptions.FORCE, options.untrackedFiles);
 		}
 	}
 	async function saveStash(options) {

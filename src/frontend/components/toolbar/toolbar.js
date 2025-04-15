@@ -49,8 +49,8 @@ class Toolbar extends HTMLElementBase {
 		this.postMessage({ command: 'commit', body: { message, files } });
 	}
 	discard() {
-		const files = this.#changeList.getSelected();
-		this.postMessage({ command: 'discard', body: { files } });
+		const files = this.#changeList.getSelected('forDiscard');
+		this.postMessage({ command: 'discard', body: { ...files } });
 	}
 
 	overflow(event) {

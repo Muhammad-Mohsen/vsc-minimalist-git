@@ -12,10 +12,10 @@ mingit-change-list {
 
 	& li {
 		display: flex;
-		align-items: baseline;
+		align-items: end;
 		gap: 6px;
 		width: calc(100% - 2px);
-		padding: 2px 13px 3px;
+		padding: 2px 13px 3px 9px;
 		cursor: pointer;
 		user-select: none;
 
@@ -33,7 +33,7 @@ mingit-change-list {
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
-		& span:first-child {
+		& span:nth-child(2) {
 			flex-shrink: 0;
 			max-width: 70%;
 		}
