@@ -6,7 +6,9 @@ const util = require('./core/utils');
 
 module.exports = class MainViewProvider {
 
-	#WATCHER_DEBOUNCE = 5000;
+	#WATCHER_DEBOUNCE = 2000;
+	#WATCHER_DELAY = 1000;
+	#watcherDispatchTimeout;
 	#lastWatcherEventTimestamp = Date.now();
 
 	/** @type {vscode.WebviewView} */
@@ -64,6 +66,7 @@ module.exports = class MainViewProvider {
 				<link href="${uri('src/frontend/css/reset.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/css/vscode.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/css/iconly.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/css/seti.css')}" rel="stylesheet">
 
 				<link href="${uri('src/frontend/components/toolbar/toolbar.css')}" rel="stylesheet">
 				<link href="${uri('src/frontend/components/welcome/welcome.css')}" rel="stylesheet">
@@ -142,7 +145,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'discard':
-					const confirm = await vsc.showWarningPopup(`This will discard: "${message.body.files.join('" & "')}".`, 'Confirm', 'Cancel');
+					const confirm = await vsc.showWarningPopup(`This will discard: "${[message.body.trackedFiles, message.body.untrackedFiles].flat().join('" & "')}".`, 'Confirm', 'Cancel');
 					if (confirm != 'Confirm') break;
 
 					await git.discard(message.body);
@@ -336,12 +339,20 @@ module.exports = class MainViewProvider {
 
 	async #onRepoChange(event) {
 		// `.git/index.lock` file gets created/changed/deleted with every call to #refresh, firing the watcher events
-		// so, we debounce those guys
+		// so, this piece of dumb, complicated logic does the following:
+
+		// if we refreshed within the last 5 seconds, ignore the event
 		if (Date.now() - this.#lastWatcherEventTimestamp < this.#WATCHER_DEBOUNCE) return;
 
-		this.#lastWatcherEventTimestamp = Date.now();
-		this.#refresh();
-		console.log(event);
+		// otherwise, schedule a refresh in 1 sescond time.
+		// this to ensure that if a multiple git commands are running one after the other (for example, when committing, git add + git commit are executed),
+		// we wait until everything finishes
+		clearTimeout(this.#watcherDispatchTimeout);
+		this.#watcherDispatchTimeout = setTimeout(() => {
+			this.#refresh();
+			this.#lastWatcherEventTimestamp = Date.now();
+
+		}, this.#WATCHER_DELAY);
 	}
 
 	#setBadge(value) {
