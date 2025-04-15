@@ -177,13 +177,13 @@ class CommitList extends HTMLElementBase {
 
 	#renderRefs(commit, colors) {
 		const refs = commit.refs;
-		const head = refs.head ? `<i class="ic-head" style="color: ${colors[commit.branchIndex]};" title="${refs.head}"></i>` : '';
 		const origin = refs.origin ? `<i class="ic-origin" style="color: ${colors[commit.branchIndex]};" title="${refs.origin}"></i>` : '';
+		const head = refs.head ? `<i class="ic-head" style="color: ${colors[commit.branchIndex]};" title="${refs.head}"></i>` : '';
 		const branches = refs.branches.length ? `<i class="ic-branch" style="color: ${colors[commit.branchIndex]};" title="${refs.branches.join('\n')}"></i>` : '';
 		const tags = refs.tags.length ? `<i class="ic-tag" style="color: ${colors[commit.branchIndex]};" title="${refs.tags.join('\n')}"></i>` : '';
 		const stash = refs.stash ? `<i class="ic-stash-ref" style="color: ${colors[commit.branchIndex]};" title="Stash"></i>` : '';
 
-		return head + origin + branches + tags + stash;
+		return origin + head + branches + tags + stash;
 	}
 }
 
