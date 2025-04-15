@@ -22,6 +22,9 @@ The `tests` folder contains a few bash scripts which create local repositories i
 I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
 
 ## TODO
+- DONE - use https://github.com/hellopao/vscode-seti-icons/tree/master for file icons?
+- DONE - fix discarding a mix of tracked and untracked files (this is gonna be a bit of a bitch!!...not really!)
+- DONE - fix watcher debounce logic because it ignores some stuff (for example, when committing, it runs after the git add, but ignores git commit)
 - DONE - add refresh button (because I removed the onvisibilitychange handler...didn't like the way it always reset to the working tree, and the extension seemed to work fine even if it isn't visible)!
 
 DONE - this is what I got when in not at the root of the repo
@@ -32,7 +35,6 @@ DONE - this is what I got when in not at the root of the repo
 
 - FIXED - it doesn't work :D :D
 	- stop relying on the built-in git, and use file watchers instead
-- fix discarding a mix of tracked and untracked files (this is gonna be a bitch!!)
 - DONE - fix commands that may not actully change the folder (for example fetch that fetches nothing)...stop the progressbar
 
 - add commands to abort cherry-pick, abort merge, abort/continue rebase?
