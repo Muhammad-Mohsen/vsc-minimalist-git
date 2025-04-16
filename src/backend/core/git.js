@@ -52,7 +52,8 @@ module.exports = (() => {
 		// tracked
 		if (options.trackedFiles?.length) {
 			await simpleGit.reset(['--', ...options.trackedFiles]); // unstage the file first
-			await simpleGit.checkout(['--', ...options.trackedFiles]);
+			try { await simpleGit.checkout(['--', ...options.trackedFiles]); } // blows up for renamed files
+			catch {};
 		}
 
 		// untracked
