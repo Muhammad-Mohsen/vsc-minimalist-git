@@ -63,3 +63,8 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Added Seti icons in change list.
 - Fixed oneshot-discarding of tracked + untracked files.
 - Fixed repo change detection issue where the final change event in commands that execute multiple git operations was ignored.
+
+### 0.9.10
+- Added resizing commit messagebox.
+- Added `Enter-to-commit` functionality.
+- Fixed discarding of renamed files.

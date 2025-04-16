@@ -3,7 +3,7 @@ import HTMLElementBase from "../../core/html-element-base.js";
 class Toolbar extends HTMLElementBase {
 	#progress;
 
-	#commitInput;
+	#commitTextarea;
 	#commitButton;
 	#overflowButton;
 	#changeList;
@@ -22,10 +22,10 @@ class Toolbar extends HTMLElementBase {
 
 	stash() {
 		const files = this.#changeList.getSelected();
-		const message = this.#commitInput.value.trim();
+		const message = this.#commitTextarea.value.trim();
 
 		this.toggleProgress(true);
-		this.#commitInput.value = '';
+		this.#commitTextarea.value = '';
 		this.onCommitMessageChange();
 		this.postMessage({ command: 'stash', body: { message, files } });
 	}
@@ -41,10 +41,10 @@ class Toolbar extends HTMLElementBase {
 	}
 	commit() {
 		const files = this.#changeList.getSelected();
-		const message = this.#commitInput.value.trim();
+		const message = this.#commitTextarea.value.trim();
 
 		this.toggleProgress(true);
-		this.#commitInput.value = '';
+		this.#commitTextarea.value = '';
 		this.onCommitMessageChange();
 		this.postMessage({ command: 'commit', body: { message, files } });
 	}
@@ -63,14 +63,20 @@ class Toolbar extends HTMLElementBase {
 
 	#toggle(force) {
 		this.querySelectorAll('.toggleable').forEach(t => t.toggleAttribute('disabled', force != true));
-		if (force) this.#commitInput.dispatchEvent(new Event('input'));
+		if (force) this.#commitTextarea.dispatchEvent(new Event('input'));
 	}
 	toggleProgress(force) {
 		this.#progress.style.display = force ? '' : 'none';
 	}
 
 	onCommitMessageChange() {
-		this.#commitButton.toggleAttribute('disabled', !this.#commitInput.value)
+		this.#commitButton.toggleAttribute('disabled', !this.#commitTextarea.value);
+	}
+	onCommitMessageKeyDown(event) { // handle 'Enter' key
+		if (event.key == 'Enter' && !event.shiftKey && this.#commitTextarea.value) {
+			event.preventDefault();
+			return this.commit();
+		}
 	}
 
 	onMessage(event) {
@@ -79,7 +85,7 @@ class Toolbar extends HTMLElementBase {
 		this.toggleProgress();
 		const isWorkingTree = this.#commitList.getSelected();
 		this.#toggle(isWorkingTree.length == 1 && isWorkingTree[0] == ''); // enable the toolbar if on working tree
-		if (message.command == 'commitmessage') return this.#commitInput.value = message.body.message;
+		if (message.command == 'commitmessage') return this.#commitTextarea.value = message.body.message;
 
 		if (!['state', 'status'].includes(message.command)) return;
 
@@ -104,14 +110,14 @@ class Toolbar extends HTMLElementBase {
 			<separator></separator>
 			<button class="tertiary ic-overflow" onclick="${this.handle}.overflow(event)"></button>
 			<div class="commit-row">
-				<input placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange()">
+				<textarea placeholder="Message" class="toggleable" required oninput="${this.handle}.onCommitMessageChange()" onkeydown="${this.handle}.onCommitMessageKeyDown(event)"></textarea>
 				<button class="tertiary ic-commit toggleable" title="Commit" disabled onclick="${this.handle}.commit()"></button>
 			</div>
 		`;
 
 		this.#progress = document.querySelector('.progress');
 
-		this.#commitInput = this.querySelector('.commit-row input');
+		this.#commitTextarea = this.querySelector('.commit-row textarea');
 		this.#commitButton = this.querySelector('.commit-row button');
 		this.#overflowButton = this.querySelector('.ic-overflow');
 		this.#changeList = document.querySelector('mingit-change-list');

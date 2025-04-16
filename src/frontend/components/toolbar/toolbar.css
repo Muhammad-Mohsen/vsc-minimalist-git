@@ -14,10 +14,15 @@ mingit-toolbar {
 		flex-basis: 100%;
 		margin-block-start: 8px;
 
-		& input { padding-inline-end: 36px; }
+		& textarea {
+			padding-inline-end: 36px;
+			field-sizing: content;
+			word-break: break-word;
+			resize: none;
+		}
 		& button {
 			position: absolute;
-			inset: 0 0 auto auto;
+			inset: auto 0 0 auto;
 			width: 26px !important;
 			height: 26px !important;
 			border-radius: 0 2px 2px 0;
