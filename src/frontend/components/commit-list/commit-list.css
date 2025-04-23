@@ -45,7 +45,7 @@ mingit-commit-list {
 		}
 
 		/* text */
-		& .col { margin-inline-start: 4px; overflow-x: hidden; }
+		& .col { margin-inline-start: 8px; overflow-x: hidden; }
 		& .row {
 			display: flex;
 			align-items: baseline;

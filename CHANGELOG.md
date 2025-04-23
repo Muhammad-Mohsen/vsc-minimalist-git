@@ -1,3 +1,6 @@
+## 0.9.11
+- Fixed log filtering.
+
 ## 0.9.10
 - Added resizing commit messagebox.
 - Added `Enter-to-commit` functionality.

@@ -6,11 +6,6 @@ const util = require('./core/utils');
 
 module.exports = class MainViewProvider {
 
-	#WATCHER_DEBOUNCE = 2000;
-	#WATCHER_DELAY = 1000;
-	#watcherDispatchTimeout;
-	#lastWatcherEventTimestamp = Date.now();
-
 	/** @type {vscode.WebviewView} */
 	#view;
 	#extensionURI;
@@ -338,21 +333,8 @@ module.exports = class MainViewProvider {
 	}
 
 	async #onRepoChange(event) {
-		// `.git/index.lock` file gets created/changed/deleted with every call to #refresh, firing the watcher events
-		// so, this piece of dumb, complicated logic does the following:
-
-		// if we refreshed within the last 5 seconds, ignore the event
-		if (Date.now() - this.#lastWatcherEventTimestamp < this.#WATCHER_DEBOUNCE) return;
-
-		// otherwise, schedule a refresh in 1 sescond time.
-		// this to ensure that if a multiple git commands are running one after the other (for example, when committing, git add + git commit are executed),
-		// we wait until everything finishes
-		clearTimeout(this.#watcherDispatchTimeout);
-		this.#watcherDispatchTimeout = setTimeout(() => {
-			this.#refresh();
-			this.#lastWatcherEventTimestamp = Date.now();
-
-		}, this.#WATCHER_DELAY);
+		if (event.path.match(/.git\/index.lock$/)) return; // ignore index.lock changes?
+		this.#refresh();
 	}
 
 	#setBadge(value) {
