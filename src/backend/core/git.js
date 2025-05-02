@@ -300,6 +300,7 @@ module.exports = (() => {
 	}
 	// getting the diff URIs is a wonderful mess! and that's not even everything
 	async function resolveDiffURIs(file, extensionURI) {
+		const titlePrefix = 'ᴅɪꜰꜰ • '; // ᴅɪꜰꜰ • // 𝗗𝗜𝗙𝗙 // ⇄ ⇌ ⇵ ⇃↾ ⥯ ↳↰
 		const empty = vsc.joinPath(extensionURI, 'res', 'git-empty.txt');
 
 		if (file.hashes[0] == '') {
@@ -315,7 +316,7 @@ module.exports = (() => {
 		if (file.decorator == 'U') return {
 			left: empty,
 			right: absoluteURI(file.path),
-			title: `${file.name}` // vscode adds its own decorator
+			title: `${titlePrefix} ${file.name}` // vscode adds its own decorator
 		};
 
 		// added -> use git URI (curr hash)
@@ -323,19 +324,19 @@ module.exports = (() => {
 			if (file.decorator.includes('M')) return { // added, then modified -> use file path
 				left: empty,
 				right: absoluteURI(file.path),
-				title: `${file.name}` // vscode adds its own decorator
+				title: `${titlePrefix} ${file.name}` // vscode adds its own decorator
 			};
 
 			if (file.decorator.includes('D')) return { // added, then deleted -> use the index
 				right: await uri(file.path, file.hashes[1]),
 				left: empty,
-				title: `${file.name} ${file.decorator}`
+				title: `${titlePrefix} ${file.name} ${file.decorator}`
 			}
 
 			return {
 				left: empty,
 				right: await uri(file.path, file.hashes[1]),
-				title: `${file.name} ${file.decorator}`
+				title: `${titlePrefix} ${file.name} ${file.decorator}`
 			};
 		}
 
@@ -343,7 +344,7 @@ module.exports = (() => {
 		if (file.decorator == 'D') return {
 			left: await uri(file.path, file.hashes[0]),
 			right: empty,
-			title: `${file.name} ${file.decorator}`
+			title: `${titlePrefix} ${file.name} ${file.decorator}`
 		};
 
 		// renamed
@@ -357,7 +358,7 @@ module.exports = (() => {
 					// remove possible double slashes (e.g. {folderA => })
 					left: await uri(file.path.replace(lr, l).replace(/\/\//g, '/'), file.hashes[0]),
 					right: await uri(file.path.replace(lr, r).replace(/\/\//g, '/'), file.hashes[1]),
-					title: file.path.replace('=>', '→')
+					title: titlePrefix + file.path.replace('=>', '→')
 				}
 
 			}
@@ -366,7 +367,7 @@ module.exports = (() => {
 			return {
 				left: await uri(l, file.hashes[0]),
 				right: await uri(r, file.hashes[1]),
-				title: file.path.replace('=>', '→')
+				title: titlePrefix + file.path.replace('=>', '→')
 			}
 		}
 
@@ -374,7 +375,7 @@ module.exports = (() => {
 		return {
 			left: await uri(file.path, file.hashes[0]) || empty,
 			right: file.hashes[1] == '' ? absoluteURI(file.path) : await uri(file.path, file.hashes[1]) || empty,
-			title: file.hashes[1] == '' ? file.name : `${file.name} ${file.decorator}`
+			title: titlePrefix + (file.hashes[1] == '' ? file.name : `${file.name} ${file.decorator}`)
 		}
 	}
 
