@@ -3,6 +3,8 @@ import HTMLElementBase from "../../core/html-element-base.js";
 // 4600 commits -> 60k elements
 class CommitList extends HTMLElementBase {
 	#progress;
+	#input;
+	#commitList;
 
 	connectedCallback() {
 		this.#render();
@@ -54,16 +56,20 @@ class CommitList extends HTMLElementBase {
 	#render() {
 		this.innerHTML = /*html*/`
 			<div class="progress"></div>
-			<input placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>]" onchange="${this.handle}.filter(event);">
-			<ul></ul>`;
+			<input style="display: none;" placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>]" onchange="${this.handle}.filter(event);">
+			<ul style="display: none;"></ul><resizer></resizer>`;
 
 		this.#progress = this.querySelector('.progress');
+		this.#input = this.querySelector('input');
+		this.#commitList = this.querySelector('ul');
 	}
 
 	#renderCommits(state) {
 		this.#progress.style.display = 'none'; // hide the loading
+		this.#input.style.display = '';
+		this.#commitList.style.display = '';
 
-		this.querySelector('ul').innerHTML = state.logs.commitList.map(c => {
+		this.#commitList.innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
 			return /*html*/`<li onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} branch-index="${c.branchIndex}" tabindex="0">
@@ -84,7 +90,6 @@ class CommitList extends HTMLElementBase {
 		}).join('');
 
 		this.#renderWorkingTree(state);
-
 		this.#renderEdges(state);
 	}
 	#renderWorkingTree(state) {
