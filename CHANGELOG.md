@@ -1,3 +1,7 @@
+## 0.9.12
+- Updated scrollbar + resizer styling
+- Added `DIFF` to diff editor tab title
+
 ## 0.9.11
 - Fixed log filtering.
 
