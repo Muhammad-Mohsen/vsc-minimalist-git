@@ -75,3 +75,6 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 ## 0.9.12
 - Updated scrollbar + resizer styling
 - Added `DIFF` to diff editor tab title
+
+## 0.9.12
+- Fixed `commit --amend` command with multiple files

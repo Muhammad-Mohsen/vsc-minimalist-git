@@ -1,4 +1,7 @@
 ## 0.9.12
+- Fixed `commit --amend` command with multiple files
+
+## 0.9.12
 - Updated scrollbar + resizer styling
 - Added `DIFF` to diff editor tab title
 
