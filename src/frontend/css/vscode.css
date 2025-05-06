@@ -22,7 +22,7 @@ body {
 * { scrollbar-color: unset !important; }
 
 ::-webkit-resizer {
-	background: url('data:image/svg+xml,<svg width="8" height="8" viewBox="3 1 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3L1 3L1 5L7 5L7 3Z" fill="%23999999" fill-opacity="0.2"/></svg>')
+	background: url('data:image/svg+xml,<svg width="8" height="8" viewBox="3 1 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3L1 3L1 5L7 5L7 3Z" fill="%23999999" fill-opacity="0.4"/></svg>')
 		bottom right no-repeat;
 }
 

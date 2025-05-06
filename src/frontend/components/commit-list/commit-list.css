@@ -12,7 +12,8 @@ mingit-commit-list {
 		max-height: calc(100vh - 250px);
 		min-height: 50vh;
 		width: calc(100% + 2px);
-		padding: 12px 0;
+		margin-block-start: 12px;
+		padding: 0 0 12px;
 		resize: vertical;
 		overflow: hidden auto;
 	}
