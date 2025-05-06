@@ -218,7 +218,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'amendcommit':
-					await git.commit({ files: message.body.files, amend: true });
+					await git.commit({ files: message.body.files.split(';'), amend: true });
 					break;
 
 				case 'checkoutcommit':
