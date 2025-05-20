@@ -81,3 +81,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.10.0
 - Removed `simple-git` dependency.
+
+## 0.10.1
+- Fixed an internal exception.
+- Removed unnecessary renders on repo change.

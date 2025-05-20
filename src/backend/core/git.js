@@ -5,7 +5,7 @@ const { pathExists } = require('./utils');
 // git wrapper
 module.exports = (() => {
 
-	const PAGE_COUNT = 500;
+	const PAGE_SIZE = 500;
 	const PATH_SEPARATOR = /\\|\//;
 
 	let builtInGit; // builtInGit.git.path
@@ -152,7 +152,7 @@ module.exports = (() => {
 			'--tags',
 			'--graph',
 			'--author-date-order',
-			`--max-count=${PAGE_COUNT}`,
+			`--max-count=${PAGE_SIZE}`,
 			...logFilters(options.filters),
 			'-i', // case insensitive (for filtering)
 		].filter(p => p));
@@ -223,7 +223,7 @@ module.exports = (() => {
 
 		// file status + current branch
 		const status = (await gitcommand(['status', '-b', '--porcelain'])).split('\n').filter(s => s);
-		const current = status[0].substring(3).replace(/\.\.\..+/, '').replace(/ \(no branch\)/i, '');
+		const current = status[0] ? status[0].substring(3).replace(/\.\.\..+/, '').replace(/ \(no branch\)/i, '') : '';
 		const files = status.slice(1).map(s => {
 			let index = s[0].trim();
 			let working = s[1].trim();
