@@ -87,7 +87,7 @@ module.exports = (() => {
 	}
 
 	async function addTag(options) {
-		await gitcommand(['tag', '-a', ...options]);
+		await gitcommand(['tag', ...options]);
 		return await gitcommand(['push', 'origin', '--tags']);
 	}
 	async function deleteTag(name) {

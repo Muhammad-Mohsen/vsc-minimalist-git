@@ -84,4 +84,5 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.10.1
 - Fixed an internal exception.
+- Fixed add tag command not working.
 - Removed unnecessary renders on repo change.
