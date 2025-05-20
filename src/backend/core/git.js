@@ -1,5 +1,6 @@
-const simpleGitModule = require('simple-git');
 const vsc = require('./vsc');
+const proc = require('child_process');
+const { pathExists } = require('./utils');
 
 // git wrapper
 module.exports = (() => {
@@ -7,114 +8,108 @@ module.exports = (() => {
 	const PAGE_COUNT = 500;
 	const PATH_SEPARATOR = /\\|\//;
 
-	let builtInGit;
+	let builtInGit; // builtInGit.git.path
 	vsc.gitExtension().then(git => builtInGit = git);
 
-	const abortController = new AbortController();
-	const simpleGit = simpleGitModule.simpleGit({
-		abort: abortController.signal // abortController.abort();
-	});
+	let cwd, repoDir;
 
 	// INITIALIZATION
-	function setWorkingDirectory(cwd) {
-		simpleGit.cwd(cwd);
+	function setWorkingDirectory(workingDirectory) {
+		cwd = workingDirectory;
 	}
 	function setRepoPath(path) {
-		simpleGit.repoPath = path; // hack to make the absoluteURI function sync
-	}
-	function setOnChangeListener(listener) {
-		onchange = listener;
+		repoDir = path;
 	}
 
 	// COMMANDS
-	async function fetch(options) {
-		return await simpleGit.fetch(options);
+	async function fetch(options = []) {
+		return await gitcommand(['fetch', ...options])
 	}
 	async function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
-		return await simpleGit.pull(options);
+		return await gitcommand(['pull', ...options])
 	}
 	async function push(options = []) {
-		return await simpleGit.raw(['push', ...options]);
+		return await gitcommand(['push', ...options])
 	}
 
-	async function commit(options) {
-		await simpleGit.add(options.files);
-		if (!options.amend) return await simpleGit.commit(options.message);
-		else return await simpleGit.raw(['commit', '--amend']);
-	}
 	async function stage(options) {
-		return await simpleGit.add(options.files);
+		if (options.files.length) return await gitcommand(['add', ...options.files]);
 	}
 	async function unstage(options) {
-		return await simpleGit.reset(['HEAD', '--', ...options.files]);
+		if (options.files.length) return await gitcommand(['reset', 'HEAD', '--', ...options.files]);
+	}
+	async function commit(options) {
+		await stage(options);
+		if (!options.amend) return await gitcommand(['commit', '-m', options.message]);
+		else return await gitcommand(['commit', '--amend']);
 	}
 	async function discard(options) {
 		// tracked
 		if (options.trackedFiles?.length) {
-			await simpleGit.reset(['--', ...options.trackedFiles]); // unstage the file first
-			try { await simpleGit.checkout(['--', ...options.trackedFiles]); } // blows up for renamed files
+			await gitcommand(['reset', '--', ...options.trackedFiles]); // unstage the file first
+			try { await gitcommand(['checkout', '--', ...options.trackedFiles]); } // blows up for renamed files
 			catch {};
 		}
 
 		// untracked
 		if (options.untrackedFiles?.length) {
-			await simpleGit.clean(simpleGitModule.CleanOptions.FORCE, options.untrackedFiles);
+			await gitcommand(['clean', '-f', '--', ...options.untrackedFiles]);
 		}
 	}
 	async function saveStash(options) {
-		await simpleGit.add(options.files);
-		return simpleGit.stash(['save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
+		await stage(options);
+		if (options.files.length) return await gitcommand(['stash', 'save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 	async function applyStash(options) {
-		return simpleGit.stash(['apply', options.hash]);
+		return await gitcommand(['stash', 'apply', options.hash]);
 	}
 	async function dropStash(options) {
-		return simpleGit.stash(['drop', options.hash]);
+		return await gitcommand(['stash', 'drop', options.hash]);
 	}
 
 	async function checkoutCommit(options) {
-		return await simpleGit.checkout([options.hash]);
+		return await gitcommand(['checkout', options.hash]);
 	}
 	async function cherryPickCommit(options) {
-		return await simpleGit.raw(['cherry-pick', '-n', options.hash]);
+		return await gitcommand(['cherry-pick', '-n', options.hash]);
 	}
 	async function revertCommit(options) {
-		return await simpleGit.raw(['revert', '-n', options.hash]);
+		return await gitcommand(['revert', '-n', options.hash]);
 	}
 	async function rebase(options) {
-		return await simpleGit.rebase(options);
+		return await gitcommand(['rebase', ...options]);
 	}
 	async function merge(options) {
-		return await simpleGit.merge(options);
+		return await gitcommand(['merge', ...options]);
 	}
 	async function reset(options) {
-		return await simpleGit.raw(['reset', ...options]);
+		return await gitcommand(['reset', ...options]);
 	}
 
 	async function addTag(options) {
-		await simpleGit.tag(options);
-		await simpleGit.push(['origin', '--tags']);
+		await gitcommand(['tag', '-a', ...options]);
+		return await gitcommand(['push', 'origin', '--tags']);
 	}
 	async function deleteTag(name) {
-		await simpleGit.tag(['-d', name]);
-		await simpleGit.push(['origin', '--delete', name]);
+		await gitcommand(['tag', '-d', name]);
+		return await gitcommand(['push', 'origin', '--delete', name]);
 	}
 
+	// used for renaming branches
 	async function branch(options) {
-		return await simpleGit.branch(options);
+		return await gitcommand(['branch', ...options]);
 	}
-	function setConfig(key, val, append = false, scope = 'local') {
-		return simpleGit.addConfig(key, val, append, scope);
+	async function setConfig(key, val, append = false, scope = 'local') {
+		return await gitcommand(['config', key, val]);
 	}
-	function getConfig(key) {
-	}
+	function getConfig(key) {}
 
 	// sequencer
 	async function abortSequencer(command) {
-		return await simpleGit.raw([command, '--abort']);
+		return await gitcommand([command, '--abort']);
 	}
 	async function continueSequencer(command) {
-		return await simpleGit.raw([command, '--continue']);
+		return await gitcommand([command, '--continue']);
 	}
 
 	// GRAPH
@@ -147,7 +142,7 @@ module.exports = (() => {
 	}
 	async function log(options = {}) {
 		// git log HEAD --branches --remotes --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
-		const logs = await simpleGit.raw([
+		const logs = await gitcommand([
 			'log',
 			// hash, ref, parents, author name, author email, author date, committer date, raw body
 			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
@@ -211,39 +206,53 @@ module.exports = (() => {
 		return [filterBy('grep'), filterBy('author'), filterBy('before'), filterBy('after')];
 	}
 	async function status() {
-		const status = await simpleGit.status(['-u']);
+		let repoState = '';
+		const stateFiles = {
+			MERGE_HEAD: 'merge',
+			REBASE_HEAD: 'rebase',
+			REVERT_HEAD: 'revert',
+			CHERRY_PICK_HEAD: 'cherry-pick',
+			// BISECT_LOG: 'bisection'
+		};
+		for (let file of Object.keys(stateFiles)) {
+			if (pathExists(absoluteURI('.git/' + file))) {
+				repoState = stateFiles[file] + ' in progress';
+				break;
+			}
+		}
 
-		// repo state
-		const repoState = (await simpleGit.raw(['status'])); // we're interested in the second line of the output
-		status.repoState = repoState.match(/(rebase in progress)|(merge in progress)|(revert in progress)|(cherry-picking commit \w{7})/)?.[0];
-		if (repoState.includes('abort the merge')) status.repoState = 'merge in progress';
-
-		// work out the decorators
-		status.files = status.files.map(f => {
-			f.index = f.index?.trim() || '';
-			f.working_dir = f.working_dir?.trim() || '';
+		// file status + current branch
+		const status = (await gitcommand(['status', '-b', '--porcelain'])).split('\n').filter(s => s);
+		const current = status[0].substring(3).replace(/\.\.\..+/, '').replace(/ \(no branch\)/i, '');
+		const files = status.slice(1).map(s => {
+			let index = s[0].trim();
+			let working = s[1].trim();
 
 			// conflicted
-			if ((f.working_dir + f.index).match(/AA|DD|U/)) {
-				f.working_dir = '(!)';
-				f.index = '';
+			if ((working + index).match(/AA|DD|U/)) {
+				working = '(!)';
+				index = '';
 			}
 
-			if (f.index == '?') f.index = ''; // untracked
-			if (f.index) f.index = `(${f.index})`;
-			if (f.working_dir == '?') f.working_dir = 'U'; // untracked
+			if (index == '?') index = ''; // untracked
+			if (index) index = `(${index})`;
+			if (working == '?') working = 'U'; // untracked
 
 			return {
-				name: f.path.split(PATH_SEPARATOR).pop(),
-				path: f.path,
-				decorator: [f.index, f.working_dir].filter(i => i).join(' ')
+				decorator: [index, working].filter(i => i).join(' '),
+				path: s.slice(3),
+				name: s.slice(3).split(PATH_SEPARATOR).pop()
 			}
 		});
 
-		return status;
+		return {
+			repoState,
+			current,
+			files
+		};
 	}
 	async function listStash(options = {}) {
-		const stashes = await simpleGit.raw([
+		const stashes = await gitcommand([
 			'stash',
 			'list',
 			`--format=${['%gD', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
@@ -268,8 +277,8 @@ module.exports = (() => {
 		if (options.length == 1 && options[0] == '') return status();
 
 		let diff = options.length == 1
-			? await simpleGit.show([options[0], '--raw', '--numstat', '--oneline'])
-			: await simpleGit.diff([options.join('..'), '--raw', '--numstat']);
+			? await gitcommand(['show', options[0], '--raw', '--numstat', '--oneline'])
+			: await gitcommand(['diff', options.join('..'), '--raw', '--numstat']);
 
 		diff = diff.split('\n')
 			.slice(options.length == 1 ? 1 : 0) // remove commit data (coming from `--oneline`) if `git show` was used
@@ -382,31 +391,53 @@ module.exports = (() => {
 	// UTILS
 	async function isInstalled() {
 		try {
-			await simpleGit.version();
+			await gitcommand(['--version']);
 			return true;
 		} catch {
 			return false;
 		}
 	}
 	async function isRepo() {
-		return await simpleGit.checkIsRepo();
+		const status = await gitcommand(['status']);
+		return !status.startsWith('fatal:');
 	}
 	async function repoPath() {
-		return await simpleGit.revparse(['--show-toplevel']);
+		return await gitcommand(['rev-parse', '--show-toplevel']);
 	}
 
 	async function uri(path, ref) {
 		if (await uriExists(path, ref)) return builtInGit.toGitUri(absoluteURI(path), ref);
 	}
 	function absoluteURI(path) {
-		return vsc.joinPath(simpleGit.repoPath, path); // simpleGit.repoPath is non-standard
+		return vsc.joinPath(repoDir, path);
 	}
 	async function uriExists(path, ref) {
-		 try {
-			await simpleGit.catFile(['-e', `${ref}:${path}`]);
-			return true;
+		const exists = await gitcommand(['cat-file', '-e', `${ref}:${path}`]);
+		return !exists.startsWith('fatal:');
+	}
 
-		} catch { return false; }
+	// git process/command
+	const gitCommandQueue = {};
+	function gitcommand(options) {
+		// if a similar command is already running, abort it...or should I ignore the new one instead?
+		gitCommandQueue[options[0]]?.kill();
+		delete gitCommandQueue[options[0]];
+
+		return new Promise((resolve, reject) => {
+			const p = proc.spawn('git', options, { cwd });
+			gitCommandQueue[options[0]] = p;
+
+			let data = '';
+			p.stdout.on('data', stream => data += stream.toString()); // apparently using += is plenty efficient!
+			p.once('error', err => {
+				reject(err);
+				delete gitCommandQueue[options[0]];
+			});
+			p.once('exit', () => {
+				resolve(data.replace(/\n$/, '')); // remove the trailing '\n' (if any)
+				delete gitCommandQueue[options[0]];
+			});
+		});
 	}
 
 	return {
@@ -415,7 +446,6 @@ module.exports = (() => {
 		setRepoPath,
 		isRepo,
 		repoPath,
-		setOnChangeListener,
 
 		fetch,
 		pull,

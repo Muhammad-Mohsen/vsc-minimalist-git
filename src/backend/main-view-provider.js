@@ -30,61 +30,7 @@ module.exports = class MainViewProvider {
 		});
 	}
 
-	async resolveWebviewView(webviewView) {
-		this.#view = webviewView;
-
-		webviewView.webview.options = this.#options();
-		webviewView.webview.html = await this.#render(webviewView.webview);
-		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
-	}
-
-	#options() {
-		return {
-			enableScripts: true,
-			localResourceRoots: [this.#extensionURI],
-		}
-	}
-
-	/** @param {vscode.Webview} webview */
-	async #render(webview) {
-		const uri = (path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
-		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
-		const showWelcome = await this.#showWelcome();
-
-		return /*html*/`<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource};">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-				<link href="${uri('src/frontend/css/reset.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/css/vscode.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/css/iconly.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/css/seti.css')}" rel="stylesheet">
-
-				<link href="${uri('src/frontend/components/toolbar/toolbar.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/components/welcome/welcome.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/components/commit-list/commit-list.css')}" rel="stylesheet">
-				<link href="${uri('src/frontend/components/change-list/change-list.css')}" rel="stylesheet">
-
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/core/html-element-base.js')}"></script>
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/welcome/welcome.js')}"></script>
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/toolbar/toolbar.js')}"></script>
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/commit-list/commit-list.js')}"></script>
-				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
-
-			</head>
-	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
-				${showWelcome
-					? '<mingit-welcome></mingit-welcome>'
-					: '<mingit-commit-list></mingit-commit-list><mingit-change-list style="display: none;"></mingit-change-list>'
-				}
-			</body>
-			</html>`;
-	}
-
-	/** @param {{ command: string, body: any }} message */
+	// message: { command: string, body: any }
 	async #onMessage(message) {
 		try {
 			switch (message.command) {
@@ -165,8 +111,6 @@ module.exports = class MainViewProvider {
 			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
-
-	/** @param {{ command: string, body: any }} message */
 	async onContext(message) {
 		try {
 			switch (message.command) {
@@ -320,16 +264,8 @@ module.exports = class MainViewProvider {
 			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
-
-	/** @param {{ command: string, body: any }} message */
 	#postMessage(message) {
 		this.#view.webview.postMessage(message);
-	}
-
-	async #showWelcome() {
-		if (!vsc.workspaceFolder()) return true; // no workspace
-		if (!(await git.isInstalled())) return true; // no git!!
-		if (!await git.isRepo()) return true; // not a repo
 	}
 
 	async #onRepoChange(event) {
@@ -346,5 +282,65 @@ module.exports = class MainViewProvider {
 			this.#postMessage({ command: 'state', body: state });
 			this.#setBadge(state.status.files.length);
 		});
+	}
+
+	async #showWelcome() {
+		if (!vsc.workspaceFolder()) return true; // no workspace
+		if (!(await git.isInstalled())) return true; // no git!!
+		if (!await git.isRepo()) return true; // not a repo
+	}
+
+	async resolveWebviewView(webviewView) {
+		this.#view = webviewView;
+
+		webviewView.webview.options = this.#options();
+		webviewView.webview.html = await this.#render(webviewView.webview);
+		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
+	}
+
+	#options() {
+		return {
+			enableScripts: true,
+			localResourceRoots: [this.#extensionURI],
+		}
+	}
+
+	/** @param {vscode.Webview} webview */
+	async #render(webview) {
+		const uri = (path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
+		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
+		const showWelcome = await this.#showWelcome();
+
+		return /*html*/`<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource};">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+				<link href="${uri('src/frontend/css/reset.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/css/vscode.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/css/iconly.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/css/seti.css')}" rel="stylesheet">
+
+				<link href="${uri('src/frontend/components/toolbar/toolbar.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/components/welcome/welcome.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/components/commit-list/commit-list.css')}" rel="stylesheet">
+				<link href="${uri('src/frontend/components/change-list/change-list.css')}" rel="stylesheet">
+
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/core/html-element-base.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/welcome/welcome.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/toolbar/toolbar.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/commit-list/commit-list.js')}"></script>
+				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
+
+			</head>
+	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
+				${showWelcome
+					? '<mingit-welcome></mingit-welcome>'
+					: '<mingit-commit-list></mingit-commit-list><mingit-change-list style="display: none;"></mingit-change-list>'
+				}
+			</body>
+			</html>`;
 	}
 }

@@ -42,7 +42,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 ## Release Notes
 
 ### 0.9.4
-- Initial beta release
+- Initial beta release.
 
 ### 0.9.6
 - Fixed `push --force` command.
@@ -73,8 +73,11 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Fixed log filtering.
 
 ## 0.9.12
-- Updated scrollbar + resizer styling
-- Added `DIFF` to diff editor tab title
+- Updated scrollbar + resizer styling.
+- Added `DIFF` to diff editor tab title.
 
-## 0.9.12
-- Fixed `commit --amend` command with multiple files
+## 0.9.13
+- Fixed `commit --amend` command with multiple files.
+
+## 0.10.0
+- Removed `simple-git` dependency.

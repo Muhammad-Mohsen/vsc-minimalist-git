@@ -1,9 +1,12 @@
-## 0.9.12
-- Fixed `commit --amend` command with multiple files
+## 0.10.0
+- Removed `simple-git` dependency.
+
+## 0.9.13
+- Fixed `commit --amend` command with multiple files.
 
 ## 0.9.12
-- Updated scrollbar + resizer styling
-- Added `DIFF` to diff editor tab title
+- Updated scrollbar + resizer styling.
+- Added `DIFF` to diff editor tab title.
 
 ## 0.9.11
 - Fixed log filtering.
@@ -34,4 +37,4 @@
 - Excluded `screenshots` and `tests` folders from package.
 
 ## 0.9.4
-- Initial beta release
+- Initial beta release.

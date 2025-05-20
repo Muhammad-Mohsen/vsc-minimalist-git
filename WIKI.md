@@ -22,6 +22,16 @@ The `tests` folder contains a few bash scripts which create local repositories i
 I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
 
 ## TODO
+- DONE - remove simplegit
+	- DONE - status (pfff)
+	- DONE - addConfig
+	- DONE - show
+	- DONE - diff
+	- DONE - version
+	- DONE - checkIsRepo
+	- DONE - rev-parse
+	- DONE - catFile
+
 - DONE - use https://github.com/hellopao/vscode-seti-icons/tree/master for file icons?
 - DONE - fix discarding a mix of tracked and untracked files (this is gonna be a bit of a bitch!!...not really!)
 - DONE - fix watcher debounce logic because it ignores some stuff (for example, when committing, it runs after the git add, but ignores git commit)

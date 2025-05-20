@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 function getNonce() {
 	let text = '';
@@ -13,4 +14,9 @@ function sameDir(dir, other) {
 	return path.normalize(dir).toLowerCase() == path.normalize(other).toLowerCase();
 }
 
-module.exports = { getNonce, sameDir };
+function pathExists(absolutePath) {
+	return fs.existsSync(absolutePath.fsPath);
+}
+
+
+module.exports = { getNonce, sameDir, pathExists };

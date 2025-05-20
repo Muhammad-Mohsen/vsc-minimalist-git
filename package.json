@@ -3,27 +3,38 @@
 	"displayName": "Minimalist Git",
 	"icon": "res/icon.png",
 	"description": "Interactive log graph, working tree & commit diffs, and integrated git commands.",
-	"categories": ["SCM Providers"],
-	"keywords": ["git", "log", "diff", "history", "graph", "branch", "commit", "scm", "flow", "tag"],
+	"categories": [
+		"SCM Providers"
+	],
+	"keywords": [
+		"git",
+		"log",
+		"diff",
+		"history",
+		"graph",
+		"branch",
+		"commit",
+		"scm",
+		"flow",
+		"tag"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Muhammad-Mohsen/vsc-minimalist-git"
 	},
 	"license": "MIT",
-	"version": "0.9.13",
+	"version": "0.10.0",
 	"publisher": "muhammadmohsen",
 	"author": "Muhammad Mohsen <muhammadaeh@gmail.com>",
-
-	"engines": { "vscode": "^1.95.0" },
+	"engines": {
+		"vscode": "^1.95.0"
+	},
 	"main": "src/backend/extension.js",
 	"activationEvents": [],
-
 	"files": [
 		"res/git-empty.txt"
 	],
-
 	"contributes": {
-
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -45,7 +56,6 @@
 				}
 			]
 		},
-
 		"menus": {
 			"webview/context": [
 				{
@@ -78,7 +88,6 @@
 					"when": "isOverflow && isCherryPicking && webviewId == 'mingit-main-view'",
 					"group": "0_sequencerActions"
 				},
-
 				{
 					"command": "mingit.checkoutCommit",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
@@ -94,7 +103,6 @@
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "1_commits"
 				},
-
 				{
 					"command": "mingit.mergeCommitIntoCurrent",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
@@ -110,7 +118,6 @@
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "2_commits2"
 				},
-
 				{
 					"command": "mingit.copyHash",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
@@ -121,7 +128,6 @@
 					"when": "isCommit && webviewId == 'mingit-main-view'",
 					"group": "3_commitCopy"
 				},
-
 				{
 					"command": "mingit.addTag",
 					"when": "isCommit && webviewId == 'mingit-main-view'",
@@ -132,7 +138,6 @@
 					"when": "isCommit && tags && webviewId == 'mingit-main-view'",
 					"group": "4_commitTags"
 				},
-
 				{
 					"command": "mingit.applyStash",
 					"when": "isStash && webviewId == 'mingit-main-view'",
@@ -143,7 +148,6 @@
 					"when": "isStash && webviewId == 'mingit-main-view'",
 					"group": "5_stashes"
 				},
-
 				{
 					"command": "mingit.changeAuthor",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
@@ -164,7 +168,6 @@
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
 				},
-
 				{
 					"command": "mingit.refresh",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
@@ -244,7 +247,6 @@
 					"command": "mingit.forcePush",
 					"when": "false"
 				},
-
 				{
 					"command": "mingit.continueRebase",
 					"when": "false"
@@ -271,7 +273,6 @@
 				}
 			]
 		},
-
 		"commands": [
 			{
 				"command": "mingit.refresh",
@@ -363,7 +364,6 @@
 				"title": "Force push",
 				"category": "Minimalist Git"
 			},
-
 			{
 				"command": "mingit.continueRebase",
 				"title": "Continue rebase",
@@ -396,22 +396,18 @@
 			}
 		]
 	},
-
 	"scripts": {
 		"lint": "eslint .",
 		"pretest": "npm run lint",
 		"test": "vscode-test"
 	},
-	"dependencies": {
-		"simple-git": "^3.27.0"
-	},
 	"devDependencies": {
-		"@types/vscode": "^1.78.0",
 		"@types/glob": "^8.1.0",
 		"@types/mocha": "^10.0.1",
 		"@types/node": "16.x",
+		"@types/vscode": "^1.78.0",
+		"@vscode/test-electron": "^2.3.0",
 		"eslint": "^8.39.0",
-		"mocha": "^10.2.0",
-		"@vscode/test-electron": "^2.3.0"
+		"mocha": "^10.2.0"
 	}
 }
