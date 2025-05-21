@@ -58,7 +58,7 @@ module.exports = (() => {
 	}
 	async function saveStash(options) {
 		await stage(options);
-		if (options.files.length) return await gitcommand(['stash', 'save', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
+		if (options.files.length) return await gitcommand(['stash', 'push', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 	async function applyStash(options) {
 		return await gitcommand(['stash', 'apply', options.hash]);
