@@ -7,7 +7,7 @@ const util = require('./core/utils');
 module.exports = class MainViewProvider {
 
 	#WATCHER_DEBOUNCE = 2000;
-	#WATCHER_DELAY = 1000;
+	#WATCHER_DELAY = 500;
 	#watcherDispatchTimeout;
 	#lastWatcherEventTimestamp = Date.now();
 

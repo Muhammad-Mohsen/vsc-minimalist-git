@@ -1,3 +1,6 @@
+## 0.10.2
+- Fixed bug where the incorrect `stash` command was used.
+
 ## 0.10.1
 - Fixed an internal exception.
 - Fixed add tag command not working.

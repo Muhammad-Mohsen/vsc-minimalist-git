@@ -86,3 +86,6 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Fixed an internal exception.
 - Fixed add tag command not working.
 - Removed unnecessary renders on repo change.
+
+## 0.10.2
+- Fixed bug where the incorrect `stash` command was used.
