@@ -309,7 +309,7 @@ module.exports = (() => {
 	}
 	// getting the diff URIs is a wonderful mess! and that's not even everything
 	async function resolveDiffURIs(file, extensionURI) {
-		const titlePrefix = 'ᴅɪꜰꜰ • '; // ᴅɪꜰꜰ • // 𝗗𝗜𝗙𝗙 // ⇄ ⇌ ⇵ ⇃↾ ⥯ ↳↰
+		const titlePrefix = '⇌ '; // ᴅɪꜰꜰ • // 𝗗𝗜𝗙𝗙 // ⇄ ⇌ ⇵ ⇃↾ ⥯ ↳↰
 		const empty = vsc.joinPath(extensionURI, 'res', 'git-empty.txt');
 
 		if (file.hashes[0] == '') {
@@ -429,12 +429,17 @@ module.exports = (() => {
 
 			let data = '';
 			p.stdout.on('data', stream => data += stream.toString()); // apparently using += is plenty efficient!
+			p.stderr.on('data', stream => data += stream.toString());
+
 			p.once('error', err => {
 				reject(err);
 				delete gitCommandQueue[options[0]];
 			});
 			p.once('exit', () => {
-				resolve(data.replace(/\n$/, '')); // remove the trailing '\n' (if any)
+				data = data.replace(/\n$/, ''); // remove the trailing '\n' (if any)
+				if (data.startsWith('fatal:')) reject(data); // reject error outputs
+				else resolve(data);
+
 				delete gitCommandQueue[options[0]];
 			});
 		});
