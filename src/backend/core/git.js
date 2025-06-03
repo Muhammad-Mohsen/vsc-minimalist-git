@@ -172,6 +172,7 @@ module.exports = (() => {
 
 			const refs = ref.split(', ').reduce((refs, r) => {
 				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
+				else if (r == 'origin/HEAD') return refs; // useless ref
 				else if (r.startsWith('origin')) refs.origin = r;
 				else if (r.startsWith('HEAD')) refs.head = r;
 				else if (r) refs.branches.push(r);
