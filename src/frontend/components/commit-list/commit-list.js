@@ -35,7 +35,7 @@ class CommitList extends HTMLElementBase {
 	}
 	onContextMenu(event) {
 		// encode the newline so that it doesn't blow up the json
-		const titleAttr = (selector) => event.currentTarget.querySelector(selector)?.getAttribute('title')?.replace(/\n/g, '\\n');
+		const titleAttr = (selector) => event.currentTarget.querySelector(selector)?.getAttribute('title')?.replace(/\n/g, '\\n') || '';
 
 		const hash = event.currentTarget.getAttribute('hash');
 		const message = titleAttr('.commit-body');
@@ -182,7 +182,7 @@ class CommitList extends HTMLElementBase {
 
 	#renderRefs(commit, colors) {
 		const refs = commit.refs;
-		const origin = refs.origin ? `<i class="ic-origin" style="color: ${colors[commit.branchIndex]};" title="${refs.origin}"></i>` : '';
+		const origin = refs.origin ? `<i class="ic-branch" style="color: ${colors[commit.branchIndex]};" title="${refs.origin}"></i>` : '';
 		const head = refs.head ? `<i class="ic-head" style="color: ${colors[commit.branchIndex]};" title="${refs.head}"></i>` : '';
 		const branches = refs.branches.length ? `<i class="ic-branch" style="color: ${colors[commit.branchIndex]};" title="${refs.branches.join('\n')}"></i>` : '';
 		const tags = refs.tags.length ? `<i class="ic-tag" style="color: ${colors[commit.branchIndex]};" title="${refs.tags.join('\n')}"></i>` : '';
