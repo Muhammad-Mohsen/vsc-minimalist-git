@@ -1,3 +1,6 @@
+## 0.10.3
+- Fixed bug where the `status` command didn't list individual files under 'untracked directories'.
+
 ## 0.10.2
 - Fixed bug where the incorrect `stash` command was used.
 

@@ -222,7 +222,7 @@ module.exports = (() => {
 		}
 
 		// file status + current branch
-		const status = (await gitcommand(['status', '-b', '--porcelain'])).split('\n').filter(s => s);
+		const status = (await gitcommand(['status', '-b', '-u', '--porcelain'])).split('\n').filter(s => s);
 		const current = status[0] ? status[0].substring(3).replace(/\.\.\..+/, '').replace(/ \(no branch\)/i, '') : '';
 		const files = status.slice(1).map(s => {
 			let index = s[0].trim();
