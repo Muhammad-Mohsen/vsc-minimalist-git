@@ -79,7 +79,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'push':
-					const response = await git.push();
+					await git.push();
 					break;
 
 				case 'pull':
@@ -87,10 +87,13 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'commit':
+					if (this.emptyFileList(message)) break;
 					await git.commit(message.body);
 					break;
 
 				case 'discard':
+					if (this.emptyFileList(message)) break;
+
 					const confirm = await vsc.showWarningPopup(`This will discard: "${[message.body.trackedFiles, message.body.untrackedFiles].flat().join('" & "')}".`, 'Confirm', 'Cancel');
 					if (confirm != 'Confirm') break;
 
@@ -98,14 +101,17 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'stage':
+					if (this.emptyFileList(message)) break;
 					await git.stage(message.body);
 					break;
 
 				case 'unstage':
+					if (this.emptyFileList(message)) break;
 					await git.unstage(message.body);
 					break;
 
 				case 'stash':
+					if (this.emptyFileList(message)) break;
 					await git.saveStash(message.body);
 					break;
 			}
@@ -167,7 +173,7 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'amendcommit':
-					await git.commit({ files: message.body.files.split(';'), amend: true });
+					await git.commit({ files: message.body.files.split(';').filter(f => f), amend: true });
 					break;
 
 				case 'checkoutcommit':
@@ -265,12 +271,12 @@ module.exports = class MainViewProvider {
 			this.#postMessage({ command: 'hideprogress' });
 
 		} catch (err) {
-			vsc.showErrorPopup(err.message);
+			vsc.showErrorPopup(err.message || err);
 			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
 	#postMessage(message) {
-		this.#view.webview.postMessage(message);
+		this.#view?.webview?.postMessage(message);
 	}
 
 	async #onRepoChange(event) {
@@ -306,6 +312,12 @@ module.exports = class MainViewProvider {
 		if (!vsc.workspaceFolder()) return true; // no workspace
 		if (!(await git.isInstalled())) return true; // no git!!
 		if (!await git.isRepo()) return true; // not a repo
+	}
+
+	emptyFileList(message) {
+		const empty = !message.body.files?.length;
+		if (empty) vsc.showWarningPopup(`Please select which file(s) to ${message.command}!`);
+		return empty;
 	}
 
 	async resolveWebviewView(webviewView) {
