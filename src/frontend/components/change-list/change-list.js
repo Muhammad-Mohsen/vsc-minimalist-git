@@ -60,6 +60,7 @@ class ChangesList extends HTMLElementBase {
 		return selected.map(f => f.title);
 	}
 
+	// RENDERING
 	#render() {
 		this.innerHTML = `
 			<mingit-toolbar>

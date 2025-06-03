@@ -92,3 +92,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.10.3
 - Fixed bug where the `status` command didn't list individual files under 'untracked directories'.
+
+## 0.10.4
+- Fixed bug where untagged commits still registered as having an 'undefined' tag!
+- Fixed `commit --amend` command without any files.
