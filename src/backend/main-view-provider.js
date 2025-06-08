@@ -92,7 +92,10 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'discard':
-					if (this.emptyFileList(message)) break;
+					if (!message.body.trackedFiles?.length && !message.body.untrackedFiles?.length) {
+						vsc.showWarningPopup(`Please select which file(s) to discard!`);
+						break;
+					}
 
 					const confirm = await vsc.showWarningPopup(`This will discard: "${[message.body.trackedFiles, message.body.untrackedFiles].flat().join('" & "')}".`, 'Confirm', 'Cancel');
 					if (confirm != 'Confirm') break;

@@ -1,3 +1,6 @@
+## 0.10.5
+- Fixed bug where `discard` wasn't working
+
 ## 0.10.4
 - Fixed bug where untagged commits still registered as having an 'undefined' tag!
 - Fixed `commit --amend` command without any files.
