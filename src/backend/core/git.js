@@ -399,8 +399,12 @@ module.exports = (() => {
 		}
 	}
 	async function isRepo() {
-		const status = await gitcommand(['status']);
-		return !status.startsWith('fatal:');
+		try {
+			await gitcommand(['rev-parse']);
+			return true;
+		} catch {
+			return false;
+		}
 	}
 	async function repoPath() {
 		return await gitcommand(['rev-parse', '--show-toplevel']);

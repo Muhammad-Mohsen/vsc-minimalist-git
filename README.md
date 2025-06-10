@@ -102,3 +102,6 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.10.6
 - Fixed a bug where commit message tooltip wasn't HTML-encoded so it could break EVERYTHING!!
+
+## 0.10.7
+- Fixed a bug where the 'welcome' page check threw!
