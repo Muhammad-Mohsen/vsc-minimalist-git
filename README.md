@@ -88,14 +88,17 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Removed unnecessary renders on repo change.
 
 ## 0.10.2
-- Fixed bug where the incorrect `stash` command was used.
+- Fixed a bug where the incorrect `stash` command was used.
 
 ## 0.10.3
-- Fixed bug where the `status` command didn't list individual files under 'untracked directories'.
+- Fixed a bug where the `status` command didn't list individual files under 'untracked directories'.
 
 ## 0.10.4
-- Fixed bug where untagged commits still registered as having an 'undefined' tag!
+- Fixed a bug where untagged commits still registered as having an 'undefined' tag!
 - Fixed `commit --amend` command without any files.
 
 ## 0.10.5
-- Fixed bug where `discard` wasn't working
+- Fixed a bug where `discard` wasn't working
+
+## 0.10.6
+- Fixed a bug where commit message tooltip wasn't HTML-encoded so it could break EVERYTHING!!

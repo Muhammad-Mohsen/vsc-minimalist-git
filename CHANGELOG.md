@@ -1,3 +1,6 @@
+## 0.10.6
+- Fixed a bug where commit message tooltip wasn't HTML-encoded so it could break EVERYTHING!!
+
 ## 0.10.5
 - Fixed bug where `discard` wasn't working
 

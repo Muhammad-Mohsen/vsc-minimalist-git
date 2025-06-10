@@ -77,12 +77,12 @@ class CommitList extends HTMLElementBase {
 				<div class="col">
 					<div class="row">
 						${this.#renderRefs(c, state.logs.colors)}
-						<p class="commit-body" title="${c.body}">${c.body}</p>
+						<p class="commit-body" title="${this.encodeHTML(c.body)}">${c.body}</p>
 					</div>
 					<div class="row secondary">
 						<time datetime="${c.date}" title="${datetime.toLocaleString()}">${datetime.toLocaleDateString()}</time>
 						&bull;
-						<address class="author" title="${c.name} &lt;${c.email}&gt;">${c.name}</address>
+						<address class="author" title="${this.encodeHTML(c.name)} &lt;${c.email}&gt;">${c.name}</address>
 					</div>
 				</div>
 			</li>`

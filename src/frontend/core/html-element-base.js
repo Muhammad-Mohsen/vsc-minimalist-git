@@ -28,4 +28,15 @@ export default class HTMLElementBase extends HTMLElement {
 	getState() {
 		return vsc.getState();
 	}
+
+	encodeHTML(str) {
+		const map = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;'
+		};
+		return str.replace(/[&<>"]/g, (m) => map[m]);
+	}
 }
