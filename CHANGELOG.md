@@ -1,3 +1,6 @@
+## 0.10.8
+- Updated seti file icon font
+
 ## 0.10.7
 - Fixed a bug where the 'welcome' page check threw!
 

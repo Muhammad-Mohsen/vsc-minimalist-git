@@ -105,3 +105,6 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.10.7
 - Fixed a bug where the 'welcome' page check threw!
+
+## 0.10.8
+- Updated seti file icon font

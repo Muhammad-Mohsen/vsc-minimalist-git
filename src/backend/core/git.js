@@ -400,7 +400,7 @@ module.exports = (() => {
 	}
 	async function isRepo() {
 		try {
-			await gitcommand(['rev-parse']);
+			await gitcommand(['rev-parse', '--is-inside-work-tree']);
 			return true;
 		} catch {
 			return false;

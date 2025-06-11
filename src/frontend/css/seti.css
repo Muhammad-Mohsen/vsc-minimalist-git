@@ -3,303 +3,641 @@
 	font-family: seti;
 	font-style: normal;
 	font-weight: 400;
-	src: url(../../../res/font/seti.woff2) format(woff2);
+	src: url(../../../res/font/seti.woff) format(woff);
 }
 
-.file-icon { font: normal 20px/16px seti; }
-.file-icon::before { content: '\e013'; } /* default to txt icon */
+.file-icon {
+	display: flex;
+	justify-content: center;
+	width: 20px;
+	font: normal 20px/16px seti;
+}
 
-.mp3::before { content: '\e004'; color: #a074c4; }
-.wav::before { content: '\e004'; color: #a074c4; }
-.ogg::before { content: '\e004'; color: #a074c4; }
-.bowerrc::before { content: '\e007'; color: #e37933; }
-.cs::before { content: '\e010'; color: #519aba; }
-.c::before { content: '\e008'; color: #cbcb41; }
-.h::before { content: '\e008'; color: #cbcb41; }
-.m::before { content: '\e008'; color: #cbcb41; }
-.ctp::before { content: '\e009'; color: #cc3e44; }
-.cjsx::before { content: '\e057'; color: #519aba; }
-.jsx::before { content: '\e057'; color: #519aba; }
-.tmp::before { content: '\e00a'; color: #6d8086; }
-.coffee::before { content: '\e00c'; color: #cbcb41; }
-.cfc::before { content: '\e00d'; color: #519aba; }
-.cfm::before { content: '\e00d'; color: #519aba; }
-.config::before { content: '\e00e'; color: #6d8086; }
-.cpp::before { content: '\e00f'; color: #519aba; }
-.css::before { content: '\e011'; color: #519aba; }
-.sss::before { content: '\e011'; color: #519aba; }
-.csv::before { content: '\e012'; color: #8dc149; }
-.editorconfig::before { content: '\e016'; color: #519aba; }
-.ejs::before { content: '\e017'; color: #cbcb41; }
-.elm::before { content: '\e018'; color: #519aba; }
-.ttf::before { content: '\e01e'; color: #cc3e44; }
-.woff::before { content: '\e01e'; color: #cc3e44; }
-.woff2::before { content: '\e01e'; color: #cc3e44; }
-.eot::before { content: '\e01e'; color: #cc3e44; }
-.gitkeep::before { content: '\e020'; color: #de4c36; }
-.gitconfig::before { content: '\e020'; color: #de4c36; }
-.gitattributes::before { content: '\e020'; color: #de4c36; }
-.gitmodules::before { content: '\e020'; color: #de4c36; }
-.gitignore::before { content: '\e020'; color: #de4c36; }
-.go::before { content: '\e029'; color: #519aba; }
-.gradle::before { content: '\e02a'; color: #8dc149; }
-.grails::before { content: '\e02b'; color: #8dc149; }
-.groovy::before { content: '\e02b'; color: #8dc149; }
-.hh::before { content: '\e02e'; color: #e37933; }
-.haml::before { content: '\e02f'; color: #cc3e44; }
-.hs::before { content: '\e030'; color: #a074c4; }
-.lhs::before { content: '\e030'; color: #a074c4; }
-.htm::before { content: '\e032'; color: #e37933; }
-.html::before { content: '\e032'; color: #e37933; }
-.shtml::before { content: '\e032'; color: #e37933; }
-.dhtml::before { content: '\e032'; color: #e37933; }
-.ai::before { content: '\e001'; color: #cbcb41; }
-.png::before { content: '\e033'; color: #a074c4; }
-.ico::before { content: '\e033'; color: #a074c4; }
-.jpg::before { content: '\e033'; color: #a074c4; }
-.bmp::before { content: '\e033'; color: #a074c4; }
-.jpeg::before { content: '\e033'; color: #a074c4; }
-.gif::before { content: '\e033'; color: #a074c4; }
-.jade::before { content: '\e036'; color: #cc3e44; }
-.java::before { content: '\e037'; color: #cc3e44; }
-.js::before { content: '\e038'; color: #cbcb41; }
-.es6::before { content: '\e038'; color: #cbcb41; }
-.es7::before { content: '\e038'; color: #cbcb41; }
-.json::before { content: '\e03a'; color: #cbcb41; }
-.jl::before { content: '\e03b'; color: #a074c4; }
-.less::before { content: '\e03e'; color: #519aba; }
-.liquid::before { content: '\e040'; color: #8dc149; }
-.ls::before { content: '\e041'; color: #519aba; }
-.lua::before { content: '\e043'; color: #519aba; }
-.md::before { content: '\e044'; color: #519aba; }
-.mustache::before { content: '\e045'; color: #e37933; }
-.handlebars::before { content: '\e045'; color: #e37933; }
-.hbs::before { content: '\e045'; color: #e37933; }
-.hjs::before { content: '\e045'; color: #e37933; }
-.stache::before { content: '\e045'; color: #e37933; }
-.npmignore::before { content: '\e04a'; color: #cb3837; }
-.ml::before { content: '\e04b'; color: #e37933; }
-.mli::before { content: '\e04b'; color: #e37933; }
-.cmx::before { content: '\e04b'; color: #e37933; }
-.cmxa::before { content: '\e04b'; color: #e37933; }
-.pdf::before { content: '\e04c'; color: #cc3e44; }
-.pl::before { content: '\e04d'; color: #519aba; }
-.psd::before { content: '\e04e'; color: #519aba; }
-.php::before { content: '\e04f'; color: #a074c4; }
-.php.inc::before { content: '\e04f'; color: #a074c4; }
-.pug::before { content: '\e052'; color: #519aba; }
-.pp::before { content: '\e053'; color: #a074c4; }
-.py::before { content: '\e054'; color: #519aba; }
-.rb::before { content: '\e058'; color: #cc3e44; }
-.erb.html::before { content: '\e058'; color: #cc3e44; }
-.html.erb::before { content: '\e058'; color: #cc3e44; }
-.rs::before { content: '\e059'; color: #6d8086; }
-.sass::before { content: '\e05a'; color: #f55385; }
-.scss::before { content: '\e05a'; color: #f55385; }
-.sbt::before { content: '\e05b'; color: #519aba; }
-.scala::before { content: '\e05c'; color: #cc3e44; }
-.sh::before { content: '\e05e'; color: #4d5a5e; }
-.cmd::before { content: '\e05e'; color: #4d5a5e; }
-.zsh::before { content: '\e05e'; color: #4d5a5e; }
-.fish::before { content: '\e05e'; color: #4d5a5e; }
-.slim::before { content: '\e05f'; color: #e37933; }
-.smarty::before { content: '\e060'; color: #cbcb41; }
-.smarty.tpl::before { content: '\e060'; color: #cbcb41; }
-.styl::before { content: '\e064'; color: #8dc149; }
-.svg::before { content: '\e065'; color: #a074c4; }
-.swift::before { content: '\e066'; color: #e37933; }
-.tf::before { content: '\e067'; color: #a074c4; }
-.tf.json::before { content: '\e067'; color: #a074c4; }
-.tex::before { content: '\e068'; color: #d4d7d6; }
-.sty::before { content: '\e068'; color: #d4d7d6; }
-.cls::before { content: '\e068'; color: #d4d7d6; }
-.dtx::before { content: '\e068'; color: #d4d7d6; }
-.ins::before { content: '\e068'; color: #d4d7d6; }
-.txt::before { content: '\e013'; color: #d4d7d6; }
-.twig::before { content: '\e06a'; color: #8dc149; }
-.ts::before { content: '\e06b'; color: #519aba; }
-.tsx::before { content: '\e057'; color: #519aba; }
-.direnv::before { content: '\e00e'; color: #6d8086; }
-.env::before { content: '\e00e'; color: #6d8086; }
-.static::before { content: '\e00e'; color: #6d8086; }
-.slugignore::before { content: '\e00e'; color: #6d8086; }
-.vala::before { content: '\e06e'; color: #6d8086; }
-.wmv::before { content: '\e070'; color: #f55385; }
-.mov::before { content: '\e070'; color: #f55385; }
-.ogv::before { content: '\e070'; color: #f55385; }
-.webm::before { content: '\e070'; color: #f55385; }
-.avi::before { content: '\e070'; color: #f55385; }
-.mpg::before { content: '\e070'; color: #f55385; }
-.mp4::before { content: '\e070'; color: #f55385; }
-.xml::before { content: '\e07b'; color: #e37933; }
-.yml::before { content: '\e07d'; color: #a074c4; }
-.vue::before { content: '\e075'; color: #41b883; }
-.babelrc::before { content: '\e005'; color: #cbcb41; }
-.eslintrc::before { content: '\e019'; color: #3a33d1; }
-.jshintrc::before { content: '\e039'; color: #626361; }
-.xcodeproj::before { content: '\e07a'; color: #1a8af4; }
-.zip::before { content: '\e07e'; color: #157efb; }
-.rar::before { content: '\e07e'; color: #157efb; }
-.gz::before { content: '\e07e'; color: #157efb; }
-.iso::before { content: '\e07e'; color: #157efb; }
-.key::before { content: '\e03d'; color: #157efb; }
-.pem::before { content: '\e03d'; color: #157efb; }
-.fs::before { content: '\e01f'; color: #378bba; }
-.vimrc::before { content: '\e071'; color: #019833; }
-.vim::before { content: '\e071'; color: #019833; }
-.viminfo::before { content: '\e071'; color: #019833; }
-.sql::before { content: '\e061'; color: #00546b; }
-.bat::before { content: '\e006'; color: #2165b6; }
-.htaccess::before { content: '\e002'; color: #dd1d59; }
-.wxml::before { content: '\e078'; color: #2dc100; }
-.wxss::before { content: '\e079'; color: #2dc100; }
-.ini::before { content: '\e00e'; color: #6d8086; }
-.clj::before { content: '\e00b'; color: #68b13b; }
-.r::before { content: '\e055'; color: #2165b6; }
-.lock::before { content: '\e042'; color: undefined; }
-.asp::before { content: '\e003'; color: undefined; }
-.flowconfig::before { content: '\e01b'; color: #ffdc67; }
+.file-icon::before { content: '\E023'; } /* default to txt icon */
+
+.bsl::before { content: '\E00A'; color: #cc3e44; }
+.mdo::before { content: '\E062'; color: #cc3e44; }
+.cls::before { content: '\E083'; color: #519aba; }
+.apex::before { content: '\E083'; color: #519aba; }
+.asm::before { content: '\E004'; color: #cc3e44; }
+.s::before { content: '\E004'; color: #cc3e44; }
+.bicep::before { content: '\E008'; color: #519aba; }
+.bzl::before { content: '\E007'; color: #8dc149; }
+.bazel::before { content: '\E007'; color: #8dc149; }
+.build::before { content: '\E007'; color: #8dc149; }
+.workspace::before { content: '\E007'; color: #8dc149; }
+.bazelignore::before { content: '\E007'; color: #8dc149; }
+.bazelversion::before { content: '\E007'; color: #8dc149; }
+.h::before { content: '\E00C'; color: #a074c4; }
+.aspx::before { content: '\E048'; color: #519aba; }
+.ascx::before { content: '\E048'; color: #8dc149; }
+.asax::before { content: '\E048'; color: #cbcb41; }
+.master::before { content: '\E048'; color: #cbcb41; }
+.hh::before { content: '\E01A'; color: #a074c4; }
+.hpp::before { content: '\E01A'; color: #a074c4; }
+.hxx::before { content: '\E01A'; color: #a074c4; }
+[class="h++"]::before { content: '\E01A'; color: #a074c4; }
+.edn::before { content: '\E013'; color: #519aba; }
+.cfc::before { content: '\E018'; color: #519aba; }
+.cfm::before { content: '\E018'; color: #519aba; }
+.litcoffee::before { content: '\E016'; color: #cbcb41; }
+.config::before { content: '\E019'; color: #6d8086; }
+.cr::before { content: '\E01B'; color: #d4d7d6; }
+.ecr::before { content: '\E01C'; color: #d4d7d6; }
+.slang::before { content: '\E01C'; color: #d4d7d6; }
+.cson::before { content: '\E055'; color: #cbcb41; }
+.css.map::before { content: '\E01D'; color: #519aba; }
+.sss::before { content: '\E01D'; color: #519aba; }
+.csv::before { content: '\E01E'; color: #8dc149; }
+.xls::before { content: '\E0A4'; color: #8dc149; }
+.xlsx::before { content: '\E0A4'; color: #8dc149; }
+.cuh::before { content: '\E01F'; color: #a074c4; }
+.hu::before { content: '\E01F'; color: #a074c4; }
+.cake::before { content: '\E00D'; color: #cc3e44; }
+.ctp::before { content: '\E00E'; color: #cc3e44; }
+.d::before { content: '\E020'; color: #cc3e44; }
+.doc::before { content: '\E0A3'; color: #519aba; }
+.docx::before { content: '\E0A3'; color: #519aba; }
+.ejs::before { content: '\E027'; color: #cbcb41; }
+.ex::before { content: '\E028'; color: #a074c4; }
+.exs::before { content: '\E029'; color: #a074c4; }
+.elm::before { content: '\E02A'; color: #519aba; }
+.ico::before { content: '\E02F'; color: #cbcb41; }
+.gitconfig::before { content: '\E034'; color: #41535b; }
+.gitkeep::before { content: '\E034'; color: #41535b; }
+.gitattributes::before { content: '\E034'; color: #41535b; }
+.gitmodules::before { content: '\E034'; color: #41535b; }
+.slide::before { content: '\E039'; color: #519aba; }
+.article::before { content: '\E039'; color: #519aba; }
+.gd::before { content: '\E03B'; color: #519aba; }
+.godot::before { content: '\E03B'; color: #cc3e44; }
+.tres::before { content: '\E03B'; color: #cbcb41; }
+.tscn::before { content: '\E03B'; color: #a074c4; }
+.gradle::before { content: '\E03C'; color: #519aba; }
+.gsp::before { content: '\E03D'; color: #8dc149; }
+.gql::before { content: '\E03E'; color: #f55385; }
+.graphql::before { content: '\E03E'; color: #f55385; }
+.graphqls::before { content: '\E03E'; color: #f55385; }
+.hack::before { content: '\E041'; color: #e37933; }
+.haml::before { content: '\E042'; color: #cc3e44; }
+.hs::before { content: '\E044'; color: #a074c4; }
+.lhs::before { content: '\E044'; color: #a074c4; }
+.hx::before { content: '\E045'; color: #e37933; }
+.hxs::before { content: '\E045'; color: #cbcb41; }
+.hxp::before { content: '\E045'; color: #519aba; }
+.hxml::before { content: '\E045'; color: #a074c4; }
+.jade::before { content: '\E04F'; color: #cc3e44; }
+.class::before { content: '\E050'; color: #519aba; }
+.classpath::before { content: '\E050'; color: #cc3e44; }
+.js.map::before { content: '\E051'; color: #cbcb41; }
+.cjs.map::before { content: '\E051'; color: #cbcb41; }
+.mjs.map::before { content: '\E051'; color: #cbcb41; }
+.spec.js::before { content: '\E051'; color: #e37933; }
+.spec.cjs::before { content: '\E051'; color: #e37933; }
+.spec.mjs::before { content: '\E051'; color: #e37933; }
+.test.js::before { content: '\E051'; color: #e37933; }
+.test.cjs::before { content: '\E051'; color: #e37933; }
+.test.mjs::before { content: '\E051'; color: #e37933; }
+.es::before { content: '\E051'; color: #cbcb41; }
+.es5::before { content: '\E051'; color: #cbcb41; }
+.es7::before { content: '\E051'; color: #cbcb41; }
+.jinja::before { content: '\E053'; color: #cc3e44; }
+.jinja2::before { content: '\E053'; color: #cc3e44; }
+.kt::before { content: '\E058'; color: #e37933; }
+.kts::before { content: '\E058'; color: #e37933; }
+.liquid::before { content: '\E05B'; color: #8dc149; }
+.ls::before { content: '\E05C'; color: #519aba; }
+.argdown::before { content: '\E003'; color: #519aba; }
+.ad::before { content: '\E003'; color: #519aba; }
+.mustache::before { content: '\E063'; color: #e37933; }
+.stache::before { content: '\E063'; color: #e37933; }
+.nim::before { content: '\E065'; color: #cbcb41; }
+.nims::before { content: '\E065'; color: #cbcb41; }
+.github-issues::before { content: '\E037'; color: #d4d7d6; }
+.ipynb::before { content: '\E066'; color: #519aba; }
+.njk::before { content: '\E069'; color: #8dc149; }
+.nunjucks::before { content: '\E069'; color: #8dc149; }
+.nunjs::before { content: '\E069'; color: #8dc149; }
+.nunj::before { content: '\E069'; color: #8dc149; }
+.njs::before { content: '\E069'; color: #8dc149; }
+.nj::before { content: '\E069'; color: #8dc149; }
+.npm-debug.log::before { content: '\E067'; color: #41535b; }
+.npmignore::before { content: '\E067'; color: #cc3e44; }
+.npmrc::before { content: '\E067'; color: #cc3e44; }
+.ml::before { content: '\E06A'; color: #e37933; }
+.mli::before { content: '\E06A'; color: #e37933; }
+.cmx::before { content: '\E06A'; color: #e37933; }
+.cmxa::before { content: '\E06A'; color: #e37933; }
+.odata::before { content: '\E06B'; color: #e37933; }
+.php.inc::before { content: '\E070'; color: #a074c4; }
+.pipeline::before { content: '\E071'; color: #e37933; }
+.pddl::before { content: '\E06C'; color: #a074c4; }
+.plan::before { content: '\E072'; color: #8dc149; }
+.happenings::before { content: '\E043'; color: #519aba; }
+.prisma::before { content: '\E075'; color: #519aba; }
+.pp::before { content: '\E079'; color: #cbcb41; }
+.epp::before { content: '\E079'; color: #cbcb41; }
+.purs::before { content: '\E07A'; color: #d4d7d6; }
+.spec.jsx::before { content: '\E07D'; color: #e37933; }
+.test.jsx::before { content: '\E07D'; color: #e37933; }
+.cjsx::before { content: '\E07D'; color: #519aba; }
+.spec.tsx::before { content: '\E07D'; color: #e37933; }
+.test.tsx::before { content: '\E07D'; color: #e37933; }
+.re::before { content: '\E07E'; color: #cc3e44; }
+.res::before { content: '\E07F'; color: #cc3e44; }
+.resi::before { content: '\E07F'; color: #f55385; }
+.r::before { content: '\E001'; color: #519aba; }
+.rmd::before { content: '\E001'; color: #519aba; }
+.erb::before { content: '\E049'; color: #cc3e44; }
+.erb.html::before { content: '\E049'; color: #cc3e44; }
+.html.erb::before { content: '\E049'; color: #cc3e44; }
+.sass::before { content: '\E084'; color: #f55385; }
+.springbeans::before { content: '\E08C'; color: #8dc149; }
+.slim::before { content: '\E08A'; color: #e37933; }
+.smarty.tpl::before { content: '\E08B'; color: #cbcb41; }
+.tpl::before { content: '\E08B'; color: #cbcb41; }
+.sbt::before { content: '\E085'; color: #519aba; }
+.scala::before { content: '\E086'; color: #cc3e44; }
+.sol::before { content: '\E02D'; color: #519aba; }
+.styl::before { content: '\E08E'; color: #8dc149; }
+.svelte::before { content: '\E090'; color: #cc3e44; }
+.soql::before { content: '\E022'; color: #519aba; }
+.tf::before { content: '\E093'; color: #a074c4; }
+.tf.json::before { content: '\E093'; color: #a074c4; }
+.tfvars::before { content: '\E093'; color: #a074c4; }
+.tfvars.json::before { content: '\E093'; color: #a074c4; }
+.dtx::before { content: '\E094'; color: #e37933; }
+.ins::before { content: '\E094'; color: #d4d7d6; }
+.toml::before { content: '\E019'; color: #6d8086; }
+.twig::before { content: '\E098'; color: #8dc149; }
+.spec.ts::before { content: '\E099'; color: #e37933; }
+.test.ts::before { content: '\E099'; color: #e37933; }
+.vala::before { content: '\E09A'; color: #6d8086; }
+.vapi::before { content: '\E09A'; color: #6d8086; }
+.component::before { content: '\E048'; color: #e37933; }
+.vue::before { content: '\E09D'; color: #8dc149; }
+.wasm::before { content: '\E09E'; color: #a074c4; }
+.wat::before { content: '\E09F'; color: #a074c4; }
+.pro::before { content: '\E077'; color: #e37933; }
+.zig::before { content: '\E0A8'; color: #e37933; }
+.jar::before { content: '\E0A9'; color: #cc3e44; }
+.zip::before { content: '\E0A9'; color: #6d8086; }
+.wgt::before { content: '\E0A1'; color: #519aba; }
+.ai::before { content: '\E04B'; color: #cbcb41; }
+.psd::before { content: '\E06F'; color: #519aba; }
+.pdf::before { content: '\E06D'; color: #cc3e44; }
+.eot::before { content: '\E033'; color: #cc3e44; }
+.ttf::before { content: '\E033'; color: #cc3e44; }
+.woff::before { content: '\E033'; color: #cc3e44; }
+.woff2::before { content: '\E033'; color: #cc3e44; }
+.otf::before { content: '\E033'; color: #cc3e44; }
+.avif::before { content: '\E04C'; color: #a074c4; }
+.gif::before { content: '\E04C'; color: #a074c4; }
+.jpg::before { content: '\E04C'; color: #a074c4; }
+.jpeg::before { content: '\E04C'; color: #a074c4; }
+.png::before { content: '\E04C'; color: #a074c4; }
+.pxm::before { content: '\E04C'; color: #a074c4; }
+.svg::before { content: '\E091'; color: #a074c4; }
+.svgx::before { content: '\E04C'; color: #a074c4; }
+.tiff::before { content: '\E04C'; color: #a074c4; }
+.webp::before { content: '\E04C'; color: #a074c4; }
+.sublime-project::before { content: '\E08F'; color: #e37933; }
+.sublime-workspace::before { content: '\E08F'; color: #e37933; }
+.mov::before { content: '\E09B'; color: #f55385; }
+.ogv::before { content: '\E09B'; color: #f55385; }
+.webm::before { content: '\E09B'; color: #f55385; }
+.avi::before { content: '\E09B'; color: #f55385; }
+.mpg::before { content: '\E09B'; color: #f55385; }
+.mp4::before { content: '\E09B'; color: #f55385; }
+.mp3::before { content: '\E005'; color: #a074c4; }
+.ogg::before { content: '\E005'; color: #a074c4; }
+.wav::before { content: '\E005'; color: #a074c4; }
+.flac::before { content: '\E005'; color: #a074c4; }
+[class="3ds"]::before { content: '\E091'; color: #519aba; }
+[class="3dm"]::before { content: '\E091'; color: #519aba; }
+.stl::before { content: '\E091'; color: #519aba; }
+.obj::before { content: '\E091'; color: #519aba; }
+.dae::before { content: '\E091'; color: #519aba; }
+.babelrc::before { content: '\E006'; color: #cbcb41; }
+.babelrc.js::before { content: '\E006'; color: #cbcb41; }
+.babelrc.cjs::before { content: '\E006'; color: #cbcb41; }
+.bazelrc::before { content: '\E007'; color: #4d5a5e; }
+.bowerrc::before { content: '\E009'; color: #e37933; }
+.dockerignore::before { content: '\E025'; color: #4d5a5e; }
+.codeclimate.yml::before { content: '\E014'; color: #8dc149; }
+.eslintrc::before { content: '\E02C'; color: #a074c4; }
+.eslintrc.js::before { content: '\E02C'; color: #a074c4; }
+.eslintrc.cjs::before { content: '\E02C'; color: #a074c4; }
+.eslintrc.yaml::before { content: '\E02C'; color: #a074c4; }
+.eslintrc.yml::before { content: '\E02C'; color: #a074c4; }
+.eslintrc.json::before { content: '\E02C'; color: #a074c4; }
+.eslintignore::before { content: '\E02C'; color: #4d5a5e; }
+.firebaserc::before { content: '\E030'; color: #e37933; }
+.gitlab-ci.yml::before { content: '\E038'; color: #e37933; }
+.jshintrc::before { content: '\E051'; color: #519aba; }
+.jscsrc::before { content: '\E051'; color: #519aba; }
+.stylelintrc::before { content: '\E08D'; color: #d4d7d6; }
+.stylelintrc.json::before { content: '\E08D'; color: #d4d7d6; }
+.stylelintrc.yaml::before { content: '\E08D'; color: #d4d7d6; }
+.stylelintrc.yml::before { content: '\E08D'; color: #d4d7d6; }
+.stylelintrc.js::before { content: '\E08D'; color: #d4d7d6; }
+.stylelintignore::before { content: '\E08D'; color: #4d5a5e; }
+.direnv::before { content: '\E019'; color: #6d8086; }
+.env::before { content: '\E019'; color: #6d8086; }
+.static::before { content: '\E019'; color: #6d8086; }
+.slugignore::before { content: '\E019'; color: #6d8086; }
+.tmp::before { content: '\E012'; color: #6d8086; }
+.htaccess::before { content: '\E019'; color: #6d8086; }
+.key::before { content: '\E05D'; color: #8dc149; }
+.cert::before { content: '\E05D'; color: #8dc149; }
+.cer::before { content: '\E05D'; color: #8dc149; }
+.crt::before { content: '\E05D'; color: #8dc149; }
+.pem::before { content: '\E05D'; color: #8dc149; }
+.ds_store::before { content: '\E04A'; color: #41535b; }
+
+.bat::before { content: '\E0A2'; color: #519aba; }
+.clj::before { content: '\E013'; color: #8dc149; }
+.coffee::before { content: '\E016'; color: #cbcb41; }
+.jsonc::before { content: '\E055'; color: #cbcb41; }
+.json::before { content: '\E055'; color: #cbcb41; }
+.c::before { content: '\E00C'; color: #519aba; }
+.cpp::before { content: '\E01A'; color: #519aba; }
+.cu::before { content: '\E01F'; color: #8dc149; }
+.cs::before { content: '\E00B'; color: #519aba; }
+.css::before { content: '\E01D'; color: #519aba; }
+.dart::before { content: '\E021'; color: #519aba; }
+.Dockerfile::before { content: '\E025'; color: #519aba; }
+.gitignore::before { content: '\E034'; color: #41535b; }
+.fs::before { content: '\E02E'; color: #519aba; }
+.go::before { content: '\E03A'; color: #519aba; }
+.groovy::before { content: '\E03D'; color: #8dc149; }
+.hbs::before { content: '\E063'; color: #e37933; }
+.html::before { content: '\E048'; color: #e37933; }
+.properties::before { content: '\E019'; color: #6d8086; }
+.java::before { content: '\E050'; color: #cc3e44; }
+.jsx::before { content: '\E07D'; color: #519aba; }
+.js::before { content: '\E051'; color: #cbcb41; }
+.jl::before { content: '\E056'; color: #a074c4; }
+.tex::before { content: '\E094'; color: #519aba; }
+.less::before { content: '\E059'; color: #519aba; }
+.lua::before { content: '\E05E'; color: #519aba; }
+.Makefile::before { content: '\E05F'; color: #e37933; }
+.md::before { content: '\E060'; color: #519aba; }
+.m::before { content: '\E00C'; color: #cbcb41; }
+.mm::before { content: '\E01A'; color: #cbcb41; }
+.pl::before { content: '\E06E'; color: #519aba; }
+.php::before { content: '\E070'; color: #a074c4; }
+.ps1::before { content: '\E074'; color: #519aba; }
+.pug::before { content: '\E078'; color: #cc3e44; }
+.py::before { content: '\E07B'; color: #519aba; }
+.r::before { content: '\E001'; color: #519aba; }
+.cshtml::before { content: '\E048'; color: #519aba; }
+.rb::before { content: '\E081'; color: #cc3e44; }
+.rs::before { content: '\E082'; color: #6d8086; }
+.scss::before { content: '\E084'; color: #f55385; }
+.sh::before { content: '\E089'; color: #8dc149; }
+.sql::before { content: '\E022'; color: #f55385; }
+.swift::before { content: '\E092'; color: #e37933; }
+.ts::before { content: '\E099'; color: #519aba; }
+.tsx::before { content: '\E07D'; color: #519aba; }
+.xml::before { content: '\E0A5'; color: #e37933; }
+.yml::before { content: '\E0A7'; color: #a074c4; }
+.ad::before { content: '\E003'; color: #519aba; }
+.bicep::before { content: '\E008'; color: #519aba; }
+.ex::before { content: '\E028'; color: #a074c4; }
+.elm::before { content: '\E02A'; color: #519aba; }
+.erb::before { content: '\E049'; color: #cc3e44; }
+.gradle::before { content: '\E03C'; color: #519aba; }
+.gd::before { content: '\E03B'; color: #519aba; }
+.haml::before { content: '\E042'; color: #cc3e44; }
+.hs::before { content: '\E044'; color: #a074c4; }
+.hx::before { content: '\E045'; color: #e37933; }
+.jinja2::before { content: '\E053'; color: #cc3e44; }
+.kt::before { content: '\E058'; color: #e37933; }
+.mustache::before { content: '\E063'; color: #e37933; }
+.njk::before { content: '\E069'; color: #8dc149; }
+.ml::before { content: '\E06A'; color: #e37933; }
+.res::before { content: '\E07F'; color: #cc3e44; }
+.sass::before { content: '\E084'; color: #f55385; }
+.styl::before { content: '\E08E'; color: #8dc149; }
+.tf::before { content: '\E093'; color: #a074c4; }
+.todo::before { content: '\E096'; color: undefined; }
+.vala::before { content: '\E09A'; color: #6d8086; }
+.vue::before { content: '\E09D'; color: #8dc149; }
+.jsonl::before { content: '\E055'; color: #cbcb41; }
+.pcss::before { content: '\E01D'; color: #519aba; }
+.blade.php::before { content: '\E070'; color: #a074c4; }
 
 .vscode-light, .vscode-high-contrast-light {
-	.mp3::before { color: #5f8b3b; }
-	.wav::before { color: #5f8b3b; }
-	.ogg::before { color: #5f8b3b; }
-	.bowerrc::before { color: #1c86cc; }
-	.cs::before { color: #ae6545; }
-	.c::before { color: #3434be; }
-	.h::before { color: #3434be; }
-	.m::before { color: #3434be; }
-	.ctp::before { color: #33c1bb; }
-	.cjsx::before { color: #ae6545; }
-	.jsx::before { color: #ae6545; }
-	.tmp::before { color: #927f79; }
-	.coffee::before { color: #3434be; }
-	.cfc::before { color: #ae6545; }
-	.cfm::before { color: #ae6545; }
-	.config::before { color: #927f79; }
-	.cpp::before { color: #ae6545; }
-	.css::before { color: #ae6545; }
-	.sss::before { color: #ae6545; }
-	.csv::before { color: #723eb6; }
-	.editorconfig::before { color: #ae6545; }
-	.ejs::before { color: #3434be; }
-	.elm::before { color: #ae6545; }
-	.ttf::before { color: #33c1bb; }
-	.woff::before { color: #33c1bb; }
-	.woff2::before { color: #33c1bb; }
-	.eot::before { color: #33c1bb; }
-	.gitkeep::before { color: #de4c36; }
-	.gitconfig::before { color: #de4c36; }
-	.gitattributes::before { color: #de4c36; }
-	.gitmodules::before { color: #de4c36; }
-	.gitignore::before { color: #de4c36; }
-	.go::before { color: #ae6545; }
-	.gradle::before { color: #723eb6; }
-	.grails::before { color: #723eb6; }
-	.groovy::before { color: #723eb6; }
-	.hh::before { color: #1c86cc; }
-	.haml::before { color: #33c1bb; }
-	.hs::before { color: #5f8b3b; }
-	.lhs::before { color: #5f8b3b; }
-	.htm::before { color: #1c86cc; }
-	.html::before { color: #1c86cc; }
-	.shtml::before { color: #1c86cc; }
-	.dhtml::before { color: #1c86cc; }
-	.ai::before { color: #3434be; }
-	.png::before { color: #5f8b3b; }
-	.ico::before { color: #5f8b3b; }
-	.jpg::before { color: #5f8b3b; }
-	.bmp::before { color: #5f8b3b; }
-	.jpeg::before { color: #5f8b3b; }
-	.gif::before { color: #5f8b3b; }
-	.jade::before { color: #33c1bb; }
-	.java::before { color: #33c1bb; }
-	.js::before { color: #ae6545; }
-	.es6::before { color: #ae6545; }
-	.es7::before { color: #ae6545; }
-	.json::before { color: #3434be; }
-	.jl::before { color: #5f8b3b; }
-	.less::before { color: #ae6545; }
-	.liquid::before { color: #723eb6; }
-	.ls::before { color: #ae6545; }
-	.lua::before { color: #ae6545; }
-	.md::before { color: #ae6545; }
-	.mustache::before { color: #1c86cc; }
-	.handlebars::before { color: #1c86cc; }
-	.hbs::before { color: #1c86cc; }
-	.hjs::before { color: #1c86cc; }
-	.stache::before { color: #1c86cc; }
-	.npmignore::before { color: #cb3837; }
-	.ml::before { color: #1c86cc; }
-	.mli::before { color: #1c86cc; }
-	.cmx::before { color: #1c86cc; }
-	.cmxa::before { color: #1c86cc; }
-	.pdf::before { color: #33c1bb; }
-	.pl::before { color: #ae6545; }
-	.psd::before { color: #ae6545; }
-	.php::before { color: #5f8b3b; }
-	.php.inc::before { color: #5f8b3b; }
-	.pug::before { color: #ae6545; }
-	.pp::before { color: #5f8b3b; }
-	.py::before { color: #ae6545; }
-	.rb::before { color: #33c1bb; }
-	.erb.html::before { color: #33c1bb; }
-	.html.erb::before { color: #33c1bb; }
-	.rs::before { color: #927f79; }
-	.sbt::before { color: #ae6545; }
-	.scala::before { color: #33c1bb; }
-	.sh::before { color: #b2a5a1; }
-	.cmd::before { color: #b2a5a1; }
-	.zsh::before { color: #b2a5a1; }
-	.fish::before { color: #b2a5a1; }
-	.slim::before { color: #1c86cc; }
-	.smarty::before { color: #3434be; }
-	.smarty.tpl::before { color: #3434be; }
-	.styl::before { color: #723eb6; }
-	.svg::before { color: #5f8b3b; }
-	.swift::before { color: #1c86cc; }
-	.tf::before { color: #5f8b3b; }
-	.tf.json::before { color: #5f8b3b; }
-	.tex::before { color: #2b2829; }
-	.sty::before { color: #2b2829; }
-	.cls::before { color: #2b2829; }
-	.dtx::before { color: #2b2829; }
-	.ins::before { color: #2b2829; }
-	.txt::before { color: #2b2829; }
-	.twig::before { color: #723eb6; }
-	.ts::before { color: #ae6545; }
-	.tsx::before { color: #ae6545; }
-	.direnv::before { color: #927f79; }
-	.env::before { color: #927f79; }
-	.static::before { color: #927f79; }
-	.slugignore::before { color: #927f79; }
-	.vala::before { color: #927f79; }
-	.xml::before { color: #1c86cc; }
-	.yml::before { color: #5f8b3b; }
-	.vue::before { color: #41b883; }
-	.babelrc::before { color: #3434be; }
-	.eslintrc::before { color: #6464e2; }
-	.jshintrc::before { color: #626361; }
-	.xcodeproj::before { color: #1a8af4; }
-	.zip::before { color: #00b8df; }
-	.rar::before { color: #00b8df; }
-	.gz::before { color: #00b8df; }
-	.iso::before { color: #00b8df; }
-	.key::before { color: #157efb; }
-	.pem::before { color: #157efb; }
-	.fs::before { color: #30b9db; }
-	.vimrc::before { color: #019833; }
-	.vim::before { color: #019833; }
-	.viminfo::before { color: #019833; }
-	.sql::before { color: #00546b; }
-	.bat::before { color: #2165b6; }
-	.htaccess::before { color: #f7d97c; }
-	.wxml::before { color: #2dc100; }
-	.wxss::before { color: #2dc100; }
-	.ini::before { color: #927f79; }
-	.clj::before { color: #95dc51; }
-	.r::before { color: #2165b6; }
-	.lock::before { color: undefined; }
-	.asp::before { color: undefined; }
-	.flowconfig::before { color: #ff9f14; }
+	.bsl::before { color: #b8383d; }
+	.mdo::before { color: #b8383d; }
+	.cls::before { color: #498ba7; }
+	.apex::before { color: #498ba7; }
+	.asm::before { color: #b8383d; }
+	.s::before { color: #b8383d; }
+	.bicep::before { color: #498ba7; }
+	.bzl::before { color: #7fae42; }
+	.bazel::before { color: #7fae42; }
+	.build::before { color: #7fae42; }
+	.workspace::before { color: #7fae42; }
+	.bazelignore::before { color: #7fae42; }
+	.bazelversion::before { color: #7fae42; }
+	.h::before { color: #9068b0; }
+	.aspx::before { color: #498ba7; }
+	.ascx::before { color: #7fae42; }
+	.asax::before { color: #b7b73b; }
+	.master::before { color: #b7b73b; }
+	.hh::before { color: #9068b0; }
+	.hpp::before { color: #9068b0; }
+	.hxx::before { color: #9068b0; }
+	[class="h++"]::before { color: #9068b0; }
+	.edn::before { color: #498ba7; }
+	.cfc::before { color: #498ba7; }
+	.cfm::before { color: #498ba7; }
+	.litcoffee::before { color: #b7b73b; }
+	.config::before { color: #627379; }
+	.cr::before { color: #bfc2c1; }
+	.ecr::before { color: #bfc2c1; }
+	.slang::before { color: #bfc2c1; }
+	.cson::before { color: #b7b73b; }
+	.css.map::before { color: #498ba7; }
+	.sss::before { color: #498ba7; }
+	.csv::before { color: #7fae42; }
+	.xls::before { color: #7fae42; }
+	.xlsx::before { color: #7fae42; }
+	.cuh::before { color: #9068b0; }
+	.hu::before { color: #9068b0; }
+	.cake::before { color: #b8383d; }
+	.ctp::before { color: #b8383d; }
+	.d::before { color: #b8383d; }
+	.doc::before { color: #498ba7; }
+	.docx::before { color: #498ba7; }
+	.ejs::before { color: #b7b73b; }
+	.ex::before { color: #9068b0; }
+	.exs::before { color: #9068b0; }
+	.elm::before { color: #498ba7; }
+	.ico::before { color: #b7b73b; }
+	.gitconfig::before { color: #3b4b52; }
+	.gitkeep::before { color: #3b4b52; }
+	.gitattributes::before { color: #3b4b52; }
+	.gitmodules::before { color: #3b4b52; }
+	.slide::before { color: #498ba7; }
+	.article::before { color: #498ba7; }
+	.gd::before { color: #498ba7; }
+	.godot::before { color: #b8383d; }
+	.tres::before { color: #b7b73b; }
+	.tscn::before { color: #9068b0; }
+	.gradle::before { color: #498ba7; }
+	.gsp::before { color: #7fae42; }
+	.gql::before { color: #dd4b78; }
+	.graphql::before { color: #dd4b78; }
+	.graphqls::before { color: #dd4b78; }
+	.hack::before { color: #cc6d2e; }
+	.haml::before { color: #b8383d; }
+	.hs::before { color: #9068b0; }
+	.lhs::before { color: #9068b0; }
+	.hx::before { color: #cc6d2e; }
+	.hxs::before { color: #b7b73b; }
+	.hxp::before { color: #498ba7; }
+	.hxml::before { color: #9068b0; }
+	.jade::before { color: #b8383d; }
+	.class::before { color: #498ba7; }
+	.classpath::before { color: #b8383d; }
+	.js.map::before { color: #b7b73b; }
+	.cjs.map::before { color: #b7b73b; }
+	.mjs.map::before { color: #b7b73b; }
+	.spec.js::before { color: #cc6d2e; }
+	.spec.cjs::before { color: #cc6d2e; }
+	.spec.mjs::before { color: #cc6d2e; }
+	.test.js::before { color: #cc6d2e; }
+	.test.cjs::before { color: #cc6d2e; }
+	.test.mjs::before { color: #cc6d2e; }
+	.es::before { color: #b7b73b; }
+	.es5::before { color: #b7b73b; }
+	.es7::before { color: #b7b73b; }
+	.jinja::before { color: #b8383d; }
+	.jinja2::before { color: #b8383d; }
+	.kt::before { color: #cc6d2e; }
+	.kts::before { color: #cc6d2e; }
+	.liquid::before { color: #7fae42; }
+	.ls::before { color: #498ba7; }
+	.argdown::before { color: #498ba7; }
+	.ad::before { color: #498ba7; }
+	.mustache::before { color: #cc6d2e; }
+	.stache::before { color: #cc6d2e; }
+	.nim::before { color: #b7b73b; }
+	.nims::before { color: #b7b73b; }
+	.github-issues::before { color: #bfc2c1; }
+	.ipynb::before { color: #498ba7; }
+	.njk::before { color: #7fae42; }
+	.nunjucks::before { color: #7fae42; }
+	.nunjs::before { color: #7fae42; }
+	.nunj::before { color: #7fae42; }
+	.njs::before { color: #7fae42; }
+	.nj::before { color: #7fae42; }
+	.npm-debug.log::before { color: #3b4b52; }
+	.npmignore::before { color: #b8383d; }
+	.npmrc::before { color: #b8383d; }
+	.ml::before { color: #cc6d2e; }
+	.mli::before { color: #cc6d2e; }
+	.cmx::before { color: #cc6d2e; }
+	.cmxa::before { color: #cc6d2e; }
+	.odata::before { color: #cc6d2e; }
+	.php.inc::before { color: #9068b0; }
+	.pipeline::before { color: #cc6d2e; }
+	.pddl::before { color: #9068b0; }
+	.plan::before { color: #7fae42; }
+	.happenings::before { color: #498ba7; }
+	.prisma::before { color: #498ba7; }
+	.pp::before { color: #b7b73b; }
+	.epp::before { color: #b7b73b; }
+	.purs::before { color: #bfc2c1; }
+	.spec.jsx::before { color: #cc6d2e; }
+	.test.jsx::before { color: #cc6d2e; }
+	.cjsx::before { color: #498ba7; }
+	.spec.tsx::before { color: #cc6d2e; }
+	.test.tsx::before { color: #cc6d2e; }
+	.re::before { color: #b8383d; }
+	.res::before { color: #b8383d; }
+	.resi::before { color: #dd4b78; }
+	.r::before { color: #498ba7; }
+	.rmd::before { color: #498ba7; }
+	.erb::before { color: #b8383d; }
+	.erb.html::before { color: #b8383d; }
+	.html.erb::before { color: #b8383d; }
+	.sass::before { color: #dd4b78; }
+	.springbeans::before { color: #7fae42; }
+	.slim::before { color: #cc6d2e; }
+	.smarty.tpl::before { color: #b7b73b; }
+	.tpl::before { color: #b7b73b; }
+	.sbt::before { color: #498ba7; }
+	.scala::before { color: #b8383d; }
+	.sol::before { color: #498ba7; }
+	.styl::before { color: #7fae42; }
+	.svelte::before { color: #b8383d; }
+	.soql::before { color: #498ba7; }
+	.tf::before { color: #9068b0; }
+	.tf.json::before { color: #9068b0; }
+	.tfvars::before { color: #9068b0; }
+	.tfvars.json::before { color: #9068b0; }
+	.dtx::before { color: #cc6d2e; }
+	.ins::before { color: #bfc2c1; }
+	.toml::before { color: #627379; }
+	.twig::before { color: #7fae42; }
+	.spec.ts::before { color: #cc6d2e; }
+	.test.ts::before { color: #cc6d2e; }
+	.vala::before { color: #627379; }
+	.vapi::before { color: #627379; }
+	.component::before { color: #cc6d2e; }
+	.vue::before { color: #7fae42; }
+	.wasm::before { color: #9068b0; }
+	.wat::before { color: #9068b0; }
+	.pro::before { color: #cc6d2e; }
+	.zig::before { color: #cc6d2e; }
+	.jar::before { color: #b8383d; }
+	.zip::before { color: #627379; }
+	.wgt::before { color: #498ba7; }
+	.ai::before { color: #b7b73b; }
+	.psd::before { color: #498ba7; }
+	.pdf::before { color: #b8383d; }
+	.eot::before { color: #b8383d; }
+	.ttf::before { color: #b8383d; }
+	.woff::before { color: #b8383d; }
+	.woff2::before { color: #b8383d; }
+	.otf::before { color: #b8383d; }
+	.avif::before { color: #9068b0; }
+	.gif::before { color: #9068b0; }
+	.jpg::before { color: #9068b0; }
+	.jpeg::before { color: #9068b0; }
+	.png::before { color: #9068b0; }
+	.pxm::before { color: #9068b0; }
+	.svg::before { color: #9068b0; }
+	.svgx::before { color: #9068b0; }
+	.tiff::before { color: #9068b0; }
+	.webp::before { color: #9068b0; }
+	.sublime-project::before { color: #cc6d2e; }
+	.sublime-workspace::before { color: #cc6d2e; }
+	.mov::before { color: #dd4b78; }
+	.ogv::before { color: #dd4b78; }
+	.webm::before { color: #dd4b78; }
+	.avi::before { color: #dd4b78; }
+	.mpg::before { color: #dd4b78; }
+	.mp4::before { color: #dd4b78; }
+	.mp3::before { color: #9068b0; }
+	.ogg::before { color: #9068b0; }
+	.wav::before { color: #9068b0; }
+	.flac::before { color: #9068b0; }
+	[class="3ds"]::before { color: #498ba7; }
+	[class="3dm"]::before { color: #498ba7; }
+	.stl::before { color: #498ba7; }
+	.obj::before { color: #498ba7; }
+	.dae::before { color: #498ba7; }
+	.babelrc::before { color: #b7b73b; }
+	.babelrc.js::before { color: #b7b73b; }
+	.babelrc.cjs::before { color: #b7b73b; }
+	.bazelrc::before { color: #455155; }
+	.bowerrc::before { color: #cc6d2e; }
+	.dockerignore::before { color: #455155; }
+	.codeclimate.yml::before { color: #7fae42; }
+	.eslintrc::before { color: #9068b0; }
+	.eslintrc.js::before { color: #9068b0; }
+	.eslintrc.cjs::before { color: #9068b0; }
+	.eslintrc.yaml::before { color: #9068b0; }
+	.eslintrc.yml::before { color: #9068b0; }
+	.eslintrc.json::before { color: #9068b0; }
+	.eslintignore::before { color: #455155; }
+	.firebaserc::before { color: #cc6d2e; }
+	.gitlab-ci.yml::before { color: #cc6d2e; }
+	.jshintrc::before { color: #498ba7; }
+	.jscsrc::before { color: #498ba7; }
+	.stylelintrc::before { color: #bfc2c1; }
+	.stylelintrc.json::before { color: #bfc2c1; }
+	.stylelintrc.yaml::before { color: #bfc2c1; }
+	.stylelintrc.yml::before { color: #bfc2c1; }
+	.stylelintrc.js::before { color: #bfc2c1; }
+	.stylelintignore::before { color: #455155; }
+	.direnv::before { color: #627379; }
+	.env::before { color: #627379; }
+	.static::before { color: #627379; }
+	.slugignore::before { color: #627379; }
+	.tmp::before { color: #627379; }
+	.htaccess::before { color: #627379; }
+	.key::before { color: #7fae42; }
+	.cert::before { color: #7fae42; }
+	.cer::before { color: #7fae42; }
+	.crt::before { color: #7fae42; }
+	.pem::before { color: #7fae42; }
+	.ds_store::before { color: #3b4b52; }
+
+	.bat::before { color: #498ba7; }
+	.clj::before { color: #7fae42; }
+	.coffee::before { color: #b7b73b; }
+	.jsonc::before { color: #b7b73b; }
+	.json::before { color: #b7b73b; }
+	.c::before { color: #498ba7; }
+	.cpp::before { color: #498ba7; }
+	.cu::before { color: #7fae42; }
+	.cs::before { color: #498ba7; }
+	.css::before { color: #498ba7; }
+	.dart::before { color: #498ba7; }
+	.Dockerfile::before { color: #498ba7; }
+	.gitignore::before { color: #3b4b52; }
+	.fs::before { color: #498ba7; }
+	.go::before { color: #498ba7; }
+	.groovy::before { color: #7fae42; }
+	.hbs::before { color: #cc6d2e; }
+	.html::before { color: #cc6d2e; }
+	.properties::before { color: #627379; }
+	.java::before { color: #b8383d; }
+	.jsx::before { color: #498ba7; }
+	.js::before { color: #b7b73b; }
+	.jl::before { color: #9068b0; }
+	.tex::before { color: #498ba7; }
+	.less::before { color: #498ba7; }
+	.lua::before { color: #498ba7; }
+	.Makefile::before { color: #cc6d2e; }
+	.md::before { color: #498ba7; }
+	.m::before { color: #b7b73b; }
+	.mm::before { color: #b7b73b; }
+	.pl::before { color: #498ba7; }
+	.php::before { color: #9068b0; }
+	.ps1::before { color: #498ba7; }
+	.pug::before { color: #b8383d; }
+	.py::before { color: #498ba7; }
+	.r::before { color: #498ba7; }
+	.cshtml::before { color: #498ba7; }
+	.rb::before { color: #b8383d; }
+	.rs::before { color: #627379; }
+	.scss::before { color: #dd4b78; }
+	.sh::before { color: #7fae42; }
+	.sql::before { color: #dd4b78; }
+	.swift::before { color: #cc6d2e; }
+	.ts::before { color: #498ba7; }
+	.tsx::before { color: #498ba7; }
+	.xml::before { color: #cc6d2e; }
+	.yml::before { color: #9068b0; }
+	.ad::before { color: #498ba7; }
+	.bicep::before { color: #498ba7; }
+	.ex::before { color: #9068b0; }
+	.elm::before { color: #498ba7; }
+	.erb::before { color: #b8383d; }
+	.gradle::before { color: #498ba7; }
+	.gd::before { color: #498ba7; }
+	.haml::before { color: #b8383d; }
+	.hs::before { color: #9068b0; }
+	.hx::before { color: #cc6d2e; }
+	.jinja2::before { color: #b8383d; }
+	.kt::before { color: #cc6d2e; }
+	.mustache::before { color: #cc6d2e; }
+	.njk::before { color: #7fae42; }
+	.ml::before { color: #cc6d2e; }
+	.res::before { color: #b8383d; }
+	.sass::before { color: #dd4b78; }
+	.styl::before { color: #7fae42; }
+	.tf::before { color: #9068b0; }
+	.vala::before { color: #627379; }
+	.vue::before { color: #7fae42; }
+	.jsonl::before { color: #b7b73b; }
+	.pcss::before { color: #498ba7; }
+	.blade.php::before { color: #9068b0; }
 }
