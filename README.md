@@ -38,6 +38,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 ## Known Issues
 - The graph only displays the most recent 500 commits.
 - No localization support.
+- `spawn ENAMETOOLONG` error when working with a very large number of files (committing, staging, etc.)
 
 ## Release Notes
 
@@ -98,7 +99,7 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Fixed `commit --amend` command without any files.
 
 ## 0.10.5
-- Fixed a bug where `discard` wasn't working
+- Fixed a bug where `discard` wasn't working.
 
 ## 0.10.6
 - Fixed a bug where commit message tooltip wasn't HTML-encoded so it could break EVERYTHING!!
@@ -107,4 +108,8 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 - Fixed a bug where the 'welcome' page check threw!
 
 ## 0.10.8
-- Updated seti file icon font
+- Updated seti file icon font.
+
+## 0.10.9
+- Added `init repository` option in the welcome page.
+- Fixed a bug where some error messages weren't properly surfaced to the user.

@@ -1,3 +1,7 @@
+## 0.10.9
+- Added `init repository` option in the welcome page.
+- Fixed a bug where some error messages weren't properly surfaced to the user.
+
 ## 0.10.8
 - Updated seti file icon font
 

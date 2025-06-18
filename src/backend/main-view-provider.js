@@ -47,6 +47,10 @@ module.exports = class MainViewProvider {
 					vsc.executeCommand('git.clone');
 					break;
 
+				case 'initrepo':
+					vsc.executeCommand('git.init');
+					break;
+
 				case 'getstatus':
 					const status = await git.status();
 					this.#postMessage({ command: 'status', body: status });
@@ -121,7 +125,7 @@ module.exports = class MainViewProvider {
 			this.#postMessage({ command: 'hideprogress' });
 
 		} catch (err) {
-			vsc.showErrorPopup(err.message);
+			vsc.showErrorPopup(err.message || err);
 			this.#postMessage({ command: 'hideprogress' });
 		}
 	}
@@ -312,9 +316,9 @@ module.exports = class MainViewProvider {
 	}
 
 	async #showWelcome() {
-		if (!vsc.workspaceFolder()) return true; // no workspace
-		if (!(await git.isInstalled())) return true; // no git!!
-		if (!await git.isRepo()) return true; // not a repo
+		if (!(await git.isInstalled())) return 'nogit'; // no git!!
+		if (!vsc.workspaceFolder()) return 'noworkspace'; // no workspace
+		if (!await git.isRepo()) return 'norepo'; // not a repo
 	}
 
 	emptyFileList(message) {
@@ -370,7 +374,7 @@ module.exports = class MainViewProvider {
 			</head>
 	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
 				${showWelcome
-					? '<mingit-welcome></mingit-welcome>'
+					? `<mingit-welcome reason="${showWelcome}"></mingit-welcome>`
 					: '<mingit-commit-list></mingit-commit-list><mingit-change-list style="display: none;"></mingit-change-list>'
 				}
 			</body>

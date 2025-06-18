@@ -301,7 +301,7 @@
 .ts::before { content: '\E099'; color: #519aba; }
 .tsx::before { content: '\E07D'; color: #519aba; }
 .xml::before { content: '\E0A5'; color: #e37933; }
-.yml::before { content: '\E0A7'; color: #a074c4; }
+.yml::before, .yaml::before { content: '\E0A7'; color: #a074c4; }
 .ad::before { content: '\E003'; color: #519aba; }
 .bicep::before { content: '\E008'; color: #519aba; }
 .ex::before { content: '\E028'; color: #a074c4; }
@@ -615,7 +615,7 @@
 	.ts::before { color: #498ba7; }
 	.tsx::before { color: #498ba7; }
 	.xml::before { color: #cc6d2e; }
-	.yml::before { color: #9068b0; }
+	.yml::before, .yaml::before { color: #9068b0; }
 	.ad::before { color: #498ba7; }
 	.bicep::before { color: #498ba7; }
 	.ex::before { color: #9068b0; }

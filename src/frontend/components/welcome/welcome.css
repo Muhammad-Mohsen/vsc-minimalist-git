@@ -4,3 +4,5 @@ content {
 	gap: 12px;
 	padding: 12px;
 }
+
+[reason="noworkspace"] .noworkspace { display: none; }
