@@ -153,8 +153,8 @@ module.exports = (() => {
 			'--graph',
 			'--author-date-order',
 			`--max-count=${PAGE_SIZE}`,
-			...logFilters(options.filters),
 			'-i', // case insensitive (for filtering)
+			...logFilters(options.filters),
 		].filter(p => p));
 
 		return logs.split('\x1EEND\x1E').reduce((response, commit) => {
@@ -196,15 +196,16 @@ module.exports = (() => {
 		if (!filterString) return [''];
 
 		function filterBy(by) {
-			const others = ['grep', 'author', 'before', 'after'].filter(f => f != by);
+			const others = ['grep', 'author', 'before', 'after', 'file'].filter(f => f != by);
 			const val = filterString.replace(new RegExp(`.*${by}:`, 'i'), '').replace(new RegExp(`(${others.join('|')}):.*`, 'i'), '');
 
 			if (!val) return '';
 			else if (by == 'author') return val.split(',').filter(a => a.trim()).map(a => `--author=${a.trim()}`).join(' ');
+			else if (by == 'file') return ['--follow', '--', val.trim()];
 			else return `--${by}=${val.trim()}`;
 		}
 
-		return [filterBy('grep'), filterBy('author'), filterBy('before'), filterBy('after')];
+		return [filterBy('grep'), filterBy('author'), filterBy('before'), filterBy('after'), filterBy('file')].flat();
 	}
 	async function status() {
 		let repoState = '';
@@ -253,11 +254,13 @@ module.exports = (() => {
 		};
 	}
 	async function listStash(options = {}) {
+		const filters = options.filters?.startsWith('file:') ? [''] : logFilters(options.filters);
+
 		const stashes = await gitcommand([
 			'stash',
 			'list',
 			`--format=${['%gD', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
-			...logFilters(options.filters),
+			...filters,
 			'-i',
 		].filter(p => p));
 
