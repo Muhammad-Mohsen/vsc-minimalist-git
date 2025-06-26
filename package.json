@@ -1,6 +1,6 @@
 {
 	"name": "mingit",
-	"displayName": "Minimalist Git",
+	"displayName": "MinGit",
 	"icon": "res/icon.png",
 	"description": "Interactive log graph, working tree & commit diffs, and integrated git commands.",
 	"categories": [

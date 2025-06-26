@@ -46,7 +46,7 @@ class CommitList extends HTMLElementBase {
 		event.currentTarget.dataset.vscodeContext = `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`;
 	}
 	filter(event) {
-		this.postMessage({ command: 'filter', body: { value: event.target.value.trim() } });
+		if (event.key == 'Enter') this.postMessage({ command: 'filter', body: { value: event.target.value.trim() } });
 	}
 	filterByFile(filePath) {
 		this.#input.value = `file: ${filePath}`
@@ -61,7 +61,7 @@ class CommitList extends HTMLElementBase {
 	#render() {
 		this.innerHTML = /*html*/`
 			<div class="progress"></div>
-			<input style="display: none;" placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>]" onchange="${this.handle}.filter(event);">
+			<input style="display: none;" type="search" placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>] | [file: <pathspec>]" onkeyup="${this.handle}.filter(event);">
 			<ul style="display: none;"></ul><resizer></resizer>`;
 
 		this.#progress = this.querySelector('.progress');
