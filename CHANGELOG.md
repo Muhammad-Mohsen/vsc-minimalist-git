@@ -1,3 +1,7 @@
+## 0.10.10
+- Added filter by file in graph search.
+- Added `File History` entry in explorer context menu.
+
 ## 0.10.9
 - Added `init repository` option in the welcome page.
 - Fixed a bug where some error messages weren't properly surfaced to the user.
