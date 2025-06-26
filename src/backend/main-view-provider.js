@@ -274,6 +274,11 @@ module.exports = class MainViewProvider {
 					git.setConfig('user.email', email);
 
 					break;
+
+				case 'getFileHistory':
+					this.#postMessage({ command: 'getFileHistory', body: message.body.fsPath });
+					vsc.executeCommand('mingit-main-view.focus');
+					break;
 			}
 			this.#postMessage({ command: 'hideprogress' });
 

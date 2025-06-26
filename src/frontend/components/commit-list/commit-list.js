@@ -15,6 +15,7 @@ class CommitList extends HTMLElementBase {
 	onMessage(event) {
 		const message = event.data;
 		if (message.command == 'state') this.#renderCommits(message.body);
+		else if (message.command == 'getFileHistory') this.filterByFile(message.body)
 	}
 
 	// EVENT HANDLERS
@@ -45,7 +46,11 @@ class CommitList extends HTMLElementBase {
 		event.currentTarget.dataset.vscodeContext = `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`;
 	}
 	filter(event) {
-		this.postMessage({ command: 'filter', body: { value: event.target.value } });
+		this.postMessage({ command: 'filter', body: { value: event.target.value.trim() } });
+	}
+	filterByFile(filePath) {
+		this.#input.value = `file: ${filePath}`
+		this.filter({ target: { value: `file: ${filePath}` } });
 	}
 
 	getSelected() {

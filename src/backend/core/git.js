@@ -254,13 +254,13 @@ module.exports = (() => {
 		};
 	}
 	async function listStash(options = {}) {
-		const filters = options.filters?.startsWith('file:') ? [''] : logFilters(options.filters);
+		if (options.filters?.startsWith('file:')) return []; // don't show stashes if filtering by file
 
 		const stashes = await gitcommand([
 			'stash',
 			'list',
 			`--format=${['%gD', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
-			...filters,
+			...logFilters(options.filters),
 			'-i',
 		].filter(p => p));
 

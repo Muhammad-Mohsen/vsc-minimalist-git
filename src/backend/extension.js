@@ -111,6 +111,10 @@ async function activate(context) {
 	vsc.registerCommand(context, 'mingit.refresh', (context) => {
 		provider.onContext({ command: 'refresh', body: context });
 	});
+
+	vsc.registerCommand(context, 'mingit.getFileHistory', fileUri => {
+		provider.onContext({ command: 'getFileHistory', body: fileUri })
+	});
 }
 
 function deactivate() {}

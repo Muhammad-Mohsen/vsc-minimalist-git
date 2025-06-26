@@ -270,6 +270,17 @@
 				{
 					"command": "mingit.abortCherryPick",
 					"when": "false"
+				},
+				{
+					"command": "mingit.getFileHistory",
+					"when": "false"
+				}
+			],
+			"explorer/context": [
+				{
+					"when": "resourceScheme == 'file' && git.state == 'initialized'",
+					"command": "mingit.getFileHistory",
+					"group": "3_compare"
 				}
 			]
 		},
@@ -393,6 +404,10 @@
 				"command": "mingit.abortCherryPick",
 				"title": "Abort Cherry-Pick",
 				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.getFileHistory",
+				"title": "File History"
 			}
 		]
 	},
