@@ -354,14 +354,14 @@ module.exports = (() => {
 		}
 
 		// deleted -> use git URI (prev hash)
-		if (file.decorator == 'D') return {
+		if (file.decorator.includes('D')) return {
 			left: await uri(file.path, file.hashes[0]),
 			right: empty,
 			title: `${titlePrefix} ${file.name} ${file.decorator}`
 		};
 
 		// renamed
-		if (file.decorator == 'R') {
+		if (file.decorator.includes('R')) {
 			// if only a path segment changes
 			if (file.path.includes('{')) {
 				const lr = file.path.match(/({.+})/)[0];
@@ -371,16 +371,16 @@ module.exports = (() => {
 					// remove possible double slashes (e.g. {folderA => })
 					left: await uri(file.path.replace(lr, l).replace(/\/\//g, '/'), file.hashes[0]),
 					right: await uri(file.path.replace(lr, r).replace(/\/\//g, '/'), file.hashes[1]),
-					title: titlePrefix + file.path.replace('=>', '→')
+					title: titlePrefix + file.path.replace(/=>|->/, '→')
 				}
 
 			}
 
-			const [l, r] = file.path.split(' => ');
+			const [l, r] = file.path.split(/ => | -> /);
 			return {
 				left: await uri(l, file.hashes[0]),
 				right: await uri(r, file.hashes[1]),
-				title: titlePrefix + file.path.replace('=>', '→')
+				title: titlePrefix + file.path.replace(/=>|->/, '→')
 			}
 		}
 
