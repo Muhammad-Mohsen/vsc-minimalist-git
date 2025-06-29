@@ -1,3 +1,6 @@
+## 0.10.11
+- Fixed a bug where resolving diff URIs failed when renamed/deleted files are staged.
+
 ## 0.10.10
 - Added filter by file in graph search.
 - Added `File History` entry in explorer context menu.
