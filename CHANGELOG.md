@@ -1,3 +1,6 @@
+## 0.10.12
+- Fixed a bug the `File History` didn't automatically trigger the filter
+
 ## 0.10.11
 - Fixed a bug where resolving diff URIs failed when renamed/deleted files are staged.
 

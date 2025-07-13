@@ -276,8 +276,8 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'getFileHistory':
+					await vsc.executeCommand('mingit-main-view.focus');
 					this.#postMessage({ command: 'getFileHistory', body: message.body.fsPath });
-					vsc.executeCommand('mingit-main-view.focus');
 					break;
 			}
 			this.#postMessage({ command: 'hideprogress' });

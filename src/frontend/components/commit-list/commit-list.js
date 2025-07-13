@@ -50,7 +50,7 @@ class CommitList extends HTMLElementBase {
 	}
 	filterByFile(filePath) {
 		this.#input.value = `file: ${filePath}`
-		this.filter({ target: { value: `file: ${filePath}` } });
+		this.filter({ target: { value: `file: ${filePath}` }, key: 'Enter' });
 	}
 
 	getSelected() {
