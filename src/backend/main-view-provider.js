@@ -101,7 +101,7 @@ module.exports = class MainViewProvider {
 						break;
 					}
 
-					const confirm = await vsc.showWarningPopup(`This will discard: "${[message.body.trackedFiles, message.body.untrackedFiles].flat().join('" & "')}".`, 'Confirm', 'Cancel');
+					const confirm = await vsc.showWarningPopup(`This will discard: "${[message.body.trackedFiles, message.body.untrackedFiles].flat().join('" --- "')}".`, 'Confirm', 'Cancel');
 					if (confirm != 'Confirm') break;
 
 					await git.discard(message.body);

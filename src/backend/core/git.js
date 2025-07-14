@@ -242,8 +242,8 @@ module.exports = (() => {
 
 			return {
 				decorator: [index, working].filter(i => i).join(' '),
-				path: s.slice(3),
-				name: s.slice(3).split(PATH_SEPARATOR).pop()
+				path: s.slice(3).replace(/\"/g, ''), // replace the quotes that might be added (if the file name had spaces?)
+				name: s.slice(3).replace(/\"/g, '').split(PATH_SEPARATOR).pop()
 			}
 		});
 

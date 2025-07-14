@@ -1,3 +1,6 @@
+## 0.10.14
+- Fixed a bug where file paths in the changes list could have quotes which would badly mess up the markup!
+
 ## 0.10.12
 - Fixed a bug the `File History` didn't automatically trigger the filter
 
