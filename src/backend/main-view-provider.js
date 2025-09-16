@@ -48,7 +48,9 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'initrepo':
-					vsc.executeCommand('git.init');
+					await vsc.executeCommand('git.init');
+					// rerender the extension after initializing the repo
+					this.#view.webview.html = await this.#render(this.#view.webview);
 					break;
 
 				case 'getstatus':
