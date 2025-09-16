@@ -141,56 +141,64 @@ module.exports = (() => {
 		return state;
 	}
 	async function log(options = {}) {
-		// git log HEAD --branches --remotes --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
-		const logs = await gitcommand([
-			'log',
-			// hash, ref, parents, author name, author email, author date, committer date, raw body
-			`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
-			'HEAD',
-			'--branches',
-			'--remotes',
-			'--tags',
-			'--graph',
-			'--author-date-order',
-			`--max-count=${PAGE_SIZE}`,
-			'-i', // case insensitive (for filtering)
-			...logFilters(options.filters),
-		].filter(p => p));
-
-		return logs.split('\x1EEND\x1E').reduce((response, commit) => {
-			commit = commit.replace(/^\n/, '');
-			if (!commit) return response;
-
-			const [graph, hash, ref, parents, name, email, date, committerDate, rawBody] = commit.split(/\x1F|\x1ESTART\x1E/);
-
-			// processing
-			const branchIndex = graph.substring(graph.lastIndexOf('\n') + 1).indexOf('*') / 2;
-
-			const body = rawBody
-				.replace(/\n[|\\/\s]+$/, '') // remove the extra new line and trailing graph remnants!
-				.replace(new RegExp(`\n.{${(branchIndex + 1) * 2}}`, 'g'), '\n'); // remove graph detritus from multi-line commit bodies
-
-			const refs = ref.split(', ').reduce((refs, r) => {
-				if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
-				else if (r == 'origin/HEAD') return refs; // useless ref
-				else if (r.startsWith('origin')) refs.origin = r;
-				else if (r.startsWith('HEAD')) refs.head = r;
-				else if (r) refs.branches.push(r);
-
-				return refs;
-
-			}, { branches: [], tags: [], head: null, origin: null });
-
-			if (branchIndex + 1 > response.branchCount) response.branchCount = branchIndex + 1;
-			response.commitList.push({ branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body });
-
-			return response;
-
-		}, { // accumulator
+		const result = {
 			commitList: [],
 			branchCount: 0,
 			colors: ['#75BEFF', '#FFB000', '#7A457A', '#8DE8A5', '#7E86A6', '#ff0000', '##80C566', '##E552EB', '#C2C500', '#DC5B23', '#6f24d6', '#ffcc00'],
-		});
+		};
+		
+		// git log HEAD --branches --remotes --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
+		try {
+
+			const logs = await gitcommand([
+				'log',
+				// hash, ref, parents, author name, author email, author date, committer date, raw body
+				`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
+				'HEAD',
+				'--branches',
+				'--remotes',
+				'--tags',
+				'--graph',
+				'--author-date-order',
+				`--max-count=${PAGE_SIZE}`,
+				'-i', // case insensitive (for filtering)
+				...logFilters(options.filters),
+			].filter(p => p));
+
+			return logs.split('\x1EEND\x1E').reduce((response, commit) => {
+				commit = commit.replace(/^\n/, '');
+				if (!commit) return response;
+
+				const [graph, hash, ref, parents, name, email, date, committerDate, rawBody] = commit.split(/\x1F|\x1ESTART\x1E/);
+
+				// processing
+				const branchIndex = graph.substring(graph.lastIndexOf('\n') + 1).indexOf('*') / 2;
+
+				const body = rawBody
+					.replace(/\n[|\\/\s]+$/, '') // remove the extra new line and trailing graph remnants!
+					.replace(new RegExp(`\n.{${(branchIndex + 1) * 2}}`, 'g'), '\n'); // remove graph detritus from multi-line commit bodies
+
+				const refs = ref.split(', ').reduce((refs, r) => {
+					if (r.startsWith('tag:')) refs.tags.push(r.replace('tag: ', ''));
+					else if (r == 'origin/HEAD') return refs; // useless ref
+					else if (r.startsWith('origin')) refs.origin = r;
+					else if (r.startsWith('HEAD')) refs.head = r;
+					else if (r) refs.branches.push(r);
+
+					return refs;
+
+				}, { branches: [], tags: [], head: null, origin: null });
+
+				if (branchIndex + 1 > response.branchCount) response.branchCount = branchIndex + 1;
+				response.commitList.push({ branchIndex, hash, refs, parents: parents?.split(' ') || [], name, email, date, committerDate, body });
+
+				return response;
+
+			}, result);
+
+		} catch {
+			return result;
+		}
 	}
 	function logFilters(filterString) {
 		if (!filterString) return [''];
