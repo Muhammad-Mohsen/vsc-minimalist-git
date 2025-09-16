@@ -22,6 +22,9 @@ The `tests` folder contains a few bash scripts which create local repositories i
 I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
 
 ## TODO
+- dummy commit as proof of ownership
+- keep commit message if no files were selected
+- restart on folder selection
 - DONE - remove simplegit
 	- DONE - status (pfff)
 	- DONE - addConfig
