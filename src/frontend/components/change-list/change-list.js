@@ -41,6 +41,10 @@ class ChangesList extends HTMLElementBase {
 		// increases perceived performance!! because the currentTarget is blurred automatically after the diff editor opens...making it look laggy
 		event.currentTarget.blur();
 	}
+	onContextMenu(event, path, decorator) {
+		event.currentTarget.dataset.vscodeContext = `{ "isChange": true, "fsPath": "${this.#path(path)}", "decorator": "${decorator}" }`;
+	}
+	
 	clearSelected() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 	}
@@ -72,7 +76,7 @@ class ChangesList extends HTMLElementBase {
 		this.style.display = '';
 
 		this.#changeList.innerHTML =
-			status.files.map(f => /*html*/`<li title="${f.path}" onclick="${this.handle}.onClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" tabindex="0">
+			status.files.map(f => `<li title="${f.path}" onclick="${this.handle}.onClick(event, '${f.name}', '${f.path}', '${f.decorator}', '${status.hashes || ''}')" oncontextmenu="${this.handle}.onContextMenu(event, '${f.path}', '${f.decorator}')" tabindex="0">
 				<i class="file-icon ${f.path.split('.').pop()}"></i>
 				<span>${f.name}</span><span class="secondary">${f.path}</span>
 				${this.#renderDecorations(f)}
@@ -88,6 +92,15 @@ class ChangesList extends HTMLElementBase {
 
 	#index(change) {
 		return Array.from(this.#changeList.children).indexOf(change);
+	}
+	#path(path) {
+		const partialRenameMatch = path.match(/\{[^}]+\s*=>\s*([^}]+)\}/);
+		if (partialRenameMatch) return path.replace(/\{[^}]+\s*=>\s*([^}]+)\}/, partialRenameMatch[1]).trim();
+
+		const fullRenameMatch = path.match(/(.+)\s*=>\s*(.+)/);
+		if (fullRenameMatch) return fullRenameMatch[2].trim();
+
+		return path;
 	}
 }
 

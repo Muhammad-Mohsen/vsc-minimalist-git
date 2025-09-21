@@ -115,6 +115,14 @@ async function activate(context) {
 	vsc.registerCommand(context, 'mingit.getFileHistory', fileUri => {
 		provider.onContext({ command: 'getFileHistory', body: fileUri })
 	});
+
+	vsc.registerCommand(context, 'mingit.openFile', context => {
+		provider.onContext({ command: 'openFile', body: context })
+	});
+
+	vsc.registerCommand(context, 'mingit.revealFileInExplorer', context => {
+		provider.onContext({ command: 'revealFileInExplorer', body: context })
+	});
 }
 
 function deactivate() {}

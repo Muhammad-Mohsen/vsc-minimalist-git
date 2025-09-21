@@ -281,6 +281,14 @@ module.exports = class MainViewProvider {
 					await vsc.executeCommand('mingit-main-view.focus');
 					this.#postMessage({ command: 'getFileHistory', body: message.body.fsPath });
 					break;
+
+				case 'revealFileInExplorer':
+					await vsc.executeCommand('revealFileInOS', vsc.absoluteURI(message.body.fsPath));
+					break;
+
+				case 'openFile':
+					await vsc.executeCommand('vscode.open', vsc.absoluteURI(message.body.fsPath));
+					break;
 			}
 			this.#postMessage({ command: 'hideprogress' });
 

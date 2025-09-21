@@ -172,6 +172,21 @@
 					"command": "mingit.refresh",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "6_general"
+				},
+				{
+					"command": "mingit.getFileHistory",
+					"when": "isChange && webviewId == 'mingit-main-view'",
+					"group": "changes"
+				},
+				{
+					"command": "mingit.openFile",
+					"when": "isChange && webviewId == 'mingit-main-view'",
+					"group": "changes"
+				},
+				{
+					"command": "mingit.revealFileInExplorer",
+					"when": "isChange && webviewId == 'mingit-main-view'",
+					"group": "changes"
 				}
 			],
 			"commandPalette": [
@@ -274,12 +289,20 @@
 				{
 					"command": "mingit.getFileHistory",
 					"when": "false"
+				},
+				{
+					"command": "mingit.openFile",
+					"when": "false"
+				},
+				{
+					"command": "mingit.revealFileInExplorer",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
 				{
-					"when": "resourceScheme == 'file' && git.state == 'initialized'",
 					"command": "mingit.getFileHistory",
+					"when": "resourceScheme == 'file' && git.state == 'initialized'",
 					"group": "3_compare"
 				}
 			]
@@ -408,6 +431,14 @@
 			{
 				"command": "mingit.getFileHistory",
 				"title": "File History"
+			},
+			{
+				"command": "mingit.openFile",
+				"title": "Open File"
+			},
+			{
+				"command": "mingit.revealFileInExplorer",
+				"title": "Reveal In Explorer"
 			}
 		]
 	},
