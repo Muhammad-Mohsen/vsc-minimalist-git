@@ -322,7 +322,7 @@ module.exports = (() => {
 	// getting the diff URIs is a wonderful mess! and that's not even everything
 	async function resolveDiffURIs(file, extensionURI) {
 		const titlePrefix = '⇌ '; // ᴅɪꜰꜰ • // 𝗗𝗜𝗙𝗙 // ⇄ ⇌ ⇵ ⇃↾ ⥯ ↳↰
-		const empty = vsc.joinPath(extensionURI, 'res', 'git-empty.txt');
+		const empty = vsc.joinPath(extensionURI, 'res', 'git-empty.txt').with({ scheme: vsc.ReadOnlyContentProvider.SCHEME });
 
 		if (file.hashes[0] == '') {
 			file.hashes[0] = 'HEAD';

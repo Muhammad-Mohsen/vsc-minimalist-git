@@ -1,3 +1,9 @@
+## 0.11.0
+- Added `Open File` context menu command in Changes List.
+- Added `Reveal File In Explorer` context menu command in Changes List.
+- Added `File History` context menu command in Changes List.
+- The empty file in the diff view is now readonly!
+
 ## 0.10.14
 - Fixed a bug where file paths in the changes list could have quotes which would badly mess up the markup!
 

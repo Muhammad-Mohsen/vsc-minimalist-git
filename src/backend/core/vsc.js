@@ -30,6 +30,15 @@ module.exports = (() => {
 	}
 
 	/**
+	 * @param {vscode.ExtensionContext} context
+	 * @param {string} scheme
+	 * @param {vscode.TextDocumentContentProvider} provider
+	 */
+	function registerTextDocumentContentProvider(context, scheme, provider) {
+		context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider(scheme, provider));
+	}
+
+	/**
 	 * @param {string} message
 	 * @param {any[]} items
 	 */
@@ -99,12 +108,21 @@ module.exports = (() => {
 		return vscode.env.clipboard.writeText(value);
 	}
 
+	class ReadOnlyContentProvider {
+		static SCHEME = 'readonly';
+
+		provideTextDocumentContent() {
+			return '';
+		}
+	}
+
 	return {
 		registerCommand,
 		executeCommand,
 
 		registerWebViewProvider,
-
+		registerTextDocumentContentProvider,
+		
 		showInfoPopup,
 		showWarningPopup,
 		showErrorPopup,
@@ -120,5 +138,7 @@ module.exports = (() => {
 		copyToClipboard,
 
 		gitExtension,
+
+		ReadOnlyContentProvider,
 	}
 })();

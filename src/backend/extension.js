@@ -12,6 +12,8 @@ async function activate(context) {
 		{ webviewOptions: { retainContextWhenHidden: true }
 	});
 
+	vsc.registerTextDocumentContentProvider(context, vsc.ReadOnlyContentProvider.SCHEME, new vsc.ReadOnlyContentProvider());
+
 	// COMMANDS
 	vsc.registerCommand(context, 'mingit.amendCommit', (context) => {
 		provider.onContext({ command: 'amendcommit', body: context });
