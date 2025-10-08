@@ -23,8 +23,9 @@ module.exports = class MainViewProvider {
 
 		git.repoPath().then(repoPath => {
 			git.setRepoPath(repoPath);
-			if (!util.sameDir(vsc.workspacePath(), repoPath)) {
+			if (repoPath && !util.sameDir(vsc.workspacePath(), repoPath)) {
 				git.setWorkingDirectory(repoPath);
+				vsc.executeCommand('git.openRepository', repoPath);
 				vsc.showInfoPopup('Opened repository in parent directory.');
 			}
 
@@ -283,11 +284,13 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'revealFileInExplorer':
-					await vsc.executeCommand('revealFileInOS', vsc.absoluteURI(message.body.fsPath));
+					// repoPath is used because the fsPath is relative to the repoDir not the workingDir
+					// so if the repo is in a parent directory, this is necessary
+					await vsc.executeCommand('revealFileInOS', vsc.joinPath(git.getRepoPath(), message.body.fsPath));
 					break;
 
 				case 'openFile':
-					await vsc.executeCommand('vscode.open', vsc.absoluteURI(message.body.fsPath));
+					await vsc.executeCommand('vscode.open', vsc.joinPath(git.getRepoPath(), message.body.fsPath));
 					break;
 			}
 			this.#postMessage({ command: 'hideprogress' });

@@ -20,6 +20,9 @@ module.exports = (() => {
 	function setRepoPath(path) {
 		repoDir = path;
 	}
+	function getRepoPath() {
+		return repoDir;
+	}
 
 	// COMMANDS
 	async function fetch(options = []) {
@@ -464,9 +467,10 @@ module.exports = (() => {
 	return {
 		isInstalled,
 		setWorkingDirectory,
-		setRepoPath,
-		isRepo,
 		repoPath,
+		setRepoPath,
+		getRepoPath,
+		isRepo,
 
 		fetch,
 		pull,

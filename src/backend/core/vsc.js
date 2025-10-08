@@ -82,9 +82,12 @@ module.exports = (() => {
 		if (typeof base == 'string') base = vscode.Uri.file(base);
 		return vscode.Uri.joinPath(base, ...segments);
 	}
-	/** @param {string} path */
-	function absoluteURI(path) {
-		return vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, path);
+	/** 
+	 * @param {string} path
+	 * @param {string | boolean} isAbsolute
+	 * */
+	function uri(path, isAbsolute = false) {
+		return isAbsolute ? vscode.Uri.file(path) : vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, path);
 	}
 
 	function fileSystemWatcher(context, path) {
@@ -132,13 +135,13 @@ module.exports = (() => {
 		workspaceFolder,
 		workspacePath,
 		joinPath,
-		absoluteURI,
+		uri,
 		fileSystemWatcher,
 		isDark,
 		copyToClipboard,
 
 		gitExtension,
-
+		
 		ReadOnlyContentProvider,
 	}
 })();
