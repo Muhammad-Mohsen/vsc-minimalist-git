@@ -94,7 +94,10 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'commit':
-					if (this.emptyFileList(message)) break;
+					if (this.emptyFileList(message)) {
+						this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
+						break;
+					}
 					await git.commit(message.body);
 					break;
 
@@ -130,6 +133,9 @@ module.exports = class MainViewProvider {
 		} catch (err) {
 			vsc.showErrorPopup(err.message || err);
 			this.#postMessage({ command: 'hideprogress' });
+			
+			// restore the commit message on failure
+			if (message.command == 'commit') this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
 		}
 	}
 	async onContext(message) {
