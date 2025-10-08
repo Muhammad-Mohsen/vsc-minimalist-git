@@ -134,8 +134,8 @@ module.exports = class MainViewProvider {
 			vsc.showErrorPopup(err.message || err);
 			this.#postMessage({ command: 'hideprogress' });
 			
-			// restore the commit message on failure
-			if (message.command == 'commit') this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
+			// restore the commit/stash message on failure
+			if (['commit', 'stash'].includes(message.command)) this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
 		}
 	}
 	async onContext(message) {
