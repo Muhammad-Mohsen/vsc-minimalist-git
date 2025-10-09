@@ -94,10 +94,6 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'commit':
-					if (this.emptyFileList(message)) {
-						this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
-						break;
-					}
 					await git.commit(message.body);
 					break;
 

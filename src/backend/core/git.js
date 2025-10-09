@@ -41,9 +41,18 @@ module.exports = (() => {
 	async function unstage(options) {
 		if (options.files.length) return await gitcommand(['reset', 'HEAD', '--', ...options.files]);
 	}
+	async function getStagedCount() {
+		const staged = await gitcommand(['diff', '--name-only', '--cached']);
+		// if no staged files, an empty string is returned, and after the split, length = 1
+		return staged ? staged.split('\n').length : '0';
+	}
 	async function commit(options) {
 		await stage(options);
-		if (!options.amend) return await gitcommand(['commit', '-m', options.message]);
+		if (!options.amend) {
+			const staged = await getStagedCount();
+			if (!staged) throw new Exception('Nothing to commit'); // no staged files
+			return await gitcommand(['commit', '-m', options.message]);
+		}
 		else return await gitcommand(['commit', '--amend']);
 	}
 	async function discard(options) {
