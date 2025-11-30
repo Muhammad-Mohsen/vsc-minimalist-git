@@ -22,12 +22,15 @@ The `tests` folder contains a few bash scripts which create local repositories i
 I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
 
 ## TODO
+- worktrees
+	- https://git-scm.com/docs/git-worktree
+	- https://code.visualstudio.com/docs/sourcecontrol/overview#_worktrees
 - DONE - context menu in changes-list
 	- file history
 	- open in explorer (not deleted)
 	- open file (not deleted)
 	- care for renamed files
-- keep commit message if no files were selected
+- DONE - keep commit message if no files were selected
 - DONE - restart on folder selection
 - DONE - fix bug if repo is initialized but has no HEAD (no commits)
 - DONE - remove simplegit

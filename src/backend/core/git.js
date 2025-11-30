@@ -11,7 +11,7 @@ module.exports = (() => {
 	let builtInGit; // builtInGit.git.path
 	vsc.gitExtension().then(git => builtInGit = git);
 
-	let cwd, repoDir;
+	let cwd, repoDir, remote;
 
 	// INITIALIZATION
 	function setWorkingDirectory(workingDirectory) {
@@ -26,23 +26,23 @@ module.exports = (() => {
 
 	// COMMANDS
 	async function fetch(options = []) {
-		return await gitcommand(['fetch', ...options])
+		return await command(['fetch', ...options])
 	}
 	async function pull(options = ['--rebase', '--autostash']) { // lol!! auto-stash dirty working tree!!
-		return await gitcommand(['pull', ...options])
+		return await command(['pull', ...options])
 	}
 	async function push(options = []) {
-		return await gitcommand(['push', ...options])
+		return await command(['push', ...options])
 	}
 
 	async function stage(options) {
-		if (options.files.length) return await gitcommand(['add', ...options.files]);
+		if (options.files.length) return await command(['add', ...options.files]);
 	}
 	async function unstage(options) {
-		if (options.files.length) return await gitcommand(['reset', 'HEAD', '--', ...options.files]);
+		if (options.files.length) return await command(['reset', 'HEAD', '--', ...options.files]);
 	}
 	async function getStagedCount() {
-		const staged = await gitcommand(['diff', '--name-only', '--cached']);
+		const staged = await command(['diff', '--name-only', '--cached']);
 		// if no staged files, an empty string is returned, and after the split, length = 1
 		return staged ? staged.split('\n').length : '0';
 	}
@@ -51,77 +51,96 @@ module.exports = (() => {
 		if (!options.amend) {
 			const staged = await getStagedCount();
 			if (!staged) throw new Exception('Nothing to commit'); // no staged files
-			return await gitcommand(['commit', '-m', options.message]);
+			return await command(['commit', '-m', options.message]);
 		}
-		else return await gitcommand(['commit', '--amend']);
+		else return await command(['commit', '--amend']);
 	}
 	async function discard(options) {
 		// tracked
 		if (options.trackedFiles?.length) {
-			await gitcommand(['reset', '--', ...options.trackedFiles]); // unstage the file first
-			try { await gitcommand(['checkout', '--', ...options.trackedFiles]); } // blows up for renamed files
+			await command(['reset', '--', ...options.trackedFiles]); // unstage the file first
+			try { await command(['checkout', '--', ...options.trackedFiles]); } // blows up for renamed files
 			catch {};
 		}
 
 		// untracked
 		if (options.untrackedFiles?.length) {
-			await gitcommand(['clean', '-f', '--', ...options.untrackedFiles]);
+			await command(['clean', '-f', '--', ...options.untrackedFiles]);
 		}
 	}
 	async function saveStash(options) {
 		await stage(options);
-		if (options.files.length) return await gitcommand(['stash', 'push', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
+		if (options.files.length) return await command(['stash', 'push', options.message ? `--m=${options.message}` : '', ...options.files].filter(o => o));
 	}
 	async function applyStash(options) {
-		return await gitcommand(['stash', 'apply', options.hash]);
+		return await command(['stash', 'apply', options.hash]);
 	}
 	async function dropStash(options) {
-		return await gitcommand(['stash', 'drop', options.hash]);
+		return await command(['stash', 'drop', options.hash]);
 	}
 
 	async function checkoutCommit(options) {
-		return await gitcommand(['checkout', options.hash]);
+		return await command(['checkout', options.hash]);
 	}
 	async function cherryPickCommit(options) {
-		return await gitcommand(['cherry-pick', '-n', options.hash]);
+		return await command(['cherry-pick', '-n', options.hash]);
 	}
 	async function revertCommit(options) {
-		return await gitcommand(['revert', '-n', options.hash]);
+		return await command(['revert', '-n', options.hash]);
 	}
 	async function rebase(options) {
-		return await gitcommand(['rebase', ...options]);
+		return await command(['rebase', ...options]);
 	}
 	async function merge(options) {
-		return await gitcommand(['merge', ...options]);
+		return await command(['merge', ...options]);
 	}
 	async function reset(options) {
-		return await gitcommand(['reset', ...options]);
+		return await command(['reset', ...options]);
 	}
 
+	// WORKTREES
+	async function addWorktree(options) {
+		// git worktree add -d <path>
+		// return await command(['worktree', 'add', ...options]);
+	}
+	async function removeWorktree(options) {
+		// git worktree remove -f <path>
+		// return await command(['worktree', 'remove', '-f', ...options]);
+	}
+	async function listWorktrees() {
+		// git worktree list [-v | --porcelain [-z]]
+		// return await command(['worktree', 'list', '--porcelain', '-z']);
+	}
+
+	// TAGS
 	async function addTag(options) {
-		await gitcommand(['tag', ...options]);
-		return await gitcommand(['push', 'origin', '--tags']);
+		if (!remote) remote = await command(['remote']); // remote can have a different name than 'origin'!
+
+		await command(['tag', ...options]);
+		return await command(['push', remote, '--tags']);
 	}
 	async function deleteTag(name) {
-		await gitcommand(['tag', '-d', name]);
-		return await gitcommand(['push', 'origin', '--delete', name]);
+		if (!remote) remote = await command(['remote']); // remote can have a different name than 'origin'!
+
+		await command(['tag', '-d', name]);
+		return await command(['push', remote, '--delete', name]);
 	}
 
 	// used for renaming branches
 	async function branch(options) {
-		return await gitcommand(['branch', ...options]);
+		return await command(['branch', ...options]);
 	}
 	async function setConfig(key, val, append = false, scope = 'local') {
-		return await gitcommand(['config', key, val]);
+		return await command(['config', key, val]);
 	}
 	function getConfig(key) {}
 
-	// sequencer
+	// SEQUENCER
 	async function abortSequencer(command) {
-		return await gitcommand([command, '--abort']);
+		return await command([command, '--abort']);
 	}
 	async function continueSequencer(command) {
-		return await gitcommand([command, '--continue']);
+		return await command([command, '--continue']);
 	}
 
 	// GRAPH
@@ -158,11 +177,11 @@ module.exports = (() => {
 			branchCount: 0,
 			colors: ['#75BEFF', '#FFB000', '#7A457A', '#8DE8A5', '#7E86A6', '#ff0000', '##80C566', '##E552EB', '#C2C500', '#DC5B23', '#6f24d6', '#ffcc00'],
 		};
-		
+
 		// git log HEAD --branches --remotes --tags --graph --format=%x1ESTART%x1E%H%x1F%D%x1F%aN%x1F%aE%x1F%at%x1F%ct%x1F%P%x1F%B%x1EEND%x1E --author-date-order
 		try {
 
-			const logs = await gitcommand([
+			const logs = await command([
 				'log',
 				// hash, ref, parents, author name, author email, author date, committer date, raw body
 				`--format=%x1ESTART%x1E${['%H', '%D', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1EEND%x1E`,
@@ -244,7 +263,7 @@ module.exports = (() => {
 		}
 
 		// file status + current branch
-		const status = (await gitcommand(['status', '-b', '-u', '--porcelain'])).split('\n').filter(s => s);
+		const status = (await command(['status', '-b', '-u', '--porcelain'])).split('\n').filter(s => s);
 		const current = status[0] ? status[0].substring(3).replace(/\.\.\..+/, '').replace(/ \(no branch\)/i, '') : '';
 		const files = status.slice(1).map(s => {
 			let index = s[0].trim();
@@ -276,7 +295,7 @@ module.exports = (() => {
 	async function listStash(options = {}) {
 		if (options.filters?.startsWith('file:')) return []; // don't show stashes if filtering by file
 
-		const stashes = await gitcommand([
+		const stashes = await command([
 			'stash',
 			'list',
 			`--format=${['%gD', '%P', '%aN', '%aE', '%at', '%ct', '%B'].join('%x1F')}%x1E`,
@@ -301,8 +320,8 @@ module.exports = (() => {
 		if (options.length == 1 && options[0] == '') return status();
 
 		let diff = options.length == 1
-			? await gitcommand(['show', options[0], '--raw', '--numstat', '--oneline'])
-			: await gitcommand(['diff', options.join('..'), '--raw', '--numstat']);
+			? await command(['show', options[0], '--raw', '--numstat', '--oneline'])
+			: await command(['diff', options.join('..'), '--raw', '--numstat']);
 
 		diff = diff.split('\n')
 			.slice(options.length == 1 ? 1 : 0) // remove commit data (coming from `--oneline`) if `git show` was used
@@ -415,7 +434,7 @@ module.exports = (() => {
 	// UTILS
 	async function isInstalled() {
 		try {
-			await gitcommand(['--version']);
+			await command(['--version']);
 			return true;
 		} catch {
 			return false;
@@ -423,14 +442,14 @@ module.exports = (() => {
 	}
 	async function isRepo() {
 		try {
-			await gitcommand(['rev-parse', '--is-inside-work-tree']);
+			await command(['rev-parse', '--is-inside-work-tree']);
 			return true;
 		} catch {
 			return false;
 		}
 	}
 	async function repoPath() {
-		return await gitcommand(['rev-parse', '--show-toplevel']);
+		return await command(['rev-parse', '--show-toplevel']);
 	}
 
 	async function uri(path, ref) {
@@ -440,20 +459,20 @@ module.exports = (() => {
 		return vsc.joinPath(repoDir, path);
 	}
 	async function uriExists(path, ref) {
-		const exists = await gitcommand(['cat-file', '-e', `${ref}:${path}`]);
+		const exists = await command(['cat-file', '-e', `${ref}:${path}`]);
 		return !exists.startsWith('fatal:');
 	}
 
 	// git process/command
-	const gitCommandQueue = {};
-	function gitcommand(options) {
+	const commandQueue = {};
+	function command(options) {
 		// if a similar command is already running, abort it...or should I ignore the new one instead?
-		gitCommandQueue[options[0]]?.kill();
-		delete gitCommandQueue[options[0]];
+		commandQueue[options[0]]?.kill();
+		delete commandQueue[options[0]];
 
 		return new Promise((resolve, reject) => {
 			const p = proc.spawn('git', options, { cwd });
-			gitCommandQueue[options[0]] = p;
+			commandQueue[options[0]] = p;
 
 			let data = '';
 			p.stdout.on('data', stream => data += stream.toString()); // apparently using += is plenty efficient!
@@ -461,14 +480,14 @@ module.exports = (() => {
 
 			p.once('error', err => {
 				reject(err);
-				delete gitCommandQueue[options[0]];
+				delete commandQueue[options[0]];
 			});
 			p.once('exit', () => {
 				data = data.replace(/\n$/, ''); // remove the trailing '\n' (if any)
-				if (data.startsWith('fatal:')) reject(data); // reject error outputs
+				if (data.match(/^fatal:|^error:|^Aborting|^Cannot|^Could not|^refusing to/i)) reject(data); // reject error outputs
 				else resolve(data);
 
-				delete gitCommandQueue[options[0]];
+				delete commandQueue[options[0]];
 			});
 		});
 	}
@@ -495,6 +514,10 @@ module.exports = (() => {
 		rebase,
 		merge,
 		reset,
+
+		addWorktree,
+		removeWorktree,
+		listWorktrees,
 
 		continueSequencer,
 		abortSequencer,

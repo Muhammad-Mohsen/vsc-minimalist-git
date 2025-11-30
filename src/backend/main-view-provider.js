@@ -129,7 +129,7 @@ module.exports = class MainViewProvider {
 		} catch (err) {
 			vsc.showErrorPopup(err.message || err);
 			this.#postMessage({ command: 'hideprogress' });
-			
+
 			// restore the commit/stash message on failure
 			if (['commit', 'stash'].includes(message.command)) this.#postMessage({ command: 'commitmessage', body: { message: message.body.message } });
 		}
@@ -158,6 +158,13 @@ module.exports = class MainViewProvider {
 
 					await git.deleteTag(nameToDelete);
 					this.#refresh();
+					break;
+
+				case 'listworktrees':
+					break;
+				case 'addworktree':
+					break;
+				case 'deleteworktree':
 					break;
 
 				case 'copyhash':
