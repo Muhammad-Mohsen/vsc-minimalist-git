@@ -43,6 +43,10 @@ class Toolbar extends HTMLElementBase {
 		const files = this.#changeList.getSelected();
 		const message = this.#commitTextarea.value.trim();
 
+		if (!files.length && !this.#changeList.hasStaged()) {
+			return this.postMessage({ command: 'commit', body: { noFiles: true } });
+		}
+
 		this.toggleProgress(true);
 		this.#commitTextarea.value = '';
 		this.onCommitMessageChange();

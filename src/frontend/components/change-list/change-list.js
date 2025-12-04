@@ -44,7 +44,7 @@ class ChangesList extends HTMLElementBase {
 	onContextMenu(event, path, decorator) {
 		event.currentTarget.dataset.vscodeContext = `{ "isChange": true, "fsPath": "${this.#path(path)}", "decorator": "${decorator}" }`;
 	}
-	
+
 	clearSelected() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 	}
@@ -62,6 +62,10 @@ class ChangesList extends HTMLElementBase {
 		}
 
 		return selected.map(f => f.title);
+	}
+
+	hasStaged() {
+		return [...this.querySelectorAll('li decorations')].find(li => li.textContent.match(/[()]/g));
 	}
 
 	// RENDERING

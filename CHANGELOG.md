@@ -1,3 +1,6 @@
+## 0.11.2
+- Fixed a bug where the commit message was cleared if there were no selected files to commit (and none were staged)
+
 ## 0.11.1
 - Improved the commit behavior to commit staged files if no changed files were selected
 - Fixed a bug related to `diff`, `open-file` and `reveal-in-explorer` functions when the repo is in a parent directory of the workspace directory

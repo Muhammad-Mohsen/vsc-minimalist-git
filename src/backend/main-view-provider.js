@@ -94,6 +94,11 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'commit':
+					if (message.body.noFiles) {
+						vsc.showWarningPopup(`Please select which file(s) to commit!`);
+						break;
+					}
+
 					await git.commit(message.body);
 					break;
 
