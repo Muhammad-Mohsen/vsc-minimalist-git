@@ -6,9 +6,7 @@ const util = require('./core/utils');
 
 module.exports = class MainViewProvider {
 
-	#WATCHER_DEBOUNCE = 2000;
-	#WATCHER_DELAY = 500;
-	#watcherDispatchTimeout;
+	#WATCHER_DEBOUNCE = 1000;
 	#lastWatcherEventTimestamp = Date.now();
 
 	/** @type {vscode.WebviewView} */
@@ -36,9 +34,21 @@ module.exports = class MainViewProvider {
 		});
 	}
 
-	// message: { command: string, body: any }
+	async resolveWebviewView(webviewView) {
+		this.#view = webviewView;
+
+		webviewView.webview.options = {
+			enableScripts: true,
+			localResourceRoots: [this.#extensionURI],
+		}
+		webviewView.webview.html = await this.#render(webviewView.webview);
+		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
+	}
+
+	// MESSAGING
 	async #onMessage(message) {
 		try {
+			// message: { command: string, body: any }
 			switch (message.command) {
 				case 'openfolder':
 					vsc.executeCommand('vscode.openFolder');
@@ -115,17 +125,17 @@ module.exports = class MainViewProvider {
 					break;
 
 				case 'stage':
-					if (this.emptyFileList(message)) break;
+					if (this.#showEmptyBodyPopup(message)) break;
 					await git.stage(message.body);
 					break;
 
 				case 'unstage':
-					if (this.emptyFileList(message)) break;
+					if (this.#showEmptyBodyPopup(message)) break;
 					await git.unstage(message.body);
 					break;
 
 				case 'stash':
-					if (this.emptyFileList(message)) break;
+					if (this.#showEmptyBodyPopup(message)) break;
 					await git.saveStash(message.body);
 					break;
 			}
@@ -319,25 +329,17 @@ module.exports = class MainViewProvider {
 	}
 
 	async #onRepoChange(event) {
-		if (event.path.match(/.git\/index.lock$/)) return; // ignore index.lock changes?
-		// this.#refresh();
+		if (event.path.match(/.git\/index.lock$/)) return; // ignore index.lock changes
 
-		// if we refreshed within the last 5 seconds, ignore the event
+		// if we refreshed within the last #WATCHER_DEBOUNCE seconds, ignore the event
 		if (Date.now() - this.#lastWatcherEventTimestamp < this.#WATCHER_DEBOUNCE) return;
 
-		// otherwise, schedule a refresh in 1 sescond time.
-		// this to ensure that if a multiple git commands are running one after the other (for example, when committing, git add + git commit are executed),
-		// we wait until everything finishes
-		clearTimeout(this.#watcherDispatchTimeout);
-		this.#watcherDispatchTimeout = setTimeout(() => {
+		// the timeout ensures that if there's another command in the pipeline, it runs first
+		setTimeout(() => {
+			if (git.commandQueueLength()) return;
 			this.#refresh();
 			this.#lastWatcherEventTimestamp = Date.now();
-
-		}, this.#WATCHER_DELAY);
-	}
-
-	#setBadge(value) {
-		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : { value: undefined };
+		});
 	}
 
 	#refresh() {
@@ -347,40 +349,28 @@ module.exports = class MainViewProvider {
 		});
 	}
 
-	async #showWelcome() {
-		if (!(await git.isInstalled())) return 'nogit'; // no git!!
-		if (!vsc.workspaceFolder()) return 'noworkspace'; // no workspace
-		if (!await git.isRepo()) return 'norepo'; // not a repo
+	#setBadge(value) {
+		this.#view.badge = value ? { value, tooltip: `${value} pending changes` } : { value: undefined };
 	}
-
-	emptyFileList(message) {
+	#showEmptyBodyPopup(message) {
 		const empty = !message.body.files?.length;
 		if (empty) vsc.showWarningPopup(`Please select which file(s) to ${message.command}!`);
 		return empty;
-	}
-
-	async resolveWebviewView(webviewView) {
-		this.#view = webviewView;
-
-		webviewView.webview.options = this.#options();
-		webviewView.webview.html = await this.#render(webviewView.webview);
-		webviewView.webview.onDidReceiveMessage((message) => this.#onMessage(message));
-	}
-
-	#options() {
-		return {
-			enableScripts: true,
-			localResourceRoots: [this.#extensionURI],
-		}
 	}
 
 	/** @param {vscode.Webview} webview */
 	async #render(webview) {
 		const uri = (path) => webview.asWebviewUri(vscode.Uri.joinPath(this.#extensionURI, path));
 		const nonce = util.getNonce(); // Use a nonce to only allow...umm...because they said to use a nonce
-		const showWelcome = await this.#showWelcome();
 
-		return /*html*/`<!DOCTYPE html>
+		const welcomeView = await (async () => {
+			if (!(await git.isInstalled())) return 'nogit'; // no git!!
+			if (!vsc.workspaceFolder()) return 'noworkspace'; // no workspace
+			if (!await git.isRepo()) return 'norepo'; // not a repo
+		})();
+
+		return `
+			<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
@@ -405,11 +395,12 @@ module.exports = class MainViewProvider {
 
 			</head>
 	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
-				${showWelcome
-					? `<mingit-welcome reason="${showWelcome}"></mingit-welcome>`
+				${welcomeView
+					? `<mingit-welcome reason="${welcomeView}"></mingit-welcome>`
 					: '<mingit-commit-list></mingit-commit-list><mingit-change-list style="display: none;"></mingit-change-list>'
 				}
 			</body>
-			</html>`;
+			</html>
+		`;
 	}
 }

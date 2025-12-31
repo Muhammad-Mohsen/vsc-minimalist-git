@@ -465,6 +465,9 @@ module.exports = (() => {
 
 	// git process/command
 	const commandQueue = {};
+	function commandQueueLength() {
+		return Object.keys(commandQueue).length;
+	}
 	function command(options) {
 		// if a similar command is already running, abort it...or should I ignore the new one instead?
 		commandQueue[options[0]]?.kill();
@@ -543,6 +546,8 @@ module.exports = (() => {
 
 		uri,
 		absoluteURI,
+
+		commandQueueLength,
 	};
 
 })();

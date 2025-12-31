@@ -1,3 +1,7 @@
+## 0.12.0
+- Fixed a bug where the commit list would reset to selecting the `Working Tree` whenever the repo state changes.
+- Improved performance of repo state change detection.
+
 ## 0.11.2
 - Fixed a bug where the commit message was cleared if there were no selected files to commit (and none were staged)
 
