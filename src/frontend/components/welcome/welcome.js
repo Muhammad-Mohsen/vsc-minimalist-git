@@ -7,7 +7,7 @@ class Welcome extends HTMLElementBase {
 	}
 
 	#render() {
-		this.innerHTML = /*html*/`
+		this.innerHTML = `
 			<content>
 				<p>In order to use Git features, you can open a folder containing a Git repository.</p>
 				<button class="monaco-button monaco-text-button" onclick="${this.handle}.postMessage({ command: 'openfolder' })">Open Folder</button>

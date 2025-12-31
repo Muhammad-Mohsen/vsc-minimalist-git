@@ -13,9 +13,11 @@ class CommitList extends HTMLElementBase {
 
 	// MESSAGE HANDLER
 	onMessage(event) {
+		const selection = this.getSelected();
+
 		const message = event.data;
-		if (message.command == 'state') this.#renderCommits(message.body);
-		else if (message.command == 'getFileHistory') this.filterByFile(message.body)
+		if (message.command == 'state') this.#renderCommits(message.body, selection);
+		else if (message.command == 'getFileHistory') this.filterByFile(message.body);
 	}
 
 	// EVENT HANDLERS
@@ -54,12 +56,16 @@ class CommitList extends HTMLElementBase {
 	}
 
 	getSelected() {
-		return Array.from(this.querySelectorAll('li.selected')).map(s => s.getAttribute('hash'));
+		return Array.from(this.querySelectorAll('li.selected')).map(s => s.getAttribute('hash') || '');
+	}
+	onWorkingTree() {
+		const selection = this.getSelected();
+		return !selection.length || selection.length == 1 && selection[0] == '';
 	}
 
 	// RENDERING
 	#render() {
-		this.innerHTML = /*html*/`
+		this.innerHTML = `
 			<div class="progress"></div>
 			<input style="display: none;" type="search" placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>] | [file: <pathspec>]" onkeyup="${this.handle}.filter(event);">
 			<ul style="display: none;"></ul><resizer></resizer>`;
@@ -69,7 +75,7 @@ class CommitList extends HTMLElementBase {
 		this.#commitList = this.querySelector('ul');
 	}
 
-	#renderCommits(state) {
+	#renderCommits(state, selection) {
 		this.#progress.style.display = 'none'; // hide the loading
 		this.#input.style.display = '';
 		this.#commitList.style.display = '';
@@ -77,32 +83,36 @@ class CommitList extends HTMLElementBase {
 		this.#commitList.innerHTML = state.logs.commitList.map(c => {
 			const datetime = new Date(Number(c.date) * 1000);
 
-			return /*html*/`<li onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)" hash="${c.hash}" ${c.refs.stash ? 'class="stash"' : ''} branch-index="${c.branchIndex}" tabindex="0">
-				${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
-				<div class="col">
-					<div class="row">
-						${this.#renderRefs(c, state.logs.colors)}
-						<p class="commit-body" title="${this.encodeHTML(c.body)}">${c.body}</p>
-					</div>
-					<div class="row secondary">
-						<time datetime="${c.date}" title="${datetime.toLocaleString()}">${datetime.toLocaleDateString()}</time>
-						&bull;
-						<address class="author" title="${this.encodeHTML(c.name)} &lt;${c.email}&gt;">${c.name}</address>
-					</div>
-				</div>
-			</li>`
+			return `
+				<li hash="${c.hash}" branch-index="${c.branchIndex}" class="${c.refs.stash ? 'stash' : ''} ${selection.includes(c.hash) ? 'selected' : '' }" tabindex="0"
+					onclick="${this.handle}.onClick(event)" oncontextmenu="${this.handle}.onContextMenu(event)">
 
+					${this.#renderVertex(c, state.logs.branchCount, state.logs.colors)}
+
+					<div class="col">
+						<div class="row">
+							${this.#renderRefs(c, state.logs.colors)}
+							<p class="commit-body" title="${this.encodeHTML(c.body)}">${c.body}</p>
+						</div>
+						<div class="row secondary">
+							<time datetime="${c.date}" title="${datetime.toLocaleString()}">${datetime.toLocaleDateString()}</time>
+							&bull;
+							<address class="author" title="${this.encodeHTML(c.name)} &lt;${c.email}&gt;">${c.name}</address>
+						</div>
+					</div>
+				</li>
+			`;
 		}).join('');
 
-		this.#renderWorkingTree(state);
+		this.#renderWorkingTree(state, selection);
 		this.#renderEdges(state);
 	}
-	#renderWorkingTree(state) {
+	#renderWorkingTree(state, selection) {
 		const parent = state.logs.commitList.find(c => c.refs.head?.includes(state.status.current)) || { branchIndex: 0, hash: 'dnc' };
 		const changes = state.status.files.length == 1 ? '1 change' : `${state.status.files.length} changes`;
 
 		this.querySelector('ul').insertAdjacentHTML('afterbegin',`
-			<li class="working-tree selected" onclick="${this.handle}.onClick(event)" hash="" tabindex="0">
+			<li hash="" class="working-tree ${selection.includes('') || !selection.length ? 'selected' : ''}" onclick="${this.handle}.onClick(event)" tabindex="0">
 				${this.#renderVertex({ hash: '', branchIndex: parent.branchIndex, parents: [parent.hash] }, state.logs.branchCount, state.logs.colors)}
 				<div class="col">
 					<p class="commit-body" title="Working Tree">Working Tree</p>

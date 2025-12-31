@@ -3,17 +3,21 @@ import HTMLElementBase from "../../core/html-element-base.js";
 class ChangesList extends HTMLElementBase {
 	#changeList;
 	#shiftSelected;
+	#commitList;
 
 	connectedCallback() {
 		this.#render();
 	}
 
 	onMessage(event) {
+		if (event.data.command == 'hideprogress') return;
+
 		const message = event.data;
-
-		if (message.command == 'hideprogress') return;
-
-		if (message.command == 'state') this.#renderChanges(message.body.status);
+		if (message.command == 'state') {
+			this.#commitList.onWorkingTree()
+				? this.#renderChanges(message.body.status)
+				: '';
+		}
 		else this.#renderChanges(message.body);
 
 		this.#shiftSelected = null; // clear the selection on update
@@ -75,6 +79,7 @@ class ChangesList extends HTMLElementBase {
 			</mingit-toolbar><ul onclick="${this.handle}.clearSelected()"></ul>`;
 
 		this.#changeList = this.querySelector('ul');
+		this.#commitList = document.querySelector('mingit-commit-list');
 	}
 	#renderChanges(status) {
 		this.style.display = '';
@@ -88,10 +93,12 @@ class ChangesList extends HTMLElementBase {
 	}
 	#renderDecorations(file) {
 		if (file.decorator) return `<decorations class="${file.decorator.trim() || file.index}">${file.decorator.trim() || file.index}</decorations>`;
-		else return /*html*/`<decorations>
-			${file.insertions ? `<span class="insertions">+${file.insertions}</span>` : ''}
-			${file.deletions ? `<span class="deletions">-${file.deletions}</span>` : ''}
-		</decorations>`;
+		else return `
+			<decorations>
+				${file.insertions ? `<span class="insertions">+${file.insertions}</span>` : ''}
+				${file.deletions ? `<span class="deletions">-${file.deletions}</span>` : ''}
+			</decorations>
+		`;
 	}
 
 	#index(change) {
