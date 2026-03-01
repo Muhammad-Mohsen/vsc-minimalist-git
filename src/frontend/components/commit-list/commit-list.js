@@ -45,10 +45,10 @@ class CommitList extends HTMLElementBase {
 		const tags = titleAttr('.ic-tag');
 		const isStash = event.currentTarget.classList.contains('stash');
 
-		event.currentTarget.dataset.vscodeContext = `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${message}", "tags": "${tags}", "isStash": ${isStash} }`;
+		event.currentTarget.dataset.vscodeContext = `{ "isCommit": ${!isStash}, "hash": "${hash}", "message": "${this.encodeHTML(message)}", "tags": "${this.encodeHTML(tags)}", "isStash": ${isStash} }`;
 	}
 	filter(event) {
-		if (event.key == 'Enter') this.postMessage({ command: 'filter', body: { value: event.target.value.trim() } });
+		this.postMessage({ command: 'filter', body: { value: event.target.value.trim() } });
 	}
 	filterByFile(filePath) {
 		this.#input.value = `file: ${filePath}`
@@ -67,7 +67,7 @@ class CommitList extends HTMLElementBase {
 	#render() {
 		this.innerHTML = `
 			<div class="progress"></div>
-			<input style="display: none;" type="search" placeholder="Search" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>] | [file: <pathspec>]" onkeyup="${this.handle}.filter(event);">
+			<input style="display: none;" type="search" placeholder="Filters" title="[grep: <search_query>] [author: <author>[,<author>]] [before: <date>] [after: <date>] | [file: <pathspec>]\nexamples:\n- grep: module fix before: 05/05/2026\n- before: 1 jan 2026 after: 1 jun 2025\n- author: user@email.com\n- file: relative/path/to/file" onsearch="${this.handle}.filter(event);">
 			<ul style="display: none;"></ul><resizer></resizer>`;
 
 		this.#progress = this.querySelector('.progress');
