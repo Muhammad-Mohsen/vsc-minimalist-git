@@ -1,35 +1,67 @@
 # Minimalist Git
 Interactive log graph, working tree & commit diffs, and integrated git commands.
-<br>
-Follow up to the goated `Git Graph` extension.
 
-## Features
-- Commit log with graph for all branches (includes working tree + stashes)
-- Filter log by:
-	- author
-	- message (--grep)
-	- date (--before, --after)
-- stackable filters: can simply type `grep: test commit author: john doe before: 5 apr 2025` in the searchbox
-- Diff two commits
-- Add/Delete tags
-- Save/Drop/View stashes
-- continue/skip/abort rebase/cherry-pick/merge
-- Cookie-cutter commands:
-	- fetch
-	- pull `--rebase --autostash`
-	- push + push `--force`
-	- commit + commit `--amend`
-	- stage + unstage
-	- discard
-- Commit commands
-	- revert/checkout/cherry-pick commit
-	- merge to current branch
-	- reset to commit `--hard`
-- Change repository author
+## Core Features
+
+-   **Interactive Log Graph**: View the commit history for all branches, including the working tree and stashes, in a clear graphical format.
+-   **Powerful Filtering**: The log can be filtered by author, message content (`--grep`), date (`--before`, `--after`), and file path. Filters are stackable for precise history navigation.
+-   **Diff Viewing**: Easily compare any two commits or view changes in the working tree.
+-   **Integrated Git Operations**: Perform common Git tasks like commit, stage, unstage, discard, fetch, pull, push, and manage stashes and tags without leaving the extension's view.
+-   **Conflict Resolution**: During a rebase, merge, or cherry-pick, the extension provides options to continue, skip, or abort the process.
+
+## Usage
+
+### Main View
+
+The extension's main view is divided into three parts:
+1.  **Toolbar**: Quick access to common Git commands.
+2.  **Commit List**: The interactive log graph showing commit history.
+3.  **Change List**: Shows the current working tree, staged files, and file-level diffs for a selected commit.
+
+### Toolbar Commands
+
+-   **Fetch**: Fetches from the remote.
+-   **Pull**: Pulls changes, with a default strategy of `--rebase --autostash`.
+-   **Push**: Pushes committed changes. The overflow menu contains **Push --force**.
+-   **Commit**: Commits selected files from the Changes List. The overflow menu contains **Amend Last Commit**.
+-   **Stage / Unstage**: Stages or unstages selected files.
+-   **Discard**: Discards changes to selected files.
+-   **Stash**: Stashes current changes.
+
+### Log View (Context Menus)
+
+Right-clicking on a commit, branch, or stash in the log view reveals a context menu with powerful actions.
+
+**On a Commit:**
+-   `Checkout commit`
+-   `Cherrypick commit`
+-   `Revert commit`
+-   `Merge commit into current branch`
+-   `Reset branch to this commit (hard)`
+-   `Start interactive rebase from commit`
+-   `Copy commit hash` / `Copy commit message`
+-   `Add tag` / `Delete tag`
+
+**On a Stash:**
+-   `Apply stash`
+-   `Drop stash`
+
+**During a Sequencer Operation (Rebase/Merge/Cherry-Pick):**
+-   `Continue rebase` / `Abort rebase`
+-   `Continue merge` / `Abort merge`
+-   `Continue Cherry-Pick` / `Abort Cherry-Pick`
+
+### Changes List (Context Menus)
+
+Right-clicking a file in the changes list provides file-specific actions:
+-   `File History`
+-   `Open File`
+-   `Reveal In Explorer`
 
 ![Screenshot #1](res/screenshots/mingit-screenshot-1.PNG)
 
 ![Screenshot #2](res/screenshots/mingit-screenshot-2.PNG)
+<br>
 <sub>theme: [VSCode Minimalist Theme (Oak)](https://marketplace.visualstudio.com/items?itemName=MuhammadMohsen.vsc-minimalist-theme)</sub>
 
 ## Visual Studio Marketplace
@@ -140,6 +172,20 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.11.2
 - Fixed a bug where the commit message was cleared if there were no selected files to commit (and none were staged)
+
 ## 0.12.0
 - Fixed a bug where the commit list would reset to selecting the `Working Tree` whenever the repo state changes.
 - Improved performance of repo state change detection.
+
+## 0.12.1
+- Improved UX of search field (when clicking the clear button, the commit list will be updated automatically)
+
+## 0.12.2
+- Added `Run garbage collector` command (overflow menu).
+- Added `Publish branch` command (overflow menu).
+- Slightly improved UX of search field by formatting the tooltip and changing the placeholder text.
+- Fixed a bug where the `push` command would fail silently if the remote had more recent commits than the local.
+- Fixed a bug where the extension showed a blank screen after initializing a repository in the workspace directory.
+
+## 0.12.3
+- Fixed a bug where the commit-list context menu would break if the message had unescaped xml characters.

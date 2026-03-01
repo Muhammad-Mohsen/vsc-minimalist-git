@@ -130,6 +130,13 @@ module.exports = (() => {
 	async function branch(options) {
 		return await command(['branch', ...options]);
 	}
+	async function publishBranch() {
+		const branchName = await command(['rev-parse', '--abbrev-ref', 'HEAD']);
+		return await command(['branch', '--set-upstream-to', branchName]);
+	}
+	async function gc(options = ['--aggressive']) {
+		return await command(['gc', ...options]);
+	}
 	async function setConfig(key, val, append = false, scope = 'local') {
 		return await command(['config', key, val]);
 	}
@@ -487,7 +494,7 @@ module.exports = (() => {
 			});
 			p.once('exit', () => {
 				data = data.replace(/\n$/, ''); // remove the trailing '\n' (if any)
-				if (data.match(/^fatal:|^error:|^Aborting|^Cannot|^Could not|^refusing to/i)) reject(data); // reject error outputs
+				if (data.match(/^fatal:|^error:|^Aborting|^Cannot|^Could not|^refusing to|^failed|error: failed to push some refs/i)) reject(data); // reject error outputs
 				else resolve(data);
 
 				delete commandQueue[options[0]];
@@ -517,6 +524,7 @@ module.exports = (() => {
 		rebase,
 		merge,
 		reset,
+		gc,
 
 		addWorktree,
 		removeWorktree,
@@ -534,6 +542,7 @@ module.exports = (() => {
 		deleteTag,
 
 		branch,
+		publishBranch,
 		setConfig,
 		getConfig,
 

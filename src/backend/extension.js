@@ -106,6 +106,9 @@ async function activate(context) {
 	vsc.registerCommand(context, 'mingit.renameBranch', async (context) => {
 		provider.onContext({ command: 'renamebranch', body: context });
 	});
+	vsc.registerCommand(context, 'mingit.publishBranch', async (context) => {
+		provider.onContext({ command: 'publishbranch', body: context });
+	});
 	vsc.registerCommand(context, 'mingit.changeAuthor', async () => {
 		provider.onContext({ command: 'changeauthor', body: context });
 	});
@@ -124,6 +127,9 @@ async function activate(context) {
 
 	vsc.registerCommand(context, 'mingit.revealFileInExplorer', context => {
 		provider.onContext({ command: 'revealFileInExplorer', body: context })
+	});
+	vsc.registerCommand(context, 'mingit.gc', async () => {
+		provider.onContext({ command: 'gc', body: context });
 	});
 }
 

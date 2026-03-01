@@ -61,6 +61,7 @@ module.exports = class MainViewProvider {
 				case 'initrepo':
 					await vsc.executeCommand('git.init');
 					// rerender the extension after initializing the repo
+					git.setRepoPath(vsc.workspacePath());
 					this.#view.webview.html = await this.#render(this.#view.webview);
 					break;
 
@@ -274,6 +275,14 @@ module.exports = class MainViewProvider {
 					git.branch(['-M', name]);
 					break;
 
+				case 'publishbranch':
+					await git.publishBranch();
+					break;
+
+				case 'gc':
+					await git.gc();
+					break;
+
 				case 'changeauthor':
 					const tokenizeInput = value => {
 						let [user, email] = value.split('<');
@@ -392,8 +401,8 @@ module.exports = class MainViewProvider {
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/toolbar/toolbar.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/commit-list/commit-list.js')}"></script>
 				<script nonce="${nonce}" type="module" src="${uri('src/frontend/components/change-list/change-list.js')}"></script>
-
 			</head>
+
 	  		<body data-vscode-context='{ "preventDefaultContextMenuItems": true }'>
 				${welcomeView
 					? `<mingit-welcome reason="${welcomeView}"></mingit-welcome>`

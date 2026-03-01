@@ -1,3 +1,16 @@
+## 0.12.3
+- Fixed a bug where the commit-list context menu would break if the message had unescaped xml characters.
+
+## 0.12.2
+- Added `Run garbage collector` command (overflow menu).
+- Added `Publish branch` command (overflow menu).
+- Slightly improved UX of search field by formatting the tooltip and changing the placeholder text.
+- Fixed a bug where the `push` command would fail silently if the remote had more recent commits than the local.
+- Fixed a bug where the extension showed a blank screen after initializing a repository in the workspace directory.
+
+## 0.12.1
+- Improved UX of search field (when clicking the clear button, the commit list will be updated automatically)
+
 ## 0.12.0
 - Fixed a bug where the commit list would reset to selecting the `Working Tree` whenever the repo state changes.
 - Improved performance of repo state change detection.

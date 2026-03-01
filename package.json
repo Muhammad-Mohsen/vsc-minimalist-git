@@ -23,7 +23,7 @@
 		"url": "https://github.com/Muhammad-Mohsen/vsc-minimalist-git"
 	},
 	"license": "MIT",
-	"version": "0.12.0",
+	"version": "0.12.3",
 	"publisher": "muhammadmohsen",
 	"author": "Muhammad Mohsen <muhammadaeh@gmail.com>",
 	"engines": {
@@ -159,6 +159,11 @@
 					"group": "5_stashes"
 				},
 				{
+					"command": "mingit.publishBranch",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "5_stashes"
+				},
+				{
 					"command": "mingit.amendCommit",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "1_commitActions"
@@ -170,6 +175,11 @@
 				},
 				{
 					"command": "mingit.refresh",
+					"when": "isOverflow && webviewId == 'mingit-main-view'",
+					"group": "6_general"
+				},
+				{
+					"command": "mingit.gc",
 					"when": "isOverflow && webviewId == 'mingit-main-view'",
 					"group": "6_general"
 				},
@@ -381,6 +391,16 @@
 			{
 				"command": "mingit.renameBranch",
 				"title": "Rename current branch",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.publishBranch",
+				"title": "Publish branch",
+				"category": "Minimalist Git"
+			},
+			{
+				"command": "mingit.gc",
+				"title": "Run garbage collector",
 				"category": "Minimalist Git"
 			},
 			{

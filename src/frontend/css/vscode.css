@@ -99,7 +99,7 @@ input::placeholder, textarea::placeholder { color: var(--vscode-input-placeholde
 }
 @keyframes progress {
 	0% {
-		translate: -50vw 0;
+		translate: -10vw 0;
 		scale: .3 1;
 	}
 	50% {

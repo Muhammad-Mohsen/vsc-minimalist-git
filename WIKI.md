@@ -1,4 +1,78 @@
-# Minimalist Git
+# Dev Notes
+
+This wiki provides detailed information about the MinGit Visual Studio Code extension, its features, and how to use them effectively.
+
+## Overview
+
+MinGit is a minimalist Git client for Visual Studio Code. It provides an interactive log graph, a clear view of the working tree, commit diffs, and a host of integrated Git commands accessible directly from its UI. It aims to be a successor to the popular `Git Graph` extension, focusing on a clean interface and essential features.
+
+## Core Features
+
+-   **Interactive Log Graph**: View the commit history for all branches, including the working tree and stashes, in a clear graphical format.
+-   **Powerful Filtering**: The log can be filtered by author, message content (`--grep`), date (`--before`, `--after`), and file path. Filters are stackable for precise history navigation.
+-   **Diff Viewing**: Easily compare any two commits or view changes in the working tree.
+-   **Integrated Git Operations**: Perform common Git tasks like commit, stage, unstage, discard, fetch, pull, push, and manage stashes and tags without leaving the extension's view.
+-   **Conflict Resolution**: During a rebase, merge, or cherry-pick, the extension provides options to continue, skip, or abort the process.
+
+## Usage
+
+### Main View
+
+The extension's main view is divided into three parts:
+1.  **Toolbar**: Quick access to common Git commands.
+2.  **Commit List**: The interactive log graph showing commit history.
+3.  **Change List**: Shows the current working tree, staged files, and file-level diffs for a selected commit.
+
+### Toolbar Commands
+
+-   **Fetch**: Fetches from the remote.
+-   **Pull**: Pulls changes, with a default strategy of `--rebase --autostash`.
+-   **Push**: Pushes committed changes. The overflow menu contains **Push --force**.
+-   **Commit**: Commits selected files from the Changes List. The overflow menu contains **Amend Last Commit**.
+-   **Stage / Unstage**: Stages or unstages selected files.
+-   **Discard**: Discards changes to selected files.
+-   **Stash**: Stashes current changes.
+
+### Log View (Context Menus)
+
+Right-clicking on a commit, branch, or stash in the log view reveals a context menu with powerful actions.
+
+**On a Commit:**
+-   `Checkout commit`
+-   `Cherrypick commit`
+-   `Revert commit`
+-   `Merge commit into current branch`
+-   `Reset branch to this commit (hard)`
+-   `Start interactive rebase from commit`
+-   `Copy commit hash` / `Copy commit message`
+-   `Add tag` / `Delete tag`
+
+**On a Stash:**
+-   `Apply stash`
+-   `Drop stash`
+
+**During a Sequencer Operation (Rebase/Merge/Cherry-Pick):**
+-   `Continue rebase` / `Abort rebase`
+-   `Continue merge` / `Abort merge`
+-   `Continue Cherry-Pick` / `Abort Cherry-Pick`
+
+### Changes List (Context Menus)
+
+Right-clicking a file in the changes list provides file-specific actions:
+-   `File History`
+-   `Open File`
+-   `Reveal In Explorer`
+
+## Architecture
+
+The extension's codebase is divided into two primary layers:
+
+-   **Backend (`src/backend`)**: This is the Node.js environment that interfaces with Visual Studio Code APIs and the file system. It executes all Git commands and provides the data to the frontend. The `extension.js` is the main activation point, and `main-view-provider.js` is responsible for managing the webview panel.
+-   **Frontend (`src/frontend`)**: This is a standard HTML/CSS/JavaScript webview that renders the UI. It communicates with the backend to send user commands (e.g., "commit") and receive data to display (e.g., the log graph and file status).
+
+## Testing
+
+The `tests` folder contains several shell scripts (`.sh`). These scripts are used to create local Git repositories in various states (e.g., with merge conflicts, complex histories) to manually test the extension's behavior under different scenarios. The behavior is often compared against VS Code's built-in Git extension and the original `Git Graph` extension to ensure correctness and consistency.
 
 ## Publishing / Updating
 - install `vsce` package `--global` if not installed already.
@@ -6,204 +80,15 @@
 - run `vsce package`
 - run `vsce publish major/minor/patch/`
 
-## Code
-The code is split in two main layers:
-- backend: accesses vscode APIs and git (using `simple-git`). The only "UI" in this page is the `main-view-provider` which is the sidebar provider
-- frontend: the webview basically
-
-### Backend
-TODO
-### Frontend
-TODO
-
-## Testing
-The `tests` folder contains a few bash scripts which create local repositories in different states to test the behavior of the extension.
-
-I also compared the extension's behavior against the built-in git extension in VSCode and the OG, the 🐐, `Git Graph` extension.
-
-## TODO
-- worktrees
-	- https://git-scm.com/docs/git-worktree
-	- https://code.visualstudio.com/docs/sourcecontrol/overview#_worktrees
-- DONE - context menu in changes-list
-	- file history
-	- open in explorer (not deleted)
-	- open file (not deleted)
-	- care for renamed files
-- DONE - keep commit message if no files were selected
-- DONE - restart on folder selection
-- DONE - fix bug if repo is initialized but has no HEAD (no commits)
-- DONE - remove simplegit
-	- DONE - status (pfff)
-	- DONE - addConfig
-	- DONE - show
-	- DONE - diff
-	- DONE - version
-	- DONE - checkIsRepo
-	- DONE - rev-parse
-	- DONE - catFile
-
-- DONE - use https://github.com/hellopao/vscode-seti-icons/tree/master for file icons?
-- DONE - fix discarding a mix of tracked and untracked files (this is gonna be a bit of a bitch!!...not really!)
-- DONE - fix watcher debounce logic because it ignores some stuff (for example, when committing, it runs after the git add, but ignores git commit)
-- DONE - add refresh button (because I removed the onvisibilitychange handler...didn't like the way it always reset to the working tree, and the extension seemed to work fine even if it isn't visible)!
-
-DONE - this is what I got when in not at the root of the repo
-	d:\Code\personal\muhammad-mohsen.github.io\buku-bacaan-koptik\buku-bacaan-koptik\web\assets\documents\pascha\resurrection\Prophecies.cr.xml
-
-	this is what it should be
-	D:\Code\personal\muhammad-mohsen.github.io\buku-bacaan-koptik\web\assets\documents\pascha\resurrection\Prophecies.cr.xml
-
-- FIXED - it doesn't work :D :D
-	- stop relying on the built-in git, and use file watchers instead
-- DONE - fix commands that may not actully change the folder (for example fetch that fetches nothing)...stop the progressbar
-
-- add commands to abort cherry-pick, abort merge, abort/continue rebase?
-	- DONE - create 2 * 3 commands to continue, abort sequence op
-	- DONE - show commands based on current state
-	- DONE - refactor the state code to use regex
-	- DONE - fix repo-2 merge conflict status
-- plus
-	- DONE - revert commit
-	- DONE - interactive rebase
-	- DONE - merge into current branch
-	- DONE - reset branch to this commit
-	- DONE - change author
-
-- DONE - create extension icon
-- DONE - set up package json
-- DONE - test run the extension
-- DONE - UI
-	- DONE - design
-	- DONE - icons
-- DONE - create webview + add it to sidebar
-
-- DONE - toolbar
-	- DONE - add buttons
-	- DONE - add button titles
-	- DONE - hook up the buttons to vscode commands
-		- DONE - webview communication
-
-- DONE - log
-	- DONE - parse command output
-	- DONE - render message, date, author
-	- DONE - clean raw message from graph edges
-	- DONE - decorators
-		- DONE - branch
-		- DONE - tag
-		- DONE - origin
-		- DONE - head
-	- DONE - graph
-
-	- DONE - resolving branches
-		- DOESN'T WORK - walk down the commit list, and assign each commit with its branch
-			- then if a commit belongs to multiple branches (is the parent to multiple commits)
-				- use `git branch --contains <commit-hash>` and use the branch listed at the end!! this won't work...the commit will belong to both branches :)
-		- DONE - or...or use the `--graph` flag and check where the bloody commit asterisk is!!!
-			- DONE - reserve space for commit marker based on index
-			- DONE - move edges to be under the cell element
-				- DONE - make the marker smaller
-				- DONE - 'edge bend' resolution
-					- DONE - color: if multiple parents, take the color of the parent
-					- DONE - direction: if multiple parents + -ve direction + hits other markers, flip it!!
-
-	- DONE - search
-	- DONE - selection + multi-selection
-	- onclick: show diff
-	- DONE - working tree
-		- DONE - 4 moving parts here
-			- log + status+ status update + log update/filter
-			- easy solution here is to just combine the log + status calls into a single response then render everything when we get the response
-
-		- DONE - get the `branchIndex` of the head of the current branch (in the `status` response) and use it as the index for the `working tree` entry
-		- DONE - onclick: show status
-
-- DONE - changes
-	- DONE - working tree changes
-		- DONE - dispatch load event
-		- NOT NEEDED - parse `git status`
-		- DONE - render file
-			- DONE - uri
-			- DONE - decorator
-		- DONE - selection
-	- DONE - onclick show diff
-	- DONE - commit message input + inline commit button
-
-- DONE - stashes
-	- DONE - list the stashes
-		- group stashes by parent
-		- splice them into the commits array
-	- DONE - assign them a new lane maxBranchIndex + 1 & sort them by parent
-	- DONE - simply render them!
-
-- DONE - repo detections
-	- DONE - 'welcome' screen
-		- DONE - html
-		- DONE - no git!!
-		- DONE - no workspace/repository
-	- DONE - repository in parent...automatically opened!
-		- DONE - show a notification message
-	- DONE - changes
-- DONE - visibility change
-- DONE - loading bar
-	- show on postMessage
-	- hide on onMessage
-
-- repo state detection
-	- DONE - changes
-	- rebasing
-	- detached
-	- cherry picking
-
-- commands
-	- toolbar
-		- DONE - fetch
-		- DONE - pull
-		- DONE - push/--force (context)
-		- DONE - commit/ --amend (context) (context)
-		- DONE - stash
-		- DONE - stage
-		- DONE - unstage
-		- DONE - discard -> show confirmation message
-		- overflow
-			- toggle `--rebase`
-			- toggle `--autostash`
-			- change author
-			- DONE - rename branch
-	- commits (context menu)
-		- DONE - add tag
-		- DONE - delete tag
-
-		- DONE - checkout
-		- DONE - cherry-pick
-		- revert
-		- drop -> show confirmation message
-
-		- merge into current branch
-		- rebase current branch on this commit
-		- reset current branch to this commit
-
-		- DONE - copy hash
-		- DONE - copy message
-
-		- DONE - apply stash (for stashes)
-		- DONE - drop stash (for stashes) -> show confirmation message
-
-- DONE - render staged files differently
-- DONE - conflicts
-	- DONE - render conflicted decoration
-	- DONE - open merge editor
-
-- DONE - resolve renamed files -> relocate the file (move it under a secondary folder, then move it back)
-- DONE - fastlane
-- DONE - shift-selections
-
-### Optimizations
+## Optimizations
 - draw graph in an `async` function?
 - DONE - cache vertex/edge bounds
 - datasource entries
 	- commit data
 	- vertex/edge bounds (invalidated on repo change)
+- use `css containment` to optimize rendering
+	- separate the graph from the `commit` element
+	- set `intrinsic-height`
 - paging
 	- chunk the drawing
 	- use an `orphanage` map to keep track of commits whose parents are unreachable
@@ -213,6 +98,11 @@ DONE - this is what I got when in not at the root of the repo
 		- add to the datasource
 		- redraw
 		- check the `orphanage` and see if anything is now reachable & re-render
+
+## TODO
+- DONE - after initializing a repository, the extension view is blank
+- add `publish branch` command to the overflow button
+- add `git gc --aggressive` command to the overflow button
 
 ## GIT cheat sheet
 	- git configuration
