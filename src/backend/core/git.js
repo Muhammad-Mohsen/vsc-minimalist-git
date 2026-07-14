@@ -1,6 +1,6 @@
 const vsc = require('./vsc');
 const proc = require('child_process');
-const { pathExists } = require('./utils');
+const { pathExists, removeFile } = require('./utils');
 
 // git wrapper
 module.exports = (() => {
@@ -143,11 +143,25 @@ module.exports = (() => {
 	function getConfig(key) {}
 
 	// SEQUENCER
-	async function abortSequencer(command) {
-		return await command([command, '--abort']);
+	async function abortSequencer(sequencerCommand) {
+		try {
+			return await command([sequencerCommand, '--abort']);
+		}
+		catch (err) {
+			const orphan = `${sequencerCommand.toUpperCase()}_HEAD`;
+			removeFile(absoluteURI(`.git/${orphan}`));
+			throw new Error(`${err.message || err}. Removed orphaned ${orphan} file.`);
+		}
 	}
-	async function continueSequencer(command) {
-		return await command([command, '--continue']);
+	async function continueSequencer(sequencerCommand) {
+		try {
+			return await command([sequencerCommand, '--continue']);
+		}
+		catch (err) {
+			const orphan = `${sequencerCommand.toUpperCase()}_HEAD`;
+			removeFile(absoluteURI(`.git/${orphan}`));
+			throw new Error(`${err.message || err}. Removed orphaned ${orphan} file.`);
+		}
 	}
 
 	// GRAPH

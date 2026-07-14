@@ -18,5 +18,9 @@ function pathExists(absolutePath) {
 	return fs.existsSync(absolutePath.fsPath);
 }
 
+function removeFile(absolutePath) {
+	return fs.unlinkSync(absolutePath.fsPath);
+}
 
-module.exports = { getNonce, sameDir, pathExists };
+
+module.exports = { getNonce, sameDir, pathExists, removeFile };
