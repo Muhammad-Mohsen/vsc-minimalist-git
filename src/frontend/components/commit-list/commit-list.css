@@ -22,7 +22,7 @@ mingit-commit-list {
 		display: block;
 		max-height: calc(100vh - 250px);
 		min-height: 50vh;
-		width: calc(100% + 2px);
+		/* width: calc(100% + 2px); */
 		margin-block-start: 12px;
 		padding: 0 0 12px;
 		resize: vertical;
@@ -32,7 +32,7 @@ mingit-commit-list {
 	& li {
 		display: flex;
 		align-items: center;
-		width: calc(100% - 2px);
+		/* width: calc(100% - 2px); */
 		padding: 6px 12px 6px 16px;
 		overflow: clip visible;
 		cursor: pointer;
