@@ -189,3 +189,12 @@ This extension is available on the [Visual Studio Marketplace](https://marketpla
 
 ## 0.12.3
 - Fixed a bug where the commit-list context menu would break if the message had unescaped xml characters.
+
+## 0.12.4
+- Added 'garbage collection' command
+
+## 0.12.5
+- Fixed stuck sequencer operations (merging, rebasing, etc.)
+
+## 0.12.6
+- Fixed discard command not working when there's a mix of added/deleted/modified files!
