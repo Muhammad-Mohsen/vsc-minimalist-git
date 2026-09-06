@@ -52,19 +52,8 @@ class ChangesList extends HTMLElementBase {
 	clearSelected() {
 		this.querySelectorAll('file.selected').forEach(c => c.classList.remove('selected'));
 	}
-	getSelected(forDiscard) {
+	getSelected() {
 		let selected = Array.from(this.querySelectorAll('li.selected'));
-		if (!selected.length) return [];
-
-		// for the discard command, we need to pass on if the file is untracked (because untracked files use a different command)
-		if (forDiscard) {
-			const untracked = selected.filter(s => s.querySelector('decorations').innerHTML.includes('U'));
-			return {
-				trackedFiles: selected.filter(s => !untracked.includes(s)).map(f => f.title),
-				untrackedFiles: untracked.map(f => f.title)
-			}
-		}
-
 		return selected.map(f => f.title);
 	}
 

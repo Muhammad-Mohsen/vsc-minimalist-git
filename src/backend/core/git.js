@@ -56,17 +56,8 @@ module.exports = (() => {
 		else return await command(['commit', '--amend']);
 	}
 	async function discard(options) {
-		// tracked
-		if (options.trackedFiles?.length) {
-			await command(['reset', '--', ...options.trackedFiles]); // unstage the file first
-			try { await command(['checkout', '--', ...options.trackedFiles]); } // blows up for renamed files
-			catch {};
-		}
-
-		// untracked
-		if (options.untrackedFiles?.length) {
-			await command(['clean', '-f', '--', ...options.untrackedFiles]);
-		}
+		await command(['restore', '--staged', '--worktree', '--', ...options.files]);
+		await command(['clean', '-f', '--', ...options.files]);
 	}
 	async function saveStash(options) {
 		await stage(options);
