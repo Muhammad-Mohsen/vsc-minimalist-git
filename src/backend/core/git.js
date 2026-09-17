@@ -56,8 +56,8 @@ module.exports = (() => {
 		else return await command(['commit', '--amend']);
 	}
 	async function discard(options) {
-		await command(['restore', '--staged', '--worktree', '--', ...options.files]);
 		await command(['clean', '-f', '--', ...options.files]);
+		await command(['restore', '--staged', '--worktree', '--', ...options.files]);
 	}
 	async function saveStash(options) {
 		await stage(options);
